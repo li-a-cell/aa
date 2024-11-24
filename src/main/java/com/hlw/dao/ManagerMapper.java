@@ -197,8 +197,24 @@ List<EquipmentDetails> getEquipmentDetailsByNodeId(@Param("nodeId") int nodeId);
     Regulations getRegulationsByName(@Param("name") String name);
 
 
+    // 根据供应商名称查询供应商ID
+    @Select("SELECT bidder_id FROM bidder WHERE name = #{supplierName}")
+    Integer getSupplierIdByName(@Param("supplierName") String supplierName);
 
+    // 根据施工地名称查询施工地ID
+    @Select("SELECT site_id FROM constructionsite WHERE site_name = #{constructionSiteName}")
+    Integer getConstructionSiteIdByName(@Param("constructionSiteName") String constructionSiteName);
 
-
-
+    // 插入新的项目
+    @Insert("INSERT INTO project (manager_id, project_name, project.planned_start_date, project.planned_end_date, description, site_id,budget,status,project_type) " +
+            "VALUES (#{managerId}, #{projectName}, #{startDate}, #{endDate}, #{projectDescription},  #{constructionSiteId},#{Budget},#{status},#{project_type} )")
+    int createProject(@Param("managerId") int managerId, @Param("projectName") String projectName,
+                      @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate,
+                      @Param("projectDescription") String projectDescription, @Param("constructionSiteId") int constructionSiteId,
+                      @Param("Budget") double Budget, @Param("status") String status,
+                      @Param("project_type") String project_type );
 }
+
+
+
+
