@@ -85,12 +85,18 @@ public interface ProjectMapper {
     })
 
     List<ProjectDto> findCompletedProjectsByManagerId(int manager_id);
-     // 按状态查询所有项目
+     // 按状态查询项目
     @Select("SELECT node_id, node_name, start_date, end_date, status, node_info " +
             "FROM projectnode " +
             "WHERE project_id = #{project_id} AND status = #{status}")
     List<ProjectNode> getProjectNodes(@Param("project_id") int project_id, ProjectNode.NodeStatus status);
-
-     @Select("SELECT COUNT(*) FROM project WHERE staus=#{status}")
+     // 按状态查询项目数量
+     @Select("SELECT COUNT(*) FROM project WHERE status=#{status}")
     int getProjectsNum(String status);
+      // 按类型查询项目数量
+       @Select("SELECT COUNT(*) FROM project WHERE project_type=#{project_type}")
+    int getProjectsNumByType(String project_type);
+        // 按类型查询项目金额
+       @Select("SELECT SUM(budget) FROM project WHERE project_type=#{project_type}")
+    double getProjectsCostNumByType(String project_type);
 }

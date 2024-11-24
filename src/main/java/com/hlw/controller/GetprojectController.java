@@ -6,10 +6,7 @@ import com.hlw.pojo.ProjectNode;
 import com.hlw.pojo.Result;
 import com.hlw.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
@@ -70,7 +67,7 @@ public class GetprojectController {
         }
     }
      // 获取项目的对应状态节点的详细信息
-     @GetMapping("/nodes")
+     @PostMapping("/nodes")
     public Result getProjectNodes(@RequestBody ProjectNode projectNode, HttpServletRequest request) {
         Object employeeIdObj = request.getAttribute("employee_id");
 
@@ -89,7 +86,7 @@ public class GetprojectController {
         return Result.success(projectNodes);
     }
     //获取某一状态项目的数量
-      @GetMapping("/all")
+      @PostMapping("/projectsnum")
     public Result getProjectsNum(@RequestBody ProjectDto projectDto, HttpServletRequest request) {
         Object employeeIdObj = request.getAttribute("employee_id");
         if (employeeIdObj == null) {
@@ -104,4 +101,37 @@ public class GetprojectController {
         int num = projectservice.getProjectsNum(projectDto.getStatus());
         return Result.success(num);
     }
+    //更据项目类型返回项目数量
+    @PostMapping("/numbytype")
+    public Result getProjectsNumByType(@RequestBody ProjectDto projectDto, HttpServletRequest request) {
+        Object employeeIdObj = request.getAttribute("employee_id");
+        if (employeeIdObj == null) {
+            return Result.error("employee_id is missing in the request");
+        }
+        int employeeId;
+        try {
+            employeeId = Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            return Result.error("Invalid Employee ID format");
+        }
+        int num = projectservice.getProjectsNumByType(String.valueOf(projectDto.getProject_type()));
+        return Result.success(num);
+    }
+      // 按类型查询项目金额
+    @PostMapping("/costbytype")
+    public Result getProjectsCostNumByType(@RequestBody ProjectDto projectDto, HttpServletRequest request) {
+        Object employeeIdObj = request.getAttribute("employee_id");
+        if (employeeIdObj == null) {
+            return Result.error("employee_id is missing in the request");
+        }
+        int employeeId;
+        try {
+            employeeId = Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            return Result.error("Invalid Employee ID format");
+        }
+        double cost = projectservice.getProjectsCostNumByType(String.valueOf(projectDto.getProject_type()));
+        return Result.success(cost);
+    }
+
 }
