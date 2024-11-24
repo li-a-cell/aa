@@ -50,7 +50,7 @@ public class ManagerController {
 
 
      // 获取顶层节点
-     @GetMapping("/topLevelNodes")
+     @PostMapping ("/topLevelNodes")
     public Result getTopLevelNodes(@RequestBody ProjectNode projectNode,HttpServletRequest request) {
          Object employeeIdObj = request.getAttribute("employee_id");
 
@@ -128,7 +128,7 @@ public class ManagerController {
     }
 
  // 获取项目经理管理的某一状态项目节点的数量
-    @GetMapping("/nodes/count")
+    @PostMapping("/nodes/count")
     public Result getNodeCountByStatus( @RequestBody ProjectNode projectNode,HttpServletRequest request) {
           Object employeeIdObj = request.getAttribute("employee_id");
 
@@ -296,7 +296,7 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 }
 
 //获取检查任务信息
-@GetMapping("/getInspectionTask")
+@PostMapping("/getInspectionTask")
     public Result selectInspectionTask(@RequestBody String inspectionTask, HttpServletRequest request){
         // 从请求属性中获取 employee_id
     Object employeeIdObj = request.getAttribute("employee_id");
@@ -319,7 +319,7 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     }
 
     //获取规章制度
-    @GetMapping("/getRegulations")
+    @PostMapping("/getRegulations")
     public Result getRegulations(@RequestBody String regulations,HttpServletRequest request){
         Object employeeIdObj = request.getAttribute("employee_id");
 
@@ -373,7 +373,7 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 projectDescription, constructionSiteName,budget,status,project_type);
     }
 
-    @PostMapping("/getAllRegylations")
+    @GetMapping("/getAllRegylations")
     public Result getAllRegulations(HttpServletRequest request){
         Object employeeIdObj = request.getAttribute("employee_id");
         // 检查 employee_id 是否为空

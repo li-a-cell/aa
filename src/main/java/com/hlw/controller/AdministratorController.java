@@ -5,6 +5,7 @@ import com.hlw.pojo.Result;
 import com.hlw.service.AdministratorService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,7 +15,7 @@ public class AdministratorController {
     @Autowired
     private AdministratorService administratorService;
     // 获取待招标项目数量
-    @RequestMapping("/biddingnum")
+    @GetMapping ("/biddingnum")
     public Result getBiddingsNum(HttpServletRequest request){
         Object employeeIdObj = request.getAttribute("employee_id");
 
@@ -32,7 +33,7 @@ public class AdministratorController {
     }
 
     // 获取员工数量
-    @RequestMapping("/employee")
+    @GetMapping("/employee")
     public Result getEmployeeNum(HttpServletRequest request){
         Object employeeIdObj = request.getAttribute("employee_id");
         if (employeeIdObj == null) {
