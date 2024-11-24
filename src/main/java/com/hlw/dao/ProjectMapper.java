@@ -1,7 +1,6 @@
 package com.hlw.dao;
 
 import com.hlw.dto.ProjectDto;
-import com.hlw.pojo.Project;
 import com.hlw.pojo.ProjectNode;
 import org.apache.ibatis.annotations.*;
 
@@ -90,6 +89,6 @@ public interface ProjectMapper {
     // 查询项目节点
     @Select("SELECT node_id, node_name, start_date, end_date, status, node_info " +
             "FROM projectnode " +
-            "WHERE project_id = #{project_id}")
-    List<ProjectNode> getProjectNodes(@Param("project_id") int project_id);
+            "WHERE project_id = #{project_id} AND status = #{status}")
+    List<ProjectNode> getProjectNodes(@Param("project_id") int project_id, ProjectNode.NodeStatus status);
 }

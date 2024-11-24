@@ -86,7 +86,7 @@ public class GetprojectController {
              return Result.error("Invalid Employee ID format");
          }
 
-        List<ProjectNode> projectNodes=projectservice.getProjectNodes(projectNode.getProject_id());
+        List<ProjectNode> projectNodes=projectservice.getProjectNodes(projectNode.getProject_id(),projectNode.getStatus());
         return Result.success(projectNodes);
     }
 }

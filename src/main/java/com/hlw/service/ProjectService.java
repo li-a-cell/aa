@@ -2,7 +2,6 @@ package com.hlw.service;
 
 import com.hlw.dao.ProjectMapper;
 import com.hlw.dto.ProjectDto;
-import com.hlw.pojo.Project;
 import com.hlw.pojo.ProjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +40,7 @@ public class ProjectService {
     }
 
     // 获取项目节点
-    public List<ProjectNode> getProjectNodes(int projectId) {
-        return projectmapper.getProjectNodes(projectId);
+    public List<ProjectNode> getProjectNodes(int projectId, ProjectNode.NodeStatus status) {
+        return projectmapper.getProjectNodes(projectId,status);
     }
 }
