@@ -22,6 +22,7 @@ public class GetprojectController {
     @Autowired
     private ProjectService projectservice;
 
+
     // 获取正在进行的项目
     @GetMapping("/ongoing")
     public Result getOngoingProjects(HttpServletRequest request) {
@@ -70,7 +71,7 @@ public class GetprojectController {
         }
     }
 
-    // 获取项目的所有节点的详细信息
+    // 获取项目的对应状态节点的详细信息
     @GetMapping("/nodes")
     public Result getProjectNodes(@RequestBody ProjectNode projectNode, HttpServletRequest request) {
         Object employeeIdObj = request.getAttribute("employee_id");
@@ -88,5 +89,20 @@ public class GetprojectController {
 
         List<ProjectNode> projectNodes=projectservice.getProjectNodes(projectNode.getProject_id(),projectNode.getStatus());
         return Result.success(projectNodes);
+    }
+    @GetMapping("/all")
+    public Result getProjectsNum(@RequestBody ProjectDto projectDto, HttpServletRequest request) {
+        Object employeeIdObj = request.getAttribute("employee_id");
+        if (employeeIdObj == null) {
+            return Result.error("employee_id is missing in the request");
+        }
+        int employeeId;
+        try {
+            employeeId = Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            return Result.error("Invalid Employee ID format");
+        }
+        int num = projectservice.getProjectsNum(projectDto.getStatus());
+        return Result.success(num);
     }
 }

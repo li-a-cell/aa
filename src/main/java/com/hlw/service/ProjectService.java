@@ -43,4 +43,8 @@ public class ProjectService {
     public List<ProjectNode> getProjectNodes(int projectId, ProjectNode.NodeStatus status) {
         return projectmapper.getProjectNodes(projectId,status);
     }
+
+    public int getProjectsNum(String status) {
+        return projectmapper.getProjectsNum(status);
+    }
 }
