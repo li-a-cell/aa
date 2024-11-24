@@ -2,10 +2,12 @@ package com.hlw.controller;
 
 import com.hlw.dto.ProjectDto;
 import com.hlw.pojo.Project;
+import com.hlw.pojo.ProjectNode;
 import com.hlw.pojo.Result;
 import com.hlw.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletRequest;
@@ -66,5 +68,23 @@ public class GetprojectController {
         } else {
             return Result.error("你不是项目经理");
         }
+    }
+     @GetMapping("/nodes")
+    public Result getProjectNodes(@RequestBody ProjectNode projectNode, HttpServletRequest request) {
+        Object employeeIdObj = request.getAttribute("employee_id");
+
+         if (employeeIdObj == null) {
+             return Result.error("employee_id is missing in the request");
+         }
+
+         int employeeId;
+         try {
+             employeeId = Integer.parseInt(employeeIdObj.toString());
+         } catch (NumberFormatException e) {
+             return Result.error("Invalid Employee ID format");
+         }
+
+        List<ProjectNode> projectNodes=projectservice.getProjectNodes(projectNode.getProject_id(),projectNode.getStatus());
+        return Result.success(projectNodes);
     }
 }
