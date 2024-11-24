@@ -51,4 +51,13 @@ public class ProjectService {
     public List<ProjectDto> getAllProjects() {
         return projectmapper.findAllProjects();
     }
+
+    // 按类型查询项目数量
+    public int getProjectsNumByType(String project_type) {
+        return projectmapper.getProjectsNumByType(project_type);
+    }
+    // 按类型查询项目金额
+    public double getProjectsCostNumByType(String project_type) {
+        return projectmapper.getProjectsCostNumByType(project_type);
+    }
 }

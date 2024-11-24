@@ -379,5 +379,7 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
     }
 
 
-
+    public List<String> getAllRegulations() {
+        return managerMapper.getAllRegulations();
+    }
 }

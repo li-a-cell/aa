@@ -95,6 +95,8 @@ public interface ProjectMapper {
     @Select("SELECT COUNT(*) FROM project WHERE staus=#{status}")
     int getProjectsNum(String status);
 
+
+    // 获取所有项目
     @Select("SELECT p.project_id, p.manager_id, p.project_name, p.planned_start_date, p.planned_end_date, " +
             "p.site_id, p.contractor_id, p.budget, p.status, p.description, p.project_type, " +
             "cs.site_name AS construction_site_name, b.name AS bidder_name_result " +
@@ -117,4 +119,13 @@ public interface ProjectMapper {
             @Result(property = "bidder_name", column = "bidder_name_result")
     })
     List<ProjectDto> findAllProjects();
+
+    // 按类型查询项目数量
+    @Select("SELECT COUNT(*) FROM project WHERE project_type=#{project_type}")
+    int getProjectsNumByType(String project_type);
+
+
+    // 按类型查询项目金额
+    @Select("SELECT SUM(budget) FROM project WHERE project_type=#{project_type}")
+    double getProjectsCostNumByType(String project_type);
 }
