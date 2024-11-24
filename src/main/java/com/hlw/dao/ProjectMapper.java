@@ -86,7 +86,7 @@ public interface ProjectMapper {
     List<ProjectDto> findCompletedProjectsByManagerId(int manager_id);
 
 
-    // 查询项目节点
+    // 获取指定状态的项目节点
     @Select("SELECT node_id, node_name, start_date, end_date, status, node_info " +
             "FROM projectnode " +
             "WHERE project_id = #{project_id} AND status = #{status}")

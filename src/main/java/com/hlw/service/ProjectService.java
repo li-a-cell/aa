@@ -39,7 +39,7 @@ public class ProjectService {
         }
     }
 
-    // 获取项目节点
+    // 获取某个项目节点
     public List<ProjectNode> getProjectNodes(int projectId, ProjectNode.NodeStatus status) {
         return projectmapper.getProjectNodes(projectId,status);
     }
