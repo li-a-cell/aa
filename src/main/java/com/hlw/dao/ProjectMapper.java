@@ -94,4 +94,27 @@ public interface ProjectMapper {
 
     @Select("SELECT COUNT(*) FROM project WHERE staus=#{status}")
     int getProjectsNum(String status);
+
+    @Select("SELECT p.project_id, p.manager_id, p.project_name, p.planned_start_date, p.planned_end_date, " +
+            "p.site_id, p.contractor_id, p.budget, p.status, p.description, p.project_type, " +
+            "cs.site_name AS construction_site_name, b.name AS bidder_name_result " +
+            "FROM project p " +
+            "LEFT JOIN constructionsite cs ON p.site_id = cs.site_id " +
+            "LEFT JOIN bidder b ON p.contractor_id = b.bidder_id " )
+    @Results({
+            @Result(property = "project_id", column = "project_id"),
+            @Result(property = "manager_id", column = "manager_id"),
+            @Result(property = "project_name", column = "project_name"),
+            @Result(property = "planned_start_date", column = "planned_start_date"),
+            @Result(property = "planned_end_date", column = "planned_end_date"),
+            @Result(property = "site_id", column = "site_id"),
+            @Result(property = "contractor_id", column = "contractor_id"),
+            @Result(property = "budget", column = "budget"),
+            @Result(property = "status", column = "status"),
+            @Result(property = "description", column = "description"),
+            @Result(property = "project_type", column = "project_type"),
+            @Result(property = "site_name", column = "construction_site_name"),
+            @Result(property = "bidder_name", column = "bidder_name_result")
+    })
+    List<ProjectDto> findAllProjects();
 }

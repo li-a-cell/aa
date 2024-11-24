@@ -47,4 +47,8 @@ public class ProjectService {
     public int getProjectsNum(String status) {
         return projectmapper.getProjectsNum(status);
     }
+
+    public List<ProjectDto> getAllProjects() {
+        return projectmapper.findAllProjects();
+    }
 }
