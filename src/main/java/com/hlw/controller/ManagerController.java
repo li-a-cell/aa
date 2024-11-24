@@ -342,5 +342,36 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     }
 
 
+    //创建项目
+    @PostMapping("/createProject")
+    public Result createProject(@RequestBody String projectDetails, HttpServletRequest request) {
+        // 从请求属性中获取 employee_id
+        Object employeeIdObj = request.getAttribute("employee_id");
+
+        if (employeeIdObj == null) {
+            return Result.error("Employee ID is missing in the request");
+        }
+
+        int employeeId;
+        try {
+            employeeId = Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            return Result.error("Invalid Employee ID format");
+        }
+
+        // 使用 JsonUtils 获取项目的具体信息
+        JsonUtils jsonUtils = new JsonUtils();
+        String projectName = jsonUtils.getValueFromJson(projectDetails, "project_name");
+        String startDate = jsonUtils.getValueFromJson(projectDetails, "planned_start_date");
+        String endDate = jsonUtils.getValueFromJson(projectDetails, "planned_end_date");
+        String  budget=jsonUtils.getValueFromJson(projectDetails, "budget");
+        String projectDescription = jsonUtils.getValueFromJson(projectDetails, "project_description");
+        String constructionSiteName = jsonUtils.getValueFromJson(projectDetails, "site_name");
+        String  status=jsonUtils.getValueFromJson(projectDetails, "status");
+        String  project_type=jsonUtils.getValueFromJson(projectDetails, "project_type");
+        // 调用 Service 层方法创建项目
+        return managerService.createProject(employeeId, projectName, startDate, endDate,
+                projectDescription, constructionSiteName,budget,status,project_type);
+    }
 
 }

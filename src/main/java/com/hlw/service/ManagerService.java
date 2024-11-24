@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -341,6 +342,40 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
         } catch (Exception e) {
             return Result.error("规章制度查询失败: " + e.getMessage());
        }
+    }
+
+    public Result createProject(int managerId, String projectName, String startDate,
+                                String endDate, String projectDescription, String constructionSiteName,String budget,String status,String project_type)
+    {
+
+
+
+
+        // 查询施工地ID
+        Integer constructionSiteId = managerMapper.getConstructionSiteIdByName(constructionSiteName);
+        if (constructionSiteId == null) {
+            return Result.error("施工地名称无效");
+        }
+
+
+        // 这里您可以直接使用 supplierId, constructionSiteId, contractorId 作为 Integer 类型
+
+        // 如果您需要将 Integer 转换为 int，请先检查是否为 null
+        int validSiteId = (constructionSiteId != null) ? constructionSiteId : -1;  // 处理 null
+
+
+        // 转换日期格式
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate start = LocalDate.parse(startDate, formatter);
+        LocalDate end = LocalDate.parse(endDate, formatter);
+        double Budget = Double.parseDouble(budget);
+
+
+
+        // 创建项目
+        int projectId = managerMapper.createProject(managerId, projectName, start, end, projectDescription, validSiteId,Budget,status,project_type );
+
+        return projectId > 0 ? Result.success("项目创建成功") : Result.error("项目创建失败");
     }
 
 
