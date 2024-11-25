@@ -175,7 +175,7 @@ public class AdministratorController {
         administratorService.updateProjects(Integer.parseInt(project_id), project_name, manger_name, localstartDate, localendDate, Double.parseDouble(budget), status, description, project_type);
         return Result.success();
     }
-
+// 删除项目
     @PostMapping("/deleteproject")
     public Result deleteProject(@RequestBody String project, HttpServletRequest request) {
         Object employeeIdObj = request.getAttribute("employee_id");

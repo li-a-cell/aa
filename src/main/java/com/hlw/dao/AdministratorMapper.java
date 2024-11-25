@@ -24,7 +24,7 @@ public interface AdministratorMapper {
     //获取新入职员工数量
     @Select("SELECT COUNT(*) FROM employee WHERE YEAR(hire_date)=#{year} AND MONTH(hire_date)=#{month}")
     int getNewEmployeeNum(int year, int month);
-    //获取新入职员工数量
+    //获取新招标数量
     @Select("SELECT COUNT(*) FROM tenderrecord WHERE YEAR(request_date)=#{year} AND MONTH(request_date)=#{month}")
     int getNewTenderNum(int year, int month);
     // 更新员工信息
