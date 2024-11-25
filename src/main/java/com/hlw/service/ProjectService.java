@@ -55,6 +55,9 @@ public class ProjectService {
     public double getProjectsCostNumByType(String project_type) {
         return projectmapper.getProjectsCostNumByType(project_type);
     }
+     public List<ProjectDto> getAllProjects() {
+        return projectmapper.findAllProjects();
+    }
 
 
 }

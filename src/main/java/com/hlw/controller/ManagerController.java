@@ -371,5 +371,23 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return managerService.createProject(employeeId, projectName, startDate, endDate,
                                             projectDescription, constructionSiteName,budget,status,project_type);
     }
+    //获取所有规章制度名字
+      @GetMapping("/getAllRegylations")
+    public Result getAllRegulations(HttpServletRequest request){
+        Object employeeIdObj = request.getAttribute("employee_id");
+        // 检查 employee_id 是否为空
+        if (employeeIdObj == null) {
+            return Result.error("Employee ID is missing in the request");
+        }
+        int employeeId;
+        try {
+            // 转换为 int 类型
+            employeeId = Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            return Result.error("Invalid Employee ID format");
+        }
+        List<String> regulations = managerService.getAllRegulations();
+        return Result.success(regulations);
+    }
 
 }

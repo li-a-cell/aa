@@ -382,5 +382,8 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
 
     return projectId > 0 ? Result.success("项目创建成功") : Result.error("项目创建失败");
 }
+ public List<String> getAllRegulations() {
+        return managerMapper.getAllRegulations();
+    }
 
 }

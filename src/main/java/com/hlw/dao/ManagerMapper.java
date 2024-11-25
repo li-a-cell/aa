@@ -213,6 +213,8 @@ List<EquipmentDetails> getEquipmentDetailsByNodeId(@Param("nodeId") int nodeId);
                       @Param("projectDescription") String projectDescription, @Param("constructionSiteId") int constructionSiteId,
                       @Param("Budget") double Budget, @Param("status") String status,
                       @Param("project_type") String project_type );
+     @Select("SELECT regulation_name FROM regulations ")
+    List<String> getAllRegulations();
 }
 
 

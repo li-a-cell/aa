@@ -133,5 +133,19 @@ public class GetprojectController {
         double cost = projectservice.getProjectsCostNumByType(String.valueOf(projectDto.getProject_type()));
         return Result.success(cost);
     }
-
+ @GetMapping("/all")
+    public Result getAllProjects(HttpServletRequest request) {
+        Object employeeIdObj = request.getAttribute("employee_id");
+        if (employeeIdObj == null) {
+            return Result.error("employee_id is missing in the request");
+        }
+        int employeeId;
+        try {
+            employeeId = Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            return Result.error("Invalid Employee ID format");
+        }
+        List<ProjectDto> projects = projectservice.getAllProjects();
+        return Result.success(projects);
+    }
 }
