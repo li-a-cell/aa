@@ -22,5 +22,11 @@ public class AdministratorService {
     public  int getNodeCountByStatus(int projectId, ProjectNode.NodeStatus status) {
         return administratorMapper.getNodeCountByStatus(projectId, status);
     }
+    public int getNewEmployeeNum(int year, int month) {
+        return administratorMapper.getNewEmployeeNum(year, month);
+    }
+    public int getNewTenderNum(int year, int month) {
+        return administratorMapper.getNewTenderNum(year, month);
+    }
 
 }

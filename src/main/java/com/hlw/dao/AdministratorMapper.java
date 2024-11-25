@@ -15,7 +15,14 @@ public interface AdministratorMapper {
     // 获取员工数量
     @Select("SELECT COUNT(*) FROM employee ")
     int getEmployeeNum();
+
     // 获取指定状态的节点数量
     @Select("SELECT COUNT(*) FROM projectnode WHERE status = #{status} AND project_id=#{project_id}")
     int getNodeCountByStatus(@Param("project_id") int project_id, @Param("status") ProjectNode.NodeStatus status);
+    //获取新入职员工数量
+    @Select("SELECT COUNT(*) FROM employee WHERE YEAR(hire_date)=#{year} AND MONTH(hire_date)=#{month}")
+    int getNewEmployeeNum(int year, int month);
+    //获取新入职员工数量
+    @Select("SELECT COUNT(*) FROM tenderrecord WHERE YEAR(request_date)=#{year} AND MONTH(request_date)=#{month}")
+    int getNewTenderNum(int year, int month);
 }
