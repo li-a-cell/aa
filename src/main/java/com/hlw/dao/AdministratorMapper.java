@@ -4,6 +4,7 @@ import com.hlw.pojo.ProjectNode;
 import com.hlw.pojo.User;
 import org.apache.ibatis.annotations.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Mapper
@@ -41,4 +42,28 @@ public interface AdministratorMapper {
     // 获取所有员工信息
     @Select("SELECT * FROM employee")
     List<User> getAllEmployees();
+    // 更新项目信息
+    @Update("UPDATE project " +
+            "SET project_name = #{projectName}, " +
+            "manager_id = (SELECT employee_id FROM employee WHERE name = #{managerName}), " +
+            "planned_start_date = #{startDate}, " +
+            "planned_end_date = #{endDate}, " +
+            "budget = #{budget}, " +
+            "status = #{status}, " +
+            "description = #{description}, " +
+            "project_type = #{projectType} " +
+            "WHERE project_id = #{projectId}")
+    void updateProjects(@Param("projectId") int projectId,
+                        @Param("projectName") String projectName,
+                        @Param("managerName") String managerName,
+                        @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate,
+                        @Param("budget") Double budget,
+                        @Param("status") String status,
+                        @Param("description") String description,
+                        @Param("projectType") String projectType);
+
+// 删除项目
+    @Delete("DELETE FROM project WHERE project_id = #{projectId}")
+    void deleteProject(int projectId);
 }

@@ -6,6 +6,7 @@ import com.hlw.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -49,6 +50,13 @@ public class AdministratorService {
     // 获取所有员工信息
     public List<User> getAllEmployees() {
         return administratorMapper.getAllEmployees();
+    }
+    public void updateProjects(int projectId, String projectName, String mangerName, LocalDate startDate, LocalDate endDate, Double budget, String status, String description, String projectType) {
+        administratorMapper.updateProjects( projectId, projectName, mangerName, startDate, endDate, budget, status, description, projectType);
+    }
+
+    public void deleteProject(int project_id) {
+        administratorMapper.deleteProject(project_id);
     }
 
 }
