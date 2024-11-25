@@ -18,4 +18,12 @@ public class AdministratorService {
     public int getEmployeeNum() {
         return administratorMapper.getEmployeeNum();
     }
+
+    public int getNewEmployeeNum(int year, int month) {
+        return administratorMapper.getNewEmployeeNum(year, month);
+    }
+
+    public void updateProjects(int employeeId, String projectId, String projectName, String mangerName, String startDate, String endDate, String budget, String status, String description, String projectType) {
+        administratorMapper.updateProjects(employeeId, projectId, projectName, mangerName, startDate, endDate, budget, status, description, projectType);
+    }
 }

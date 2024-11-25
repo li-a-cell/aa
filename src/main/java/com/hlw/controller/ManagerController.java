@@ -373,7 +373,7 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 projectDescription, constructionSiteName,budget,status,project_type);
     }
 
-    @GetMapping("/getAllRegylations")
+    @GetMapping("/getAllRegulations")
     public Result getAllRegulations(HttpServletRequest request){
         Object employeeIdObj = request.getAttribute("employee_id");
         // 检查 employee_id 是否为空
