@@ -3,11 +3,14 @@ package com.hlw.controller;
 
 import com.hlw.pojo.ProjectNode;
 import com.hlw.pojo.Result;
+import com.hlw.pojo.User;
 import com.hlw.service.AdministratorService;
 import com.hlw.utils.JsonUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/administrator")
@@ -95,4 +98,46 @@ public class AdministratorController {
         int num=administratorService.getNewTenderNum(Integer.parseInt(year),Integer.parseInt(month));
         return Result.success(num);
     }
+    //更新员工信息
+    @PutMapping("/updateemployee/{employeeId}")
+    public Result updateEmployee(@PathVariable("employeeId") int employeeId, @RequestBody User updatedEmployee) {
+        boolean success = administratorService.updateEmployeeInfo(employeeId, updatedEmployee);
+        if (success) {
+            return Result.success("Employee updated successfully");
+        } else {
+            return Result.error("Failed to update employee");
+        }
+    }
+
+    // 删除员工信息
+    @DeleteMapping("/deleteemployee/{employeeId}")
+    public Result deleteEmployee(@PathVariable("employeeId") int employeeId) {
+        boolean success = administratorService.deleteEmployeeById(employeeId);
+        if (success) {
+            return Result.success("Employee deleted successfully");
+        } else {
+            return Result.error("Failed to delete employee");
+        }
+    }
+
+    // 添加新员工
+    @PostMapping("/createemployee")
+    public Result addEmployee(@RequestBody User newEmployee) {
+        boolean success = administratorService.addEmployee(newEmployee);
+        if (success) {
+            return Result.success("Employee added successfully");
+        } else {
+            return Result.error("Failed to add employee");
+        }
+    }
+    @GetMapping("/employees")
+    public Result getAllEmployees() {
+        List<User> employees = administratorService.getAllEmployees();
+        if (employees != null && !employees.isEmpty()) {
+            return Result.success(employees);
+        } else {
+            return Result.error("No employees found");
+        }
+    }
+
 }
