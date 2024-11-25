@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 @RestController
 @RequestMapping("/administrator")
 public class AdministratorController {
@@ -89,8 +92,33 @@ public class AdministratorController {
         String status = jsonUtils.getValueFromJson(projects, "status");
         String description = jsonUtils.getValueFromJson(projects, "description");
         String project_type = jsonUtils.getValueFromJson(projects, "project_type");
-        administratorService.updateProjects(employeeId, project_id, project_name, manger_name, start_date, end_date, budget, status, description, project_type);
+        // 定义日期格式
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+// 解析字符串为 LocalDate
+
+        LocalDate localstartDate = LocalDate.parse(start_date, formatter);
+
+        LocalDate localendDate = LocalDate.parse(end_date, formatter);
+        administratorService.updateProjects(Integer.parseInt(project_id), project_name, manger_name, localstartDate, localendDate, Double.parseDouble(budget), status, description, project_type);
         return Result.success();
     }
 
+    @PostMapping("/deleteproject")
+    public Result deleteProject(@RequestBody String project, HttpServletRequest request) {
+        Object employeeIdObj = request.getAttribute("employee_id");
+        if (employeeIdObj == null) {
+            return Result.error("employee_id is missing in the request");
+        }
+        int employeeId;
+        try {
+            employeeId = Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            return Result.error("Invalid Employee ID format");
+        }
+        JsonUtils jsonUtils = new JsonUtils();
+        String project_id = jsonUtils.getValueFromJson(project, "project_id");
+        administratorService.deleteProject(Integer.parseInt(project_id));
+        return Result.success();
+    }
 }

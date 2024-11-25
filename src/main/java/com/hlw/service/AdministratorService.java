@@ -4,6 +4,8 @@ import com.hlw.dao.AdministratorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 public class AdministratorService {
     @Autowired
@@ -23,7 +25,11 @@ public class AdministratorService {
         return administratorMapper.getNewEmployeeNum(year, month);
     }
 
-    public void updateProjects(int employeeId, String projectId, String projectName, String mangerName, String startDate, String endDate, String budget, String status, String description, String projectType) {
-        administratorMapper.updateProjects(employeeId, projectId, projectName, mangerName, startDate, endDate, budget, status, description, projectType);
+    public void updateProjects(int projectId, String projectName, String mangerName, LocalDate startDate, LocalDate endDate, Double budget, String status, String description, String projectType) {
+        administratorMapper.updateProjects( projectId, projectName, mangerName, startDate, endDate, budget, status, description, projectType);
+    }
+
+    public void deleteProject(int project_id) {
+        administratorMapper.deleteProject(project_id);
     }
 }

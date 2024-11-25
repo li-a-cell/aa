@@ -1,7 +1,8 @@
 package com.hlw.dao;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
+
+import java.time.LocalDate;
 
 @Mapper
 public interface AdministratorMapper {
@@ -22,5 +23,27 @@ public interface AdministratorMapper {
 
 
 
-    void updateProjects(int employeeId, String projectId, String projectName, String mangerName, String startDate, String endDate, String budget, String status, String description, String projectType);
+    @Update("UPDATE project " +
+            "SET project_name = #{projectName}, " +
+            "manager_id = (SELECT employee_id FROM employee WHERE name = #{managerName}), " +
+            "planned_start_date = #{startDate}, " +
+            "planned_end_date = #{endDate}, " +
+            "budget = #{budget}, " +
+            "status = #{status}, " +
+            "description = #{description}, " +
+            "project_type = #{projectType} " +
+            "WHERE project_id = #{projectId}")
+    void updateProjects(@Param("projectId") int projectId,
+                        @Param("projectName") String projectName,
+                        @Param("managerName") String managerName,
+                        @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate,
+                        @Param("budget") Double budget,
+                        @Param("status") String status,
+                        @Param("description") String description,
+                        @Param("projectType") String projectType);
+
+
+    @Delete("DELETE FROM project WHERE project_id = #{projectId}")
+    void deleteProject(int projectId);
 }
