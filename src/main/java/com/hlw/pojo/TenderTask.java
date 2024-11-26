@@ -19,8 +19,9 @@ public class TenderTask {
     @Column(name = "deadline")
     private LocalDate deadline;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "tender_task_status")
-    private TenderTaskStatus Tender_task_status;
+    private TenderTaskStatus tender_task_status;
     public enum TenderTaskStatus {
         待发布, 待招标, 已完成
     }

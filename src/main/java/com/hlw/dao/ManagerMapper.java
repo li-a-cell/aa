@@ -224,6 +224,6 @@ List<EquipmentDetails> getEquipmentDetailsByNodeId(@Param("nodeId") int nodeId);
     // 添加投标任务
     @Insert("INSERT INTO tender_task (project_id, tender_task_status,deadline) " +
             "VALUES (#{project_id}, #{tender_task_status}, #{deadline})")
-    boolean addTenderTask(@Param("project_id") int project_id, @Param("tender_task_status") TenderTask.TenderTaskStatus tender_task_status, @Param("deadline") LocalDate deadline);
+    boolean addTenderTask(@Param("project_id") int project_id, @Param("tender_task_status") String tender_task_status, @Param("deadline") LocalDate deadline);
 
 }

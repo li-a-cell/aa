@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/biddingmanagement")
@@ -32,8 +33,8 @@ public class BiddingManagementController {
         } catch (NumberFormatException e) {
             return Result.error("Invalid Employee ID format");
         }
-        biddingManagementService.getTenderTask();
-        return Result.success();
+        List<TenderTask>  tenderTasks =biddingManagementService.getTenderTask();
+        return Result.success(tenderTasks);
     }
     @PostMapping("/tenderRecord")
     public Result addTenderRecord(@RequestBody TenderRecord tenderRecord, HttpServletRequest request) {
