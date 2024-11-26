@@ -1,16 +1,14 @@
 package com.hlw.pojo;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-@Data
 @Getter
 @Setter
 @Entity
@@ -30,6 +28,6 @@ public class ProjectBiddingRecord {
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "bidding_time")
-    private LocalDate bidding_time;
+    private LocalDateTime bidding_time;
 
 }
