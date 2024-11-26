@@ -314,10 +314,10 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
         }
     }
 
-    public Result getInspectionTask(int task_id) {
+    public Result getInspectionTask(String record_name) {
         try {
             // 调用 DAO 层方法查询检查任务
-            InspectionTask inspectionTask = managerMapper.getInspectionTaskById(task_id);
+            InspectionTask inspectionTask = managerMapper.getInspectionTaskByName(record_name);
             // 如果检查任务不存在，返回错误信息
             if (inspectionTask == null) {
                 return Result.error("检查任务不存在");

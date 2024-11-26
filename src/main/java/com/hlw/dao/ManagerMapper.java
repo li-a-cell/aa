@@ -193,6 +193,9 @@ List<EquipmentDetails> getEquipmentDetailsByNodeId(@Param("nodeId") int nodeId);
     @Select("SELECT * FROM inspectiontask WHERE inspection_task_id = #{taskId}")
     InspectionTask getInspectionTaskById(@Param("taskId") int taskId);
 
+    @Select("SELECT * FROM inspectiontask WHERE inspection_task_id = (SELECT inspection_task_id FROM inspectionrecord WHERE record_name=#{recordName})")
+    InspectionTask getInspectionTaskByName(@Param("recordName") String recordName);
+
     @Select("SELECT * FROM regulations WHERE regulation_name=#{name}")
     Regulations getRegulationsByName(@Param("name") String name);
 

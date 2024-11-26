@@ -314,8 +314,8 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return Result.error("Invalid Employee ID format");
     }
     JsonUtils jsonUtils = new JsonUtils();
-    String taskId = jsonUtils.getValueFromJson(inspectionTask, "task_id");
-    return managerService.getInspectionTask(Integer.parseInt(taskId));
+    String recordName = jsonUtils.getValueFromJson(inspectionTask, "record_name");
+    return managerService.getInspectionTask(recordName);
     }
 
     //获取规章制度
