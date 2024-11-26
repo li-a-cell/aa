@@ -19,8 +19,13 @@ public class TenderTask {
     @Column(name = "deadline")
     private LocalDate deadline;
 
-    @Lob
     @Column(name = "tender_task_status")
-    private String tender_task_status;
+    private Status tender_task_status;
+
+    public enum Status {
+        待发布,
+        待招标,
+        已完成
+    }
 
 }

@@ -9,6 +9,7 @@ import java.util.List;
 
 @Mapper
 public interface AdministratorMapper {
+
     // 获取待招标项目数量
     @Select("SELECT COUNT(*) FROM project WHERE status='待招标'")
     int getBiddingsNum();
@@ -71,4 +72,40 @@ public interface AdministratorMapper {
     // 获取所有员工信息
     @Select("SELECT * FROM employee")
     List<User> getAllEmployees();
+
+
+
+    // 通过材料名称查询材料 ID 是否存在
+    @Select("SELECT material_id FROM material WHERE material_name = #{materialName} LIMIT 1")
+    Integer getMaterialIdByName(@Param("materialName") String materialName);
+
+    // 添加材料入库记录，并在材料表中插入相应材料（如果不存在）
+    @Insert("INSERT INTO material (material_name, current_stock_quantity) " +
+            "SELECT #{materialName}, #{quantity} " +
+            "WHERE NOT EXISTS (SELECT 1 FROM material WHERE material_name = #{materialName})")
+    void addNewMaterialIfNotExists(@Param("materialName") String materialName,
+                                   @Param("quantity") int quantity);
+
+    // 更新现有材料的数量
+    @Update("UPDATE material " +
+            "SET current_stock_quantity = current_stock_quantity + #{quantity} " +
+            "WHERE material_name = #{materialName}")
+    void updateMaterialQuantity(@Param("materialName") String materialName,
+                                @Param("quantity") int quantity);
+
+    // 添加材料入库记录
+    @Insert("INSERT INTO material_inventory (material_id, quantity, entry_date, supplier_name, price, remarks) " +
+            "VALUES ((SELECT material_id FROM material WHERE material_name = #{materialName}), " +
+            "#{quantity}, #{localDate}, #{supplierName}, #{price}, #{remarks})")
+    int addMaterialStorage(@Param("materialName") String materialName,
+                            @Param("quantity") int quantity,
+                            @Param("localDate") LocalDate localDate,
+                            @Param("supplierName") String supplierName,
+                            @Param("price") int price,
+                            @Param("remarks") String remarks);
+
+
+
+
+
 }

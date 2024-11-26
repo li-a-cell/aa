@@ -1,6 +1,7 @@
 package com.hlw.controller;
 
 
+import com.hlw.pojo.Material;
 import com.hlw.pojo.Result;
 import com.hlw.service.AdministratorService;
 import com.hlw.utils.JsonUtils;
@@ -183,5 +184,20 @@ public class AdministratorController {
         } else {
             return Result.error("No employees found");
         }
+    }
+
+    @PostMapping("/materialstorage")
+    public Result addMaterialStorage(@RequestBody String material ,HttpServletRequest request) {
+        JsonUtils jsonUtils = new JsonUtils();
+        String material_name = jsonUtils.getValueFromJson(material, "material_name");
+        String quantity = jsonUtils.getValueFromJson(material, "quantity");
+        String entry_date = jsonUtils.getValueFromJson(material, "entry_date");
+        String supplier_name = jsonUtils.getValueFromJson(material, "supplier_name");
+        String price = jsonUtils.getValueFromJson(material, "price");
+        String remarks = jsonUtils.getValueFromJson(material, "remarks");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(entry_date, formatter);
+        return administratorService.addMaterialStorage(material_name, Integer.parseInt(quantity), localDate, supplier_name, Integer.parseInt(price), remarks);
+
     }
 }

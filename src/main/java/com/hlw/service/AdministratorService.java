@@ -2,6 +2,7 @@ package com.hlw.service;
 
 import com.hlw.dao.AdministratorMapper;
 import com.hlw.pojo.ProjectNode;
+import com.hlw.pojo.Result;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.List;
 public class AdministratorService {
     @Autowired
     private AdministratorMapper administratorMapper;
+
 
     // 获取招标数量
     public int getBiddingsNum() {
@@ -60,5 +62,17 @@ public class AdministratorService {
     // 获取所有员工信息
     public List<User> getAllEmployees() {
         return administratorMapper.getAllEmployees();
+    }
+
+    public Result addMaterialStorage(String materialName, int quantity, LocalDate localDate, String supplierName, int price, String remarks) {
+        Integer materialId = administratorMapper.getMaterialIdByName(materialName);
+        if (materialId == null) {
+            administratorMapper.addNewMaterialIfNotExists(materialName, quantity);
+        }
+        else {
+            administratorMapper.updateMaterialQuantity(materialName, quantity);
+        }
+        int inventoryId = administratorMapper.addMaterialStorage(materialName, quantity, localDate, supplierName, price, remarks);
+        return inventoryId > 0 ? Result.success("材料入库成功") : Result.error("材料入库失败");
     }
 }
