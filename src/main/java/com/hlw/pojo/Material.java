@@ -27,9 +27,6 @@ public class Material {
     @Column(name = "material_type", length = 100)
     private String material_type; // 材料类型
 
-    @Column(name = "supplier_name", length = 100)
-    private String supplier_name; // 供应商名称
-
     @Column(name = "current_stock_quantity")
     private int currentStock_quantity; // 当前库存量
 

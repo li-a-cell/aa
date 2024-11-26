@@ -1,13 +1,16 @@
 package com.hlw.pojo;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
 
+@Data
 @Getter
 @Setter
 @Entity
@@ -18,15 +21,15 @@ public class ProjectBiddingRecord {
     @Column(name = "record_id", nullable = false)
     private Integer record_id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bidder_id")
-    private Bidder bidder_id;
+
+    @Column(name = "bidder_id")
+    private int bidder_id;
 
     @Column(name = "bidding_price", precision = 15, scale = 2)
     private BigDecimal bidding_price;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "bidding_time")
-    private Instant biddingTime;
+    private LocalDate bidding_time;
 
 }
