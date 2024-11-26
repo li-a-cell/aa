@@ -1,5 +1,6 @@
 package com.hlw.dao;
 
+import com.hlw.pojo.Equipment;
 import com.hlw.pojo.ProjectNode;
 import com.hlw.pojo.User;
 import org.apache.ibatis.annotations.*;
@@ -21,12 +22,15 @@ public interface AdministratorMapper {
     // 获取指定状态的节点数量
     @Select("SELECT COUNT(*) FROM projectnode WHERE status = #{status} AND project_id=#{project_id}")
     int getNodeCountByStatus(@Param("project_id") int project_id, @Param("status") ProjectNode.NodeStatus status);
+
     //获取新入职员工数量
     @Select("SELECT COUNT(*) FROM employee WHERE YEAR(hire_date)=#{year} AND MONTH(hire_date)=#{month}")
     int getNewEmployeeNum(int year, int month);
+
     //获取新招标数量
     @Select("SELECT COUNT(*) FROM tenderrecord WHERE YEAR(request_date)=#{year} AND MONTH(request_date)=#{month}")
     int getNewTenderNum(int year, int month);
+
     // 更新员工信息
     @Update("UPDATE employee SET account=#{updatedEmployee.account}, name=#{updatedEmployee.name}, job_type=#{updatedEmployee.job_type}, salary=#{updatedEmployee.salary}, hire_date=#{updatedEmployee.hire_date}, phone_number=#{updatedEmployee.phone_number}, profile_picture=#{updatedEmployee.profile_picture}, gender=#{updatedEmployee.gender}, birth_date=#{updatedEmployee.birth_date}, address=#{updatedEmployee.address} WHERE employee_id=#{employeeId}")
     boolean updateEmployeeInfo(@Param("employeeId") int employeeId, @Param("updatedEmployee") User updatedEmployee);
@@ -42,6 +46,7 @@ public interface AdministratorMapper {
     // 获取所有员工信息
     @Select("SELECT * FROM employee")
     List<User> getAllEmployees();
+
     // 更新项目信息
     @Update("UPDATE project " +
             "SET project_name = #{projectName}, " +
@@ -66,4 +71,40 @@ public interface AdministratorMapper {
 // 删除项目
     @Delete("DELETE FROM project WHERE project_id = #{projectId}")
     void deleteProject(int projectId);
+
+
+        // 插入新设备
+        @Insert("INSERT INTO equipment (equipment_name, equipment_photo, equipment_type, equipment_model, status,  remarks) " +
+                "VALUES (#{newEquipment.equipment_name}, #{newEquipment.equipment_photo}, #{newEquipment.equipment_type}, #{newEquipment.equipment_model}, " +
+                "#{newEquipment.status}, #{newEquipment.remarks})")
+        boolean addEquipment(@Param("newEquipment") Equipment newEquipment);
+
+    // 通过材料名称查询材料 ID 是否存在
+    @Select("SELECT material_id FROM material WHERE material_name = #{materialName} LIMIT 1")
+    Integer getMaterialIdByName(@Param("materialName") String materialName);
+
+    // 添加材料入库记录，并在材料表中插入相应材料（如果不存在）
+    @Insert("INSERT INTO material (material_name, current_stock_quantity) " +
+            "SELECT #{materialName}, #{quantity} " +
+            "WHERE NOT EXISTS (SELECT 1 FROM material WHERE material_name = #{materialName})")
+    void addNewMaterialIfNotExists(@Param("materialName") String materialName,
+                                   @Param("quantity") int quantity);
+
+    // 更新现有材料的数量
+    @Update("UPDATE material " +
+            "SET current_stock_quantity = current_stock_quantity + #{quantity} " +
+            "WHERE material_name = #{materialName}")
+    void updateMaterialQuantity(@Param("materialName") String materialName,
+                                @Param("quantity") int quantity);
+
+    // 添加材料入库记录
+    @Insert("INSERT INTO material_inventory (material_id, quantity, entry_date, supplier_name, price, remarks) " +
+            "VALUES ((SELECT material_id FROM material WHERE material_name = #{materialName}), " +
+            "#{quantity}, #{localDate}, #{supplierName}, #{price}, #{remarks})")
+    int addMaterialStorage(@Param("materialName") String materialName,
+                           @Param("quantity") int quantity,
+                           @Param("localDate") LocalDate localDate,
+                           @Param("supplierName") String supplierName,
+                           @Param("price") int price,
+                           @Param("remarks") String remarks);
 }

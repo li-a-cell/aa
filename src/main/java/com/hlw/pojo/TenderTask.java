@@ -21,6 +21,9 @@ public class TenderTask {
 
     @Lob
     @Column(name = "tender_task_status")
-    private String tender_task_status;
+    private String TenderTaskStatus;
+    public enum TenderTaskStatus {
+        待发布, 待招标, 已完成
+    }
 
 }

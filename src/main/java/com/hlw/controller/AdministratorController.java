@@ -1,6 +1,7 @@
 package com.hlw.controller;
 
 
+import com.hlw.pojo.Equipment;
 import com.hlw.pojo.ProjectNode;
 import com.hlw.pojo.Result;
 import com.hlw.pojo.User;
@@ -101,7 +102,7 @@ public class AdministratorController {
         return Result.success(num);
     }
     //更新员工信息
-    @PutMapping("/updateemployee/{employeeId}")
+    @PostMapping("/updateemployee/{employeeId}")
     public Result updateEmployee(@PathVariable("employeeId") int employeeId, @RequestBody User updatedEmployee) {
         boolean success = administratorService.updateEmployeeInfo(employeeId, updatedEmployee);
         if (success) {
@@ -112,7 +113,7 @@ public class AdministratorController {
     }
 
     // 删除员工信息
-    @DeleteMapping("/deleteemployee/{employeeId}")
+    @PostMapping("/deleteemployee/{employeeId}")
     public Result deleteEmployee(@PathVariable("employeeId") int employeeId) {
         boolean success = administratorService.deleteEmployeeById(employeeId);
         if (success) {
@@ -132,6 +133,7 @@ public class AdministratorController {
             return Result.error("Failed to add employee");
         }
     }
+    // 获取所有员工信息
     @GetMapping("/employees")
     public Result getAllEmployees() {
         List<User> employees = administratorService.getAllEmployees();
@@ -192,5 +194,30 @@ public class AdministratorController {
         String project_id = jsonUtils.getValueFromJson(project, "project_id");
         administratorService.deleteProject(Integer.parseInt(project_id));
         return Result.success();
+    }
+    // 添加设备
+    @PostMapping("/createequipment")
+    public Result addEquipment(@RequestBody Equipment newEquipment) {
+        boolean success = administratorService.addEquipment(newEquipment);
+        if (success) {
+            return Result.success("设备添加成功");
+        } else {
+            return Result.error("设备添加失败");
+        }
+    }
+    // 添加材料入库
+    @PostMapping("/materialstorage")
+    public Result addMaterialStorage(@RequestBody String material ,HttpServletRequest request) {
+        JsonUtils jsonUtils = new JsonUtils();
+        String material_name = jsonUtils.getValueFromJson(material, "material_name");
+        String quantity = jsonUtils.getValueFromJson(material, "quantity");
+        String entry_date = jsonUtils.getValueFromJson(material, "entry_date");
+        String supplier_name = jsonUtils.getValueFromJson(material, "supplier_name");
+        String price = jsonUtils.getValueFromJson(material, "price");
+        String remarks = jsonUtils.getValueFromJson(material, "remarks");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(entry_date, formatter);
+        return administratorService.addMaterialStorage(material_name, Integer.parseInt(quantity), localDate, supplier_name, Integer.parseInt(price), remarks);
+
     }
 }

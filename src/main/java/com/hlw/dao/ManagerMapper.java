@@ -7,6 +7,7 @@ import com.hlw.dto.nodematerial;
 import com.hlw.pojo.InspectionTask;
 import com.hlw.pojo.ProjectNode;
 import com.hlw.pojo.Regulations;
+import com.hlw.pojo.TenderTask;
 import jakarta.transaction.Transactional;
 import org.apache.ibatis.annotations.*;
 
@@ -192,7 +193,8 @@ List<EquipmentDetails> getEquipmentDetailsByNodeId(@Param("nodeId") int nodeId);
 
     @Select("SELECT * FROM inspectiontask WHERE inspection_task_id = #{taskId}")
     InspectionTask getInspectionTaskById(@Param("taskId") int taskId);
-
+    @Select("SELECT * FROM inspectiontask WHERE inspection_task_id = (SELECT inspection_task_id FROM inspectionrecord WHERE record_name=#{recordName})")
+    InspectionTask getInspectionTaskByName(@Param("recordName") String recordName);
     @Select("SELECT * FROM regulations WHERE regulation_name=#{name}")
     Regulations getRegulationsByName(@Param("name") String name);
 
@@ -213,8 +215,14 @@ List<EquipmentDetails> getEquipmentDetailsByNodeId(@Param("nodeId") int nodeId);
                       @Param("projectDescription") String projectDescription, @Param("constructionSiteId") int constructionSiteId,
                       @Param("Budget") double Budget, @Param("status") String status,
                       @Param("project_type") String project_type );
+    // 获取所有 Regulation
      @Select("SELECT regulation_name FROM regulations ")
     List<String> getAllRegulations();
+     // 添加投标任务
+    @Insert("INSERT INTO tender_task (project_id, tender_task_status,deadline) " +
+            "VALUES (#{project_id}, #{tender_task_status}, #{deadline})")
+    boolean addTenderTask(@Param("project_id") int project_id, @Param("tender_task_status") TenderTask.TenderTaskStatus tender_task_status,@Param("deadline") LocalDate deadline);
+
 }
 
 

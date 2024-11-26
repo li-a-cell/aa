@@ -133,6 +133,7 @@ public class GetprojectController {
         double cost = projectservice.getProjectsCostNumByType(String.valueOf(projectDto.getProject_type()));
         return Result.success(cost);
     }
+    // 获取所有项目
  @GetMapping("/all")
     public Result getAllProjects(HttpServletRequest request) {
         Object employeeIdObj = request.getAttribute("employee_id");

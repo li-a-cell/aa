@@ -201,8 +201,6 @@ public Result getProjectNodeStartEndDate(HttpServletRequest request) {
         return managerService.getMaterialsByNodeId(nodeId);
     }
 
-    // 获取某一节点的设备详情
-;
 
     // 获取某一节点的设备详情
     @GetMapping("/node/{nodeId}/equipment/details")
@@ -297,8 +295,8 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 //获取检查任务信息
 @PostMapping("/getInspectionTask")
-    public Result selectInspectionTask(@RequestBody String inspectionTask, HttpServletRequest request){
-        // 从请求属性中获取 employee_id
+public Result selectInspectionTask(@RequestBody String inspectionTask, HttpServletRequest request){
+    // 从请求属性中获取 employee_id
     Object employeeIdObj = request.getAttribute("employee_id");
 
     // 检查 employee_id 是否为空
@@ -314,9 +312,9 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return Result.error("Invalid Employee ID format");
     }
     JsonUtils jsonUtils = new JsonUtils();
-    String taskId = jsonUtils.getValueFromJson(inspectionTask, "task_id");
-    return managerService.getInspectionTask(Integer.parseInt(taskId));
-    }
+    String recordName = jsonUtils.getValueFromJson(inspectionTask, "record_name");
+    return managerService.getInspectionTask(recordName);
+}
 
 
     //获取规章制度
@@ -389,5 +387,27 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         List<String> regulations = managerService.getAllRegulations();
         return Result.success(regulations);
     }
+    // 创建招标任务
+    @PostMapping("/createTask")
+    public Result createTenderTask(@RequestBody String task) {
+        // 解析输入的 JSON 字符串
+        JsonUtils jsonUtils = new JsonUtils();
+        String projectid = jsonUtils.getValueFromJson(task, "project_id");
+        String deadline = jsonUtils.getValueFromJson(task, "deadline");
+        String tenderTaskStatus = jsonUtils.getValueFromJson(task, "tender_task_status");
 
+        // 解析项目ID和招标任务状态等字段
+        int projectId = Integer.parseInt(projectid);  // project_name 实际上应该是 project_id
+        LocalDate localDeadline = LocalDate.parse(deadline);
+
+        // 调用 service 层的业务逻辑方法
+        boolean isCreated = managerService.createTenderTask(projectId, tenderTaskStatus, localDeadline);
+
+        // 返回操作结果
+        if (isCreated) {
+            return Result.success("Tender task created successfully");
+        } else {
+            return Result.error("Failed to create tender task");
+        }
+    }
 }

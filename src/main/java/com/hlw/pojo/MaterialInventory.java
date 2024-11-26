@@ -1,13 +1,12 @@
-package com.hlw;
+package com.hlw.pojo;
 
-import com.hlw.pojo.Material;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -27,7 +26,7 @@ public class MaterialInventory {
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "entry_date")
-    private LocalDate entry_date;
+    private LocalDateTime entry_date;
 
     @Column(name = "supplier_name")
     private String supplier_name;

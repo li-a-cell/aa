@@ -5,10 +5,7 @@ import com.hlw.dto.EquipmentDetails;
 import com.hlw.dto.MaterialUsage;
 import com.hlw.dto.ProjectNodeIdDto;
 import com.hlw.dto.nodematerial;
-import com.hlw.pojo.ProjectNode;
-import com.hlw.pojo.Regulations;
-import com.hlw.pojo.InspectionTask;
-import com.hlw.pojo.Result;
+import com.hlw.pojo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -314,10 +311,10 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
         }
     }
 
-    public Result getInspectionTask(int task_id) {
+    public Result getInspectionTask(String record_name) {
         try {
             // 调用 DAO 层方法查询检查任务
-            InspectionTask inspectionTask = managerMapper.getInspectionTaskById(task_id);
+            InspectionTask inspectionTask = managerMapper.getInspectionTaskByName(record_name);
             // 如果检查任务不存在，返回错误信息
             if (inspectionTask == null) {
                 return Result.error("检查任务不存在");
@@ -326,7 +323,7 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
             return Result.success(inspectionTask);
         } catch (Exception e) {
             return Result.error("检查任务查询失败: " + e.getMessage());
-       }
+        }
     }
 
     public Result getRegulationsByName(String name) {
@@ -372,6 +369,14 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
 }
  public List<String> getAllRegulations() {
         return managerMapper.getAllRegulations();
+    }
+    // 创建投标任务
+    public boolean createTenderTask(int projectId, String tenderTaskStatus, LocalDate deadline) {
+        // 将传入的状态转换为枚举类型
+        TenderTask.TenderTaskStatus status = TenderTask.TenderTaskStatus.valueOf(tenderTaskStatus);
+
+        // 调用 Mapper 层方法将数据插入数据库
+        return managerMapper.addTenderTask(projectId, status, deadline);
     }
 
 }
