@@ -220,4 +220,17 @@ public class AdministratorController {
         return administratorService.addMaterialStorage(material_name, Integer.parseInt(quantity), localDate, supplier_name, Integer.parseInt(price), remarks);
 
     }
+    // Controller method
+    @GetMapping("/topLevelNodes/{projectId}")
+    public Result getParentNodeByProjectId(@PathVariable int projectId) {
+        ProjectNode parentNode = administratorService.getParentNodeByProjectId(projectId);
+
+        if (parentNode == null) {
+            return Result.error("No parent node found for the given project ID.");
+        }
+
+        return Result.success(parentNode);
+    }
+
+
 }

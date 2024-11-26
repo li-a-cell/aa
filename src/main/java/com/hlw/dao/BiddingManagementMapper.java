@@ -20,6 +20,6 @@ public interface BiddingManagementMapper {
                          @Param("bidderId") int bidderId);
 
     @Select("SELECT * FROM tender_task")
-    Void getTenderTask();
+    TenderTask getTenderTask();
 
 }

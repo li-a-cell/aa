@@ -217,7 +217,6 @@ public Result createInspectionTask(@RequestBody String inspectionTask, HttpServl
     if (employeeIdObj == null) {
         return Result.error("Employee ID is missing in the request");
     }
-
     int employeeId;
     try {
         // 转换为 int 类型
@@ -233,9 +232,6 @@ public Result createInspectionTask(@RequestBody String inspectionTask, HttpServl
     String startDate = jsonUtils.getValueFromJson(inspectionTask, "start_date");
     String dueDate = jsonUtils.getValueFromJson(inspectionTask, "due_date");
     int inspectorId = empService.GetNameByID(inspectorName);
-
-
-
 // 定义日期格式
 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -399,7 +395,7 @@ public Result selectInspectionTask(@RequestBody String inspectionTask, HttpServl
         // 解析项目ID和招标任务状态等字段
         int projectId = Integer.parseInt(projectid);  // project_name 实际上应该是 project_id
         LocalDate localDeadline = LocalDate.parse(deadline);
-
+;
         // 调用 service 层的业务逻辑方法
         boolean isCreated = managerService.createTenderTask(projectId, tenderTaskStatus, localDeadline);
 

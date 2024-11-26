@@ -373,10 +373,10 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
     // 创建投标任务
     public boolean createTenderTask(int projectId, String tenderTaskStatus, LocalDate deadline) {
         // 将传入的状态转换为枚举类型
-        TenderTask.TenderTaskStatus status = TenderTask.TenderTaskStatus.valueOf(tenderTaskStatus);
+
 
         // 调用 Mapper 层方法将数据插入数据库
-        return managerMapper.addTenderTask(projectId, status, deadline);
+        return managerMapper.addTenderTask(projectId,tenderTaskStatus, deadline);
     }
 
 }

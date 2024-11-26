@@ -107,4 +107,8 @@ public interface AdministratorMapper {
                            @Param("supplierName") String supplierName,
                            @Param("price") int price,
                            @Param("remarks") String remarks);
+    // Mapper interface
+    @Select("SELECT * FROM projectnode WHERE project_id = #{projectId} AND parent_node_id IS NULL")
+    ProjectNode getParentNodeByProjectId(@Param("projectId") int projectId);
+
 }
