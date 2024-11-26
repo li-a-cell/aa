@@ -9,6 +9,7 @@ import com.hlw.pojo.ProjectNode;
 import com.hlw.pojo.Regulations;
 import com.hlw.pojo.InspectionTask;
 import com.hlw.pojo.Result;
+import com.hlw.pojo.TenderTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -381,5 +382,13 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
 
     public List<String> getAllRegulations() {
         return managerMapper.getAllRegulations();
+    }
+    // 创建投标任务
+    public boolean createTenderTask(int projectId, String tenderTaskStatus, LocalDate deadline) {
+        // 将传入的状态转换为枚举类型
+        TenderTask.TenderTaskStatus status = TenderTask.TenderTaskStatus.valueOf(tenderTaskStatus);
+
+        // 调用 Mapper 层方法将数据插入数据库
+        return managerMapper.addTenderTask(projectId, status, deadline);
     }
 }

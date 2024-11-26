@@ -20,12 +20,9 @@ public class TenderTask {
     private LocalDate deadline;
 
     @Column(name = "tender_task_status")
-    private Status tender_task_status;
-
-    public enum Status {
-        待发布,
-        待招标,
-        已完成
+    private TenderTaskStatus Tender_task_status;
+    public enum TenderTaskStatus {
+        待发布, 待招标, 已完成
     }
 
 }

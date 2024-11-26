@@ -7,6 +7,7 @@ import com.hlw.dto.nodematerial;
 import com.hlw.pojo.InspectionTask;
 import com.hlw.pojo.ProjectNode;
 import com.hlw.pojo.Regulations;
+import com.hlw.pojo.TenderTask;
 import jakarta.transaction.Transactional;
 import org.apache.ibatis.annotations.*;
 
@@ -219,4 +220,10 @@ List<EquipmentDetails> getEquipmentDetailsByNodeId(@Param("nodeId") int nodeId);
 
     @Select("SELECT regulation_name FROM regulations ")
     List<String> getAllRegulations();
+
+    // 添加投标任务
+    @Insert("INSERT INTO tender_task (project_id, tender_task_status,deadline) " +
+            "VALUES (#{project_id}, #{tender_task_status}, #{deadline})")
+    boolean addTenderTask(@Param("project_id") int project_id, @Param("tender_task_status") TenderTask.TenderTaskStatus tender_task_status, @Param("deadline") LocalDate deadline);
+
 }

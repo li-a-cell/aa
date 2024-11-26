@@ -25,9 +25,6 @@ public class TenderRecord {
     @Column(name = "tenderer_id", nullable = false)
     private int tenderer_id; // 关联的招标方（项目），数据库中的字段为 tenderer_id
 
-    @Column(name = "approval_status", length = 50)
-    private String approval_status; // 审批状态，数据库中的字段为 approval_status
-
     @Column(name = "request_date")
     private LocalDate request_date; // 请求日期，数据库中的字段为 request_date
 
