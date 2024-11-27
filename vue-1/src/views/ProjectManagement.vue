@@ -1,23 +1,5 @@
 <template>
-  <div>
-    <h1>{{ projectTitle }}</h1>
-    <div>
-      <label for="username">用户名:</label>
-      <input v-model="account" id="username" type="text" required />
-    </div>
-    <div>
-      <label for="password">密码:</label>
-      <input v-model="password" id="password" type="password" required />
-    </div>
-    <button @click="handleLogin">{{ loginButtonText }}</button>
-    <button @click="update">更新</button>
-    <div v-if="loading">{{ loadingText }}</div>
-    <div v-if="error">{{ error }}</div>
-    <ul v-if="users.length">
-      <li v-for="user in users" :key="user.id">{{ user.name }}</li>
-    </ul>
-  </div>
-
+  
   <div class="project-overview">
     <!-- Project Header Section -->
     <header class="project-header">
@@ -147,6 +129,7 @@ const update = () => {
         })
         .then(response => {
             const data = response.data.data;
+            console.log("data",data);
 
             if (!data || Object.keys(data).length === 0) {
                 // 处理空数据的情况
