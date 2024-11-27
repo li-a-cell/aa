@@ -406,4 +406,5 @@ public Result selectInspectionTask(@RequestBody String inspectionTask, HttpServl
             return Result.error("Failed to create tender task");
         }
     }
+
 }

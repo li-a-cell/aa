@@ -149,6 +149,7 @@ public class GetprojectController {
         List<ProjectDto> projects = projectservice.getAllProjects();
         return Result.success(projects);
     }
+    //根据项目状态获取项目
     @PostMapping("/status")
     public Result getProjectsByStatus(@RequestBody ProjectDto projectDto,HttpServletRequest request) {
         Object employeeIdObj = request.getAttribute("employee_id");

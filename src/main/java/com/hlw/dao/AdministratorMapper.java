@@ -1,6 +1,7 @@
 package com.hlw.dao;
 
 import com.hlw.pojo.Equipment;
+import com.hlw.pojo.Material;
 import com.hlw.pojo.ProjectNode;
 import com.hlw.pojo.User;
 import org.apache.ibatis.annotations.*;
@@ -111,4 +112,7 @@ public interface AdministratorMapper {
     @Select("SELECT * FROM projectnode WHERE project_id = #{projectId} AND parent_node_id IS NULL")
     List<ProjectNode> getParentNodeByProjectId(@Param("projectId") int projectId);
 
+    // 查询所有材料信息
+    @Select("SELECT * FROM material")
+    List<Material> getAllMaterials();
 }

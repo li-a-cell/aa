@@ -1,10 +1,7 @@
 package com.hlw.service;
 
 import com.hlw.dao.AdministratorMapper;
-import com.hlw.pojo.Equipment;
-import com.hlw.pojo.ProjectNode;
-import com.hlw.pojo.Result;
-import com.hlw.pojo.User;
+import com.hlw.pojo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -78,6 +75,9 @@ public class AdministratorService {
    // 获取父节点
     public List<ProjectNode> getParentNodeByProjectId(int projectId) {
         return administratorMapper.getParentNodeByProjectId(projectId);
+    }
+    public List<Material> getAllMaterials() {
+        return administratorMapper.getAllMaterials();
     }
 
 }

@@ -1,10 +1,7 @@
 package com.hlw.controller;
 
 
-import com.hlw.pojo.Equipment;
-import com.hlw.pojo.ProjectNode;
-import com.hlw.pojo.Result;
-import com.hlw.pojo.User;
+import com.hlw.pojo.*;
 import com.hlw.service.AdministratorService;
 import com.hlw.utils.JsonUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -231,7 +228,11 @@ public class AdministratorController {
 
         return Result.success(parentNodes);
     }
-
+    // 获取所有材料
+    @GetMapping("/getAllMaterial")
+    public List<Material> getAllMaterials() {
+        return administratorService.getAllMaterials();
+    }
 
 
 }
