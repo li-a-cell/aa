@@ -216,4 +216,10 @@ public class AdministratorController {
 
         return Result.success(parentNode);
     }
+
+    // 获取所有材料
+    @GetMapping("/getAllMaterial")
+    public List<Material> getAllMaterials() {
+        return administratorService.getAllMaterials();
+    }
 }

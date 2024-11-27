@@ -1,5 +1,6 @@
 package com.hlw.dao;
 
+import com.hlw.pojo.Material;
 import com.hlw.pojo.ProjectNode;
 import org.apache.catalina.User;
 import org.apache.ibatis.annotations.*;
@@ -109,7 +110,12 @@ public interface AdministratorMapper {
     ProjectNode getParentNodeByProjectId(@Param("projectId") int projectId);
 
 
-
-
-
+    // 查询所有材料信息
+    @Select("SELECT * FROM material")
+    List<Material> getAllMaterials();
 }
+
+
+
+
+

@@ -413,4 +413,17 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             return Result.error("Failed to create tender task");
         }
     }
+
+
+
+    // 通过项目节点ID查找检查任务
+    @GetMapping("/inspectionTasksByNodeId")
+    public Result getInspectionTasksByNodeId(@RequestBody String inspectionTask) {
+        JsonUtils jsonUtils = new JsonUtils();
+        String nodeId = jsonUtils.getValueFromJson(inspectionTask, "node_id");
+        return managerService.getInspectionTasksByNodeId(Integer.parseInt(nodeId));
+    }
+
+
+
 }

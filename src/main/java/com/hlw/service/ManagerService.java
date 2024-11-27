@@ -390,4 +390,20 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
         // 调用 Mapper 层方法将数据插入数据库
         return managerMapper.addTenderTask(projectId, tenderTaskStatus, deadline);
     }
+
+
+    // 通过项目节点ID查找检查任务
+    public Result getInspectionTasksByNodeId(int nodeId) {
+        try {
+            List<InspectionTask> inspectionTasks = managerMapper.getInspectionTasksByNodeId(nodeId);
+
+            if (inspectionTasks == null || inspectionTasks.isEmpty()) {
+                return Result.error("该节点没有检查任务");
+            }
+
+            return Result.success(inspectionTasks);
+        } catch (Exception e) {
+            return Result.error("查找检查任务失败: " + e.getMessage());
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.hlw.service;
 
 import com.hlw.dao.AdministratorMapper;
+import com.hlw.pojo.Material;
 import com.hlw.pojo.ProjectNode;
 import com.hlw.pojo.Result;
 import org.apache.catalina.User;
@@ -79,5 +80,9 @@ public class AdministratorService {
     // 获取父节点
     public ProjectNode getParentNodeByProjectId(int projectId) {
         return administratorMapper.getParentNodeByProjectId(projectId);
+    }
+
+    public List<Material> getAllMaterials() {
+        return administratorMapper.getAllMaterials();
     }
 }

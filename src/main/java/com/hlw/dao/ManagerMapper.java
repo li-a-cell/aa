@@ -226,4 +226,9 @@ List<EquipmentDetails> getEquipmentDetailsByNodeId(@Param("nodeId") int nodeId);
             "VALUES (#{project_id}, #{tender_task_status}, #{deadline})")
     boolean addTenderTask(@Param("project_id") int project_id, @Param("tender_task_status") String tender_task_status, @Param("deadline") LocalDate deadline);
 
+
+    // 根据项目节点ID查找检查任务
+    @Select("SELECT * FROM inspectiontask WHERE node_id = #{nodeId}")
+    List<InspectionTask> getInspectionTasksByNodeId(@Param("nodeId") int nodeId);
+
 }
