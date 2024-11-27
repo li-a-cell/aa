@@ -4,7 +4,7 @@ package com.hlw.dao;
 import com.hlw.dto.TenderTaskDto;
 import com.hlw.pojo.Bidder;
 import com.hlw.pojo.ProjectBiddingRecord;
-import com.hlw.pojo.ProjectBiddingRecordDto;
+import com.hlw.dto.ProjectBiddingRecordDto;
 import com.hlw.pojo.TenderTask;
 import org.apache.ibatis.annotations.*;
 

@@ -1,5 +1,5 @@
 
-package com.hlw.pojo;
+package com.hlw.dto;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Data
 @Getter
 @Setter
-
 public class ProjectBiddingRecordDto {
 
 
@@ -25,7 +24,7 @@ public class ProjectBiddingRecordDto {
 
     private int project_id;
 
-    private int bidder_name;
+    private String bidder_name;
 
     private int bidder_id;
 
