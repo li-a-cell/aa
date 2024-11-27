@@ -104,6 +104,10 @@ public interface AdministratorMapper {
                             @Param("price") int price,
                             @Param("remarks") String remarks);
 
+    // 获取父节点
+    @Select("SELECT * FROM projectnode WHERE project_id = #{projectId} AND parent_node_id IS NULL")
+    ProjectNode getParentNodeByProjectId(@Param("projectId") int projectId);
+
 
 
 

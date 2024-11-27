@@ -22,4 +22,27 @@ public class BiddingManagementService {
     public void addTenderRecord(int projectId, int tendererId, LocalDate requestDate, int bidderId) {
         biddingManagementMapper.addTenderRecord(projectId, tendererId, requestDate, bidderId);
     }
+
+    // 获取待发布项目的数量
+    public int getPendingProjectsNum() {
+        return biddingManagementMapper.getPendingProjectsNum();
+    }
+
+    // 获取待招标的项目数量
+    public int getPendingTenderProjects() {
+        return biddingManagementMapper.getPendingTenderProjectsNum();
+    }
+
+    // 获取施工中的项目数量
+    public int getOngoingConstructionProjects() {
+        return biddingManagementMapper.getOngoingConstructionProjectsNum();
+    }
+
+    // 发布招标操作
+    public void publishTender(int projectId) {
+        // 更新项目表的状态为待招标
+        biddingManagementMapper.updateProjectStatusToPendingTender(projectId);
+        // 插入一条新的招标记录
+        biddingManagementMapper.updateTenderTaskStatusToPendingTender(projectId);
+    }
 }

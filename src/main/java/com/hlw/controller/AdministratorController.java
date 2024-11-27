@@ -2,6 +2,7 @@ package com.hlw.controller;
 
 
 import com.hlw.pojo.Material;
+import com.hlw.pojo.ProjectNode;
 import com.hlw.pojo.Result;
 import com.hlw.service.AdministratorService;
 import com.hlw.utils.JsonUtils;
@@ -176,6 +177,7 @@ public class AdministratorController {
             return Result.error("Failed to add employee");
         }
     }
+    // 获取所有员工信息
     @GetMapping("/employees")
     public Result getAllEmployees() {
         List<User> employees = administratorService.getAllEmployees();
@@ -186,6 +188,7 @@ public class AdministratorController {
         }
     }
 
+    // 添加材料入库
     @PostMapping("/materialstorage")
     public Result addMaterialStorage(@RequestBody String material ,HttpServletRequest request) {
         JsonUtils jsonUtils = new JsonUtils();
@@ -199,5 +202,18 @@ public class AdministratorController {
         LocalDate localDate = LocalDate.parse(entry_date, formatter);
         return administratorService.addMaterialStorage(material_name, Integer.parseInt(quantity), localDate, supplier_name, Integer.parseInt(price), remarks);
 
+    }
+
+
+    // 获取父节点
+    @GetMapping("/topLevelNodes/{projectId}")
+    public Result getParentNodeByProjectId(@PathVariable int projectId) {
+        ProjectNode parentNode = administratorService.getParentNodeByProjectId(projectId);
+
+        if (parentNode == null) {
+            return Result.error("No parent node found for the given project ID.");
+        }
+
+        return Result.success(parentNode);
     }
 }
