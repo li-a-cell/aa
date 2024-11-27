@@ -94,7 +94,7 @@ public interface ProjectMapper {
             "WHERE project_id = #{project_id} AND status = #{status}")
     List<ProjectNode> getProjectNodes(@Param("project_id") int project_id, ProjectNode.NodeStatus status);
 
-    @Select("SELECT COUNT(*) FROM project WHERE staus=#{status}")
+    @Select("SELECT COUNT(*) FROM project WHERE status=#{status}")
     int getProjectsNum(String status);
 
 
