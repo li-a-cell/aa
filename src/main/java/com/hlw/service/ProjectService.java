@@ -2,6 +2,7 @@ package com.hlw.service;
 
 import com.hlw.dao.ProjectMapper;
 import com.hlw.dto.ProjectDto;
+import com.hlw.pojo.Project;
 import com.hlw.pojo.ProjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,5 +60,14 @@ public class ProjectService {
     // 按类型查询项目金额
     public double getProjectsCostNumByType(String project_type) {
         return projectmapper.getProjectsCostNumByType(project_type);
+    }
+
+    public Project findProjectById(Integer projectId) {
+        return projectmapper.findProjectById(projectId);
+    }
+
+
+    public List<ProjectDto> getProjectsByStatus( String status) {
+        return projectmapper.findProjectsByStatus(status);
     }
 }

@@ -104,21 +104,6 @@ public class GetprojectController {
         return Result.success(num);
     }
 
-    @GetMapping("/all")
-    public Result getAllProjects(HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
-        if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
-        }
-        int employeeId;
-        try {
-            employeeId = Integer.parseInt(employeeIdObj.toString());
-        } catch (NumberFormatException e) {
-            return Result.error("Invalid Employee ID format");
-        }
-        List<ProjectDto> projects = projectservice.getAllProjects();
-        return Result.success(projects);
-    }
     //更据项目类型返回项目数量
     @PostMapping("/numbytype")
     public Result getProjectsNumByType(@RequestBody ProjectDto projectDto, HttpServletRequest request) {
@@ -150,5 +135,38 @@ public class GetprojectController {
         }
         double cost = projectservice.getProjectsCostNumByType(String.valueOf(projectDto.getProject_type()));
         return Result.success(cost);
+    }
+    // 获取所有项目
+    @GetMapping("/all")
+    public Result getAllProjects(HttpServletRequest request) {
+        Object employeeIdObj = request.getAttribute("employee_id");
+        if (employeeIdObj == null) {
+            return Result.error("employee_id is missing in the request");
+        }
+        int employeeId;
+        try {
+            employeeId = Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            return Result.error("Invalid Employee ID format");
+        }
+        List<ProjectDto> projects = projectservice.getAllProjects();
+        return Result.success(projects);
+    }
+    @PostMapping("/status")
+    public Result getProjectsByStatus(@RequestBody ProjectDto projectDto,HttpServletRequest request) {
+        Object employeeIdObj = request.getAttribute("employee_id");
+
+        if (employeeIdObj == null) {
+            return Result.error("employee_id is missing in the request");
+        }
+
+        int employeeId;
+        try {
+            employeeId = Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            return Result.error("Invalid Employee ID format");
+        }
+
+        return Result.success(projectservice.getProjectsByStatus( projectDto.getStatus()));
     }
 }

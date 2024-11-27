@@ -1,3 +1,4 @@
+
 package com.hlw.dto;
 
 import lombok.AllArgsConstructor;
@@ -14,6 +15,8 @@ public class ProjectDto {
     private int project_id;  // 保持与数据库字段一致
 
     private int manager_id;
+
+    private String manager_name;
 
     private String project_name;
 

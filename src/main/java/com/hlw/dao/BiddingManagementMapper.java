@@ -1,3 +1,4 @@
+
 package com.hlw.dao;
 
 import com.hlw.dto.TenderTaskDto;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Mapper
 public interface BiddingManagementMapper {
-
+    //
     @Insert("INSERT INTO tenderrecord (project_id, tenderer_id, request_date, bidder_id) " +
             "VALUES (#{projectId}, #{tendererId}, #{requestDate}, #{bidderId})")
     void addTenderRecord(@Param("projectId") int projectId,
@@ -50,5 +51,23 @@ public interface BiddingManagementMapper {
     // 更新招标详情表的状态为待招标
     @Update("UPDATE tender_task SET tender_task_status = '待招标' WHERE project_id = #{projectId}")
     void updateTenderTaskStatusToPendingTender(@Param("projectId") int projectId);
+
+    // 根据投标任务ID查询投标记录
+    @Select("SELECT pbr.record_id, pbr.project_id, pr.project_name, pbr.bidder_id, b.name AS bidder_name, " +
+            "pbr.bidding_price, pbr.bidding_time " +
+            "FROM project_bidding_record pbr " +
+            "LEFT JOIN project pr ON pbr.project_id = pr.project_id " +
+            "LEFT JOIN bidder b ON pbr.bidder_id = b.bidder_id " +
+            "WHERE pbr.project_id = #{projectId}")
+    @Results({
+            @Result(property = "record_id", column = "record_id"),
+            @Result(property = "project_id", column = "project_id"),
+            @Result(property = "project_name", column = "project_name"),
+            @Result(property = "bidder_id", column = "bidder_id"),
+            @Result(property = "bidder_name", column = "bidder_name"),
+            @Result(property = "bidding_price", column = "bidding_price"),
+            @Result(property = "bidding_time", column = "bidding_time")
+    })
+    List<ProjectBiddingRecordDto> findBiddingRecordsByProjectId(@Param("projectId") int projectId);
 
 }

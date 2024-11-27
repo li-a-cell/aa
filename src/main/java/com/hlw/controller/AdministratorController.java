@@ -126,7 +126,7 @@ public class AdministratorController {
         return Result.success();
     }
 
-    //获取新招标项目数量
+    //获取新员工数量
     @PostMapping("/newtender")
     public Result getNewTenderNum(@RequestBody String employee, HttpServletRequest request){
         Object employeeIdObj = request.getAttribute("employee_id");

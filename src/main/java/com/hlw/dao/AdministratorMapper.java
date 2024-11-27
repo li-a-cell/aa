@@ -58,7 +58,7 @@ public interface AdministratorMapper {
     @Select("SELECT COUNT(*) FROM tenderrecord WHERE YEAR(request_date)=#{year} AND MONTH(request_date)=#{month}")
     int getNewTenderNum(int year, int month);
     // 更新员工信息
-    @Update("UPDATE employee SET account=#{updatedEmployee.account}, name=#{updatedEmployee.name}, job_type=#{updatedEmployee.job_type}, salary=#{updatedEmployee.salary}, hire_date=#{updatedEmployee.hire_date}, phone_number=#{updatedEmployee.phone_number}, profile_picture=#{updatedEmployee.profile_picture}, gender=#{updatedEmployee.gender}, birth_date=#{updatedEmployee.birth_date}, address=#{updatedEmployee.address} WHERE employee_id=#{employeeId}")
+    @Update("UPDATE employee SET account=#{updatedEmployee.account}, name=#{updatedEmployee.name}, job_type=#{updatedEmployee.job_type}, salary=#{updatedEmployee.salary}, hire_date=#{updatedEmployee.hire_date}, phone_number=#{updatedEmployee.phone_number}, password=#{updatedEmployee.password}, gender=#{updatedEmployee.gender}, birth_date=#{updatedEmployee.birth_date}, address=#{updatedEmployee.address} WHERE employee_id=#{employeeId}")
     boolean updateEmployeeInfo(@Param("employeeId") int employeeId, @Param("updatedEmployee") User updatedEmployee);
 
     // 删除员工
@@ -66,8 +66,8 @@ public interface AdministratorMapper {
     boolean deleteEmployeeById(int employeeId);
 
     // 添加新员工
-    @Insert("INSERT INTO employee (account, name, job_type, salary, hire_date, phone_number, profile_picture, gender, birth_date, address) " +
-            "VALUES (#{newEmployee.account}, #{newEmployee.name}, #{newEmployee.job_type}, #{newEmployee.salary}, #{newEmployee.hire_date}, #{newEmployee.phone_number}, #{newEmployee.profile_picture}, #{newEmployee.gender}, #{newEmployee.birth_date}, #{newEmployee.address})")
+    @Insert("INSERT INTO employee (account, name, job_type, salary, hire_date, phone_number, password, gender, birth_date, address) " +
+            "VALUES (#{newEmployee.account}, #{newEmployee.name}, #{newEmployee.job_type}, #{newEmployee.salary}, #{newEmployee.hire_date}, #{newEmployee.password}, #{newEmployee.profile_picture}, #{newEmployee.gender}, #{newEmployee.birth_date}, #{newEmployee.address})")
     boolean addEmployee(@Param("newEmployee") User newEmployee);
     // 获取所有员工信息
     @Select("SELECT * FROM employee")
