@@ -20,6 +20,7 @@ public class BiddingManagementController {
     @Autowired
     private BiddingManagementService biddingManagementService;
 
+    // 获取投标任务
     @GetMapping("/gettendertask")
     public Result getTenderTask(HttpServletRequest request){
         Object employeeIdObj = request.getAttribute("employee_id");
@@ -34,8 +35,7 @@ public class BiddingManagementController {
         } catch (NumberFormatException e) {
             return Result.error("Invalid Employee ID format");
         }
-        List<TenderTask>  tenderTasks =biddingManagementService.getTenderTask();
-        return Result.success(tenderTasks);
+        return Result.success(biddingManagementService.getTenderTask());
     }
     @PostMapping("/tenderRecord")
     public Result addTenderRecord(@RequestBody TenderRecord tenderRecord, HttpServletRequest request) {
@@ -58,63 +58,6 @@ public class BiddingManagementController {
         return Result.success("Tender record added successfully");
     }
 
-    // 获取待发布项目的数量
-    @GetMapping("/pendingnum")
-    public Result getPendingProjectsNum(HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
-
-        if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
-        }
-
-        int employeeId;
-        try {
-            employeeId = Integer.parseInt(employeeIdObj.toString());
-        } catch (NumberFormatException e) {
-            return Result.error("Invalid Employee ID format");
-        }
-
-        int num=biddingManagementService.getPendingProjectsNum();
-        return Result.success(num);
-    }
-
-    // 获取待招标的项目数量
-    @GetMapping("/pendingtender")
-    public Result getPendingTenderProjectsNum(HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
-
-        if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
-        }
-
-        int employeeId;
-        try {
-            employeeId = Integer.parseInt(employeeIdObj.toString());
-        } catch (NumberFormatException e) {
-            return Result.error("Invalid Employee ID format");
-        }
-        int num= biddingManagementService.getPendingTenderProjects();
-        return Result.success(num);
-    }
-
-    // 获取施工中的项目数量
-    @GetMapping("/ongoingconstruction")
-    public Result getOngoingConstructionProjectsNum(HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
-
-        if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
-        }
-
-        int employeeId;
-        try {
-            employeeId = Integer.parseInt(employeeIdObj.toString());
-        } catch (NumberFormatException e) {
-            return Result.error("Invalid Employee ID format");
-        }
-        int num = biddingManagementService.getOngoingConstructionProjects();
-        return Result.success(num);
-    }
 
     // 发布招标操作
     @PostMapping("/publishTender")
@@ -136,5 +79,22 @@ public class BiddingManagementController {
         String projectId = jsonUtils.getValueFromJson(tenderRecord, "project_id");
         biddingManagementService.publishTender(Integer.parseInt(projectId));
         return Result.success("Tender published successfully");
+    }
+    // 获取所有投标记录
+    @GetMapping("/getbiddingrecord")
+    public Result  getAllBiddingRecords(HttpServletRequest request) {
+        Object employeeIdObj = request.getAttribute("employee_id");
+
+        if (employeeIdObj == null) {
+            return Result.error("employee_id is missing in the request");
+        }
+
+        int employeeId;
+        try {
+            employeeId = Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            return Result.error("Invalid Employee ID format");
+        }
+        return Result.success(biddingManagementService.getAllBiddingRecords());
     }
 }
