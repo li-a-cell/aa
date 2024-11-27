@@ -31,16 +31,6 @@ public class BidderController {
         return new ResponseEntity<>(project, HttpStatus.OK);
     }
 
-    // 投标人登录接口
-    @PostMapping("/login")
-    public ResponseEntity<Bidder> login(@RequestBody Bidder bidder) {
-        Bidder loggedInBidder = bidderService.login(bidder.getAccount(), bidder.getPassword());
-        if (loggedInBidder!= null) {
-            return new ResponseEntity<>(loggedInBidder, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-    }
 
     // 获取所有投标人信息接口
     @GetMapping("/all")
@@ -84,4 +74,6 @@ public class BidderController {
         bidderService.bid(record);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+
 }

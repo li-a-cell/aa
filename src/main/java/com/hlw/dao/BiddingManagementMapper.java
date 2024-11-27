@@ -2,6 +2,7 @@
 package com.hlw.dao;
 
 import com.hlw.dto.TenderTaskDto;
+import com.hlw.pojo.Bidder;
 import com.hlw.pojo.ProjectBiddingRecord;
 import com.hlw.pojo.ProjectBiddingRecordDto;
 import com.hlw.pojo.TenderTask;
@@ -69,5 +70,24 @@ public interface BiddingManagementMapper {
             @Result(property = "bidding_time", column = "bidding_time")
     })
     List<ProjectBiddingRecordDto> findBiddingRecordsByProjectId(@Param("projectId") int projectId);
+
+    // 查询所有投标人
+    @Select("SELECT * FROM bidder")
+    List<Bidder> getAllBidders();
+
+    // 添加投标人
+    @Insert("INSERT INTO bidder (account, password, name, phone_number, company_name, status) " +
+            "VALUES (#{account}, #{password}, #{name}, #{phone_number}, #{company_name}, #{status})")
+    void addBidder(Bidder bidder);
+
+    // 更新投标人信息
+    @Update("UPDATE bidder SET account = #{account}, password = #{password}, name = #{name}, " +
+            "phone_number = #{phone_number}, company_name = #{company_name}, status = #{status} " +
+            "WHERE bidder_id = #{bidder_id}")
+    void updateBidder(Bidder bidder);
+
+    // 删除投标人
+    @Delete("DELETE FROM bidder WHERE bidder_id = #{bidderId}")
+    void deleteBidder(@Param("bidderId") int bidderId);
 
 }

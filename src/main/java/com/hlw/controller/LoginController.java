@@ -1,12 +1,16 @@
 package com.hlw.controller;
 
 import com.hlw.dao.EmpMapper;
+import com.hlw.pojo.Bidder;
 import com.hlw.pojo.Result;
 import com.hlw.pojo.User;
+import com.hlw.service.BidderService;
 import com.hlw.service.LoginService;
 import com.hlw.utils.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -20,6 +24,8 @@ public class LoginController {
     private LoginService loginService;
     @Autowired
      private EmpMapper empMapper;
+    @Autowired
+    private BidderService bidderService;
     @PostMapping("/login")
     public Result authenticate(@RequestBody User User) {
         if (loginService.authenticate(User.getAccount(), User.getPassword())) {
@@ -31,6 +37,20 @@ public class LoginController {
             String jwt=JwtUtils.generateJwt(claims);
            return Result.success(jwt);
 
+        } else {
+            return Result.error("账号或密码错误");
+        }
+    }
+
+    @PostMapping("/bidderlogin")
+    public Result login(@RequestBody Bidder bidder) {
+        Bidder loggedInBidder = bidderService.login(bidder.getAccount(), bidder.getPassword());
+        if (loggedInBidder!= null) {
+            Map<String, Object> claims=new HashMap<>();
+            claims.put("employee_id",bidder.getBidder_id());
+            claims.put("job_type","投标人");
+            String jwt=JwtUtils.generateJwt(claims);
+            return Result.success(jwt);
         } else {
             return Result.error("账号或密码错误");
         }

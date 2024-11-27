@@ -13,6 +13,5 @@ public class TenderProjectView {
     private Date startDate;
     private Date endDate;
     private Date tenderDeadline;
-    private String projectDescription;
     private String projectType;
 }

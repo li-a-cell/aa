@@ -107,4 +107,83 @@ public class BiddingManagementController {
         return Result.success(biddingManagementService.getBiddingRecordsByProjectId(project.getProject_id()));
     }
 
+    // 获取所有投标人信息
+    @GetMapping("/getAllBidders")
+    public Result getAllBidders(HttpServletRequest request) {
+        Object employeeIdObj = request.getAttribute("employee_id");
+
+        if (employeeIdObj == null) {
+            return Result.error("employee_id is missing in the request");
+        }
+
+        int employeeId;
+        try {
+            employeeId = Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            return Result.error("Invalid Employee ID format");
+        }
+
+        List<Bidder> bidders = biddingManagementService.getAllBidders();
+        return Result.success(bidders);
+    }
+
+    // 添加投标人
+    @PostMapping("/addBidder")
+    public Result addBidder(@RequestBody Bidder bidder, HttpServletRequest request) {
+        Object employeeIdObj = request.getAttribute("employee_id");
+
+        if (employeeIdObj == null) {
+            return Result.error("employee_id is missing in the request");
+        }
+
+        int employeeId;
+        try {
+            employeeId = Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            return Result.error("Invalid Employee ID format");
+        }
+
+        biddingManagementService.addBidder(bidder);
+        return Result.success("Bidder added successfully");
+    }
+
+    // 更新投标人信息
+    @PutMapping("/updateBidder")
+    public Result updateBidder(@RequestBody Bidder bidder, HttpServletRequest request) {
+        Object employeeIdObj = request.getAttribute("employee_id");
+
+        if (employeeIdObj == null) {
+            return Result.error("employee_id is missing in the request");
+        }
+
+        int employeeId;
+        try {
+            employeeId = Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            return Result.error("Invalid Employee ID format");
+        }
+
+        biddingManagementService.updateBidder(bidder);
+        return Result.success("Bidder updated successfully");
+    }
+
+    // 删除投标人
+    @DeleteMapping("/deleteBidder/{bidderId}")
+    public Result deleteBidder(@PathVariable("bidderId") int bidderId, HttpServletRequest request) {
+        Object employeeIdObj = request.getAttribute("employee_id");
+
+        if (employeeIdObj == null) {
+            return Result.error("employee_id is missing in the request");
+        }
+
+        int employeeId;
+        try {
+            employeeId = Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            return Result.error("Invalid Employee ID format");
+        }
+
+        biddingManagementService.deleteBidder(bidderId);
+        return Result.success("Bidder deleted successfully");
+    }
 }
