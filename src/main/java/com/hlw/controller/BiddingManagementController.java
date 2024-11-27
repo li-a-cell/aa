@@ -1,9 +1,7 @@
 package com.hlw.controller;
 
-import com.hlw.pojo.ProjectBiddingRecord;
-import com.hlw.pojo.Result;
-import com.hlw.pojo.TenderRecord;
-import com.hlw.pojo.TenderTask;
+import com.hlw.dto.ProjectDto;
+import com.hlw.pojo.*;
 import com.hlw.service.AdministratorService;
 import com.hlw.service.BiddingManagementService;
 import com.hlw.utils.JsonUtils;
@@ -93,6 +91,20 @@ public class BiddingManagementController {
         String projectId = jsonUtils.getValueFromJson(tenderRecord, "project_id");
         biddingManagementService.publishTender(Integer.parseInt(projectId));
         return Result.success("Tender published successfully");
-    }  // 更新项目表的状态为待招标
+    }
+    @PostMapping("/getProjectBiddingRecords")
+   Result getProjectBiddingRecords(@RequestBody Project project, HttpServletRequest request) {
+        Object employeeIdObj = request.getAttribute("employee_id");
+        if (employeeIdObj == null) {
+            return Result.error("employee_id is missing in the request");
+        }
+        int employeeId;
+        try {
+            employeeId = Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            return Result.error("Invalid Employee ID format");
+        }
+        return Result.success(biddingManagementService.getBiddingRecordsByProjectId(project.getProject_id()));
+   }
 
 }

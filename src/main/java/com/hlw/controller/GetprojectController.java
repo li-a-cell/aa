@@ -149,4 +149,22 @@ public class GetprojectController {
         List<ProjectDto> projects = projectservice.getAllProjects();
         return Result.success(projects);
     }
+    @PostMapping("/status")
+    public Result getProjectsByStatus(@RequestBody ProjectDto projectDto,HttpServletRequest request) {
+        Object employeeIdObj = request.getAttribute("employee_id");
+
+        if (employeeIdObj == null) {
+            return Result.error("employee_id is missing in the request");
+        }
+
+        int employeeId;
+        try {
+            employeeId = Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            return Result.error("Invalid Employee ID format");
+        }
+
+        return Result.success(projectservice.getProjectsByStatus( projectDto.getStatus()));
+    }
+
 }

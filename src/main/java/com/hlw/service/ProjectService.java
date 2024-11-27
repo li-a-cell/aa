@@ -59,6 +59,8 @@ public class ProjectService {
         return projectmapper.findAllProjects();
     }
 
-
+    public List<ProjectDto> getProjectsByStatus( String status) {
+       return projectmapper.findProjectsByStatus(status);
+    }
 
 }

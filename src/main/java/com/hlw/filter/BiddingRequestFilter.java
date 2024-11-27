@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @Slf4j
-@WebFilter(urlPatterns = "/administrator")
+@WebFilter(urlPatterns = "/biddingmanagent")
 public class BiddingRequestFilter  implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)

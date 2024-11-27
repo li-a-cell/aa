@@ -35,6 +35,8 @@ public class BiddingManagementService {
         // 插入一条新的招标记录
         biddingManagementMapper.updateTenderTaskStatusToPendingTender(projectId);
     }
-
+    public  List<ProjectBiddingRecordDto> getBiddingRecordsByProjectId(int projectId) {
+        return biddingManagementMapper.findBiddingRecordsByProjectId(projectId);
+    }
 
 }

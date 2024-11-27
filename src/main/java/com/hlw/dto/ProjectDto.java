@@ -15,6 +15,8 @@ public class ProjectDto {
 
     private int manager_id;
 
+    private String manager_name;
+
     private String project_name;
 
     private LocalDate planned_start_date;
