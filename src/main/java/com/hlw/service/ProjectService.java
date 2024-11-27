@@ -1,6 +1,7 @@
 package com.hlw.service;
 
 import com.hlw.dao.ProjectMapper;
+import com.hlw.dto.ProjectDetailsView;
 import com.hlw.dto.ProjectDto;
 import com.hlw.pojo.Project;
 import com.hlw.pojo.ProjectNode;
@@ -62,7 +63,7 @@ public class ProjectService {
         return projectmapper.getProjectsCostNumByType(project_type);
     }
 
-    public Project findProjectById(Integer projectId) {
+    public ProjectDetailsView findProjectById(Integer projectId) {
         return projectmapper.findProjectById(projectId);
     }
 

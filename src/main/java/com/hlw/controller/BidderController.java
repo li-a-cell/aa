@@ -1,5 +1,6 @@
 package com.hlw.controller;
 
+import com.hlw.dto.ProjectDetailsView;
 import com.hlw.dto.TenderProjectView;
 import com.hlw.pojo.Bidder;
 import com.hlw.pojo.Project;
@@ -25,8 +26,8 @@ public class BidderController {
     @Autowired
     private ProjectService projectService;
     @GetMapping("/project/{projectId}")
-    public ResponseEntity<Project> getProjectById(@PathVariable Integer projectId) {
-        Project project = projectService.findProjectById(projectId);
+    public ResponseEntity<ProjectDetailsView> getProjectById(@PathVariable Integer projectId) {
+        ProjectDetailsView project = projectService.findProjectById(projectId);
         return new ResponseEntity<>(project, HttpStatus.OK);
     }
 

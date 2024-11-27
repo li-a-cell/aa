@@ -1,5 +1,6 @@
 package com.hlw.dao;
 
+import com.hlw.dto.ProjectDetailsView;
 import com.hlw.dto.ProjectDto;
 import com.hlw.pojo.Project;
 import com.hlw.pojo.ProjectNode;
@@ -108,7 +109,7 @@ public interface ProjectMapper {
     double getProjectsCostNumByType(String project_type);
 
     @Select("SELECT * FROM project_details_view WHERE projectId = #{projectId}")
-    Project findProjectById(Integer projectId);
+    ProjectDetailsView findProjectById(Integer projectId);
 
     //
     @Select("SELECT p.project_id, p.manager_id, e.name,p.project_name, p.planned_start_date, p.planned_end_date, " +
