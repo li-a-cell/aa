@@ -1,4 +1,4 @@
-package com.hlw.pojo;
+package com.hlw.dto;
 
 import jakarta.persistence.*;
 import lombok.Data;
