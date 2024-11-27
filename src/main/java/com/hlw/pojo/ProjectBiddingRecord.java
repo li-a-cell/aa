@@ -22,6 +22,9 @@ public class ProjectBiddingRecord {
     @Column(name = "record_id", nullable = false)
     private Integer record_id;
 
+    @Column(name= "project_id", nullable = false)
+    private int project_id;
+
     @Column(name = "bidder_id")
     private int bidder_id;
 

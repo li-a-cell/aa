@@ -75,8 +75,8 @@ public class AdministratorService {
         int inventoryId = administratorMapper.addMaterialStorage(materialName, quantity, localDate, supplierName, price, remarks);
         return inventoryId > 0 ? Result.success("材料入库成功") : Result.error("材料入库失败");
     }
-    // Service method
-    public ProjectNode getParentNodeByProjectId(int projectId) {
+   // 获取父节点
+    public List<ProjectNode> getParentNodeByProjectId(int projectId) {
         return administratorMapper.getParentNodeByProjectId(projectId);
     }
 

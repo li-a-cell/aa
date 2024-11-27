@@ -107,8 +107,8 @@ public interface AdministratorMapper {
                            @Param("supplierName") String supplierName,
                            @Param("price") int price,
                            @Param("remarks") String remarks);
-    // Mapper interface
+    // 获取顶级节点
     @Select("SELECT * FROM projectnode WHERE project_id = #{projectId} AND parent_node_id IS NULL")
-    ProjectNode getParentNodeByProjectId(@Param("projectId") int projectId);
+    List<ProjectNode> getParentNodeByProjectId(@Param("projectId") int projectId);
 
 }

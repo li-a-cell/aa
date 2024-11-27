@@ -220,17 +220,18 @@ public class AdministratorController {
         return administratorService.addMaterialStorage(material_name, Integer.parseInt(quantity), localDate, supplier_name, Integer.parseInt(price), remarks);
 
     }
-    // Controller method
+    // 获取顶级节点
     @GetMapping("/topLevelNodes/{projectId}")
     public Result getParentNodeByProjectId(@PathVariable int projectId) {
-        ProjectNode parentNode = administratorService.getParentNodeByProjectId(projectId);
+       List<ProjectNode> parentNodes = administratorService.getParentNodeByProjectId(projectId);
 
-        if (parentNode == null) {
+        if (parentNodes == null) {
             return Result.error("No parent node found for the given project ID.");
         }
 
-        return Result.success(parentNode);
+        return Result.success(parentNodes);
     }
+
 
 
 }

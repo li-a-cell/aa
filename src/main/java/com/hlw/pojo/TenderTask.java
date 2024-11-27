@@ -16,6 +16,9 @@ public class TenderTask {
     @Column(name = "tender_task_id", nullable = false)
     private Integer tend_task_id;
 
+    @Column(name = "project_id", nullable = false)
+    private int project_id;
+
     @Column(name = "deadline")
     private LocalDate deadline;
     @Enumerated(EnumType.STRING)
