@@ -10,7 +10,7 @@ import java.util.Base64;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MaterialUsage {
-    private String material_name;   // 材料名称
-    private int  total_quantity;  // 所需数量
+    private String materialName;   // 材料名称
+    private int  totalQuantity;  // 所需数量
 
 }

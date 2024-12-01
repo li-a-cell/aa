@@ -17,20 +17,20 @@ public class MaterialInventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inventory_id", nullable = false)
-    private int inventory_id;
+    private int inventoryId;
 
     @Column(name = "material_id", nullable = false)
-    private int material_id;
+    private int materialId;
 
     @Column(name = "quantity", nullable = false)
     private int quantity;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "entry_date")
-    private LocalDateTime entry_date;
+    private LocalDateTime entryDate;
 
     @Column(name = "supplier_name")
-    private String supplier_name;
+    private String supplierName;
 
     @Column(name = "price")
     private int price;

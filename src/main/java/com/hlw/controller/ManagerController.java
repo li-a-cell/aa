@@ -42,10 +42,9 @@ public class ManagerController {
         } catch (NumberFormatException e) {
             return Result.error("Invalid Employee ID format");
         }
-
         // 调用服务层，创建项目节点
-        return managerService.createProjectNode(employeeId, projectNode.getParent_node_id(), projectNode.getNode_name(),
-                projectNode.getStart_date(), projectNode.getEnd_date(), projectNode.getNode_info());
+        return managerService.createProjectNode(projectNode.getProjectId(), projectNode.getParentNodeId(), projectNode.getNodeName(),
+                projectNode.getStartDate(), projectNode.getEndDate(), projectNode.getNodeInfo());
     }
 
 
@@ -97,7 +96,7 @@ public class ManagerController {
     //添加设备
        @PostMapping("/configureEquipment")
     public Result configureEquipment(@RequestBody Equipment equipment) {
-        return managerService.configureEquipmentForNode(equipment.getNode_id(), equipment.getEquipment_name());
+        return managerService.configureEquipmentForNode(equipment.getNodeId(), equipment.getEquipmentName());
     }
     //修改材料数量
    @PostMapping("/updateMaterialQuantityByName")
@@ -112,19 +111,19 @@ public class ManagerController {
     // 控制层方法：将项目节点在使用的设备状态改为指定状态
      @PostMapping("/updateStatus")
     public Result updateEquipmentStatus(@RequestBody Equipment equipment) {
-        return managerService.updateEquipmentStatus(equipment.getNode_id(), equipment.getEquipment_name(), equipment.getEquipment_type());
+        return managerService.updateEquipmentStatus(equipment.getNodeId(), equipment.getEquipmentName(), equipment.getEquipmentType());
     }
 
     // 控制层方法：将指定项目节点下所有在使用的设备状态改为 '未使用'
     @PostMapping("/releaseAllFromNode")
     public Result releaseAllEquipmentFromNode(@RequestBody Equipment equipment) {
-        return managerService.releaseAllEquipmentFromNode(equipment.getNode_id());
+        return managerService.releaseAllEquipmentFromNode(equipment.getNodeId());
     }
 
   // 控制层方法：更新项目节点状态
     @PostMapping("/updateNodeStatus")
     public Result updateProjectNodeStatus(@RequestBody ProjectNode projectNode) {
-        return managerService.updateProjectNodeStatus(projectNode.getNode_id(), String.valueOf(projectNode.getStatus()));
+        return managerService.updateProjectNodeStatus(projectNode.getNodeId(), String.valueOf(projectNode.getStatus()));
     }
 
  // 获取项目经理管理的某一状态项目节点的数量

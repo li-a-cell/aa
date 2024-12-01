@@ -12,21 +12,21 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ProjectDto {
 
-    private int project_id;  // 保持与数据库字段一致
+    private int projectId;  // 保持与数据库字段一致
 
-    private int manager_id;
+    private int managerId;
 
-    private String manager_name;
+    private String managerName;
 
-    private String project_name;
+    private String projectName;
 
-    private LocalDate planned_start_date;
+    private LocalDate plannedStartDate;
 
-    private LocalDate planned_end_date;
+    private LocalDate plannedEndDate;
 
-    private int site_id;
+    private int siteId;
 
-    private int contractor_id;
+    private int contractorId;
 
     private double budget;
 
@@ -34,13 +34,13 @@ public class ProjectDto {
 
     private String description;
 
-    private ProjectType project_type;
+    private ProjectType projectType;
 
     // 施工地名称，与查询的 construction_site_name 字段匹配
-    private String site_name;
+    private String siteName;
 
     // 投标人名称，与查询的 bidder_name_result 字段匹配
-    private String bidder_name;
+    private String bidderName;
 
     public enum ProjectType {
         房屋建筑,

@@ -15,14 +15,14 @@ public class ConstructionSite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "site_id")  // 映射数据库表中的 site_id 列
-    private int site_id; // 施工场地ID
+    private int siteId; // 施工场地ID
 
     @Column(name = "site_name", nullable = false, length = 100)
-    private String site_name; // 施工场地名称
+    private String siteName; // 施工场地名称
 
     @Column(name = "site_address", length = 255)
-    private String site_address; // 施工场地地址
+    private String siteAddress; // 施工场地地址
 
     @Column(name = "area_size")
-    private double area_size; // 施工场地面积
+    private double areaSize; // 施工场地面积
 }

@@ -9,8 +9,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProjectNodeIdDto {
-    private LocalDate start_date;  // 开始日期
+    private LocalDate startDate;  // 开始日期
 
 
-    private LocalDate end_date;  // 结束日期
+    private LocalDate endDate;  // 结束日期
 }

@@ -15,21 +15,21 @@ public class Equipment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "equipment_id")
-    private int equipment_id;  // 设备 ID
+    private int equipmentId;  // 设备 ID
 
 
     @Column(name = "equipment_name", nullable = false)
-    private String equipment_name;  // 设备名称
+    private String equipmentName;  // 设备名称
 
     @Lob
     @Column(name = "equipment_photo")
-    private byte[] equipment_photo;  // 设备照片
+    private byte[] equipmentPhoto;  // 设备照片
 
     @Column(name = "equipment_type")
-    private String equipment_type;  // 设备类型
+    private String equipmentType;  // 设备类型
 
     @Column(name = "equipment_model")
-    private String equipment_model;  // 设备型号
+    private String equipmentModel;  // 设备型号
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -37,7 +37,7 @@ public class Equipment {
 
 
     @Column(name = "node_id", nullable = false)
-    private int  node_id;  // 关联的项目节点
+    private int  nodeId;  // 关联的项目节点
 
     @Column(name = "remarks")
     private String remarks;  // 备注

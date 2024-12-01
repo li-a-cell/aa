@@ -18,15 +18,15 @@ public class InspectionTask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inspection_task_id") // 映射到数据库中的 inspection_task_id 列
-    private int inspection_taskId; // 检查任务ID
+    private int inspectionTaskId; // 检查任务ID
 
 
     @Column(name = "node_id")
-    private int node_id; // 关联的项目节点（外键）
+    private int nodeId; // 关联的项目节点（外键）
 
 
     @Column(name = "inspector_id", nullable = false)
-    private int inspector_id; // 关联的检查员（外键，User 是 Employee 实体）
+    private int inspectorId; // 关联的检查员（外键，User 是 Employee 实体）
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -34,13 +34,13 @@ public class InspectionTask {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "inspection_type", nullable = false)
-    private InspectionType inspection_type; // 检查类型
+    private InspectionType inspectionType; // 检查类型
 
     @Column(name = "start_date")
-    private LocalDate start_date; // 检查任务开始日期
+    private LocalDate startDate; // 检查任务开始日期
 
     @Column(name = "due_date")
-    private LocalDate due_date; // 检查任务到期日期
+    private LocalDate dueDate; // 检查任务到期日期
 
     // 状态枚举：任务状态
     public enum Status {

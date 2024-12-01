@@ -84,7 +84,7 @@ public class GetprojectController {
              return Result.error("Invalid Employee ID format");
          }
 
-        List<ProjectNode> projectNodes=projectservice.getProjectNodes(projectNode.getProject_id(),projectNode.getStatus());
+        List<ProjectNode> projectNodes=projectservice.getProjectNodes(projectNode.getProjectId(),projectNode.getStatus());
         return Result.success(projectNodes);
     }
     //获取某一状态项目的数量
@@ -117,7 +117,7 @@ public class GetprojectController {
         } catch (NumberFormatException e) {
             return Result.error("Invalid Employee ID format");
         }
-        int num = projectservice.getProjectsNumByType(String.valueOf(projectDto.getProject_type()));
+        int num = projectservice.getProjectsNumByType(String.valueOf(projectDto.getProjectType()));
         return Result.success(num);
     }
     // 按类型查询项目金额
@@ -133,7 +133,7 @@ public class GetprojectController {
         } catch (NumberFormatException e) {
             return Result.error("Invalid Employee ID format");
         }
-        double cost = projectservice.getProjectsCostNumByType(String.valueOf(projectDto.getProject_type()));
+        double cost = projectservice.getProjectsCostNumByType(String.valueOf(projectDto.getProjectType()));
         return Result.success(cost);
     }
     // 获取所有项目

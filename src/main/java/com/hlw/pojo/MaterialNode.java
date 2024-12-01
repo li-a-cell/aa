@@ -16,13 +16,13 @@ import lombok.NoArgsConstructor;
 public class MaterialNode {
     @Id
     @Column(name = "node_id")
-    private int node_id; // 节点ID
+    private int nodeId; // 节点ID
 
     @Id
     @Column(name = "material_id")
-    private int material_id; // 材料ID
+    private int materialId; // 材料ID
 
     @Column(name = "required_quantity")
-    private int required_quantity; // 所需数量
+    private int requiredQuantity; // 所需数量
 
 }

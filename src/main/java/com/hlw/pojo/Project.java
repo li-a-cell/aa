@@ -11,19 +11,19 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class Project {
 
-    private int project_id;  // 保持与数据库字段一致
+    private int projectId;  // 保持与数据库字段一致
 
-    private int manager_id;
+    private int managerId;
 
-    private String project_name;
+    private String projectName;
 
-    private LocalDate planned_start_date;
+    private LocalDate plannedStartDate;
 
-    private LocalDate planned_end_date;
+    private LocalDate plannedEndDate;
 
-    private int site_id;
+    private int siteId;
 
-    private int contractor_id;
+    private int contractorId;
 
     private double budget;
 
@@ -31,7 +31,7 @@ public class Project {
 
     private String description;
 
-    private ProjectType project_type;
+    private ProjectType projectType;
 
 
     public enum ProjectType {

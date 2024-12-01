@@ -24,10 +24,18 @@ public class ManagerService {
     private ManagerMapper managerMapper;
 
     // 方法：创建项目节点
-    public Result createProjectNode(int managerId, int parentNodeId, String nodeName, LocalDate startDate, LocalDate endDate, String nodeInfo) {
+    public Result createProjectNode(int ProjectId, Integer parentNodeId, String nodeName, LocalDate startDate, LocalDate endDate, String nodeInfo) {
         try {
-            // 调用 Mapper 层方法，插入数据
-            managerMapper.createProjectNodesByManagerId(managerId, parentNodeId, nodeName, startDate, endDate, nodeInfo);
+            System.out.println(ProjectId);
+            if(parentNodeId!=null){
+                // 调用 Mapper 层方法，插入数据
+                managerMapper.createProjectNodesByManagerId(ProjectId, parentNodeId, nodeName, startDate, endDate, nodeInfo);
+            }
+            else {
+
+                // 调用 Mapper 层方法，插入数据
+                managerMapper.createParentProjectNodesByManagerId(ProjectId,  nodeName, startDate, endDate, nodeInfo);
+            }
             return Result.success("Project node created successfully.");
         } catch (Exception e) {
             return Result.error("Failed to create project node: " + e.getMessage());

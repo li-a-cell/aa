@@ -14,17 +14,17 @@ public class TenderTask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tender_task_id", nullable = false)
-    private Integer tend_task_id;
+    private Integer tendTaskId;
 
     @Column(name = "project_id", nullable = false)
-    private int project_id;
+    private int projectId;
 
     @Column(name = "deadline")
     private LocalDate deadline;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tender_task_status")
-    private TenderTaskStatus tender_task_status;
+    private TenderTaskStatus tenderTaskStatus;
     public enum TenderTaskStatus {
         待发布, 待招标, 已完成
     }

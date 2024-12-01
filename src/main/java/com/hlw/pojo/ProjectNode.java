@@ -15,25 +15,25 @@ public class ProjectNode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "node_id")
-    private int node_id;  // 节点 ID
+    private int nodeId;  // 节点 ID
 
     @Column(name = "project_id", nullable = false)
-    private int project_id;  // 关联的项目
+    private int projectId;  // 关联的项目
 
     @Column(name = "parent_node_id")
-    private int  parent_node_id;  // 上级节点 (可为空)
+    private int  parentNodeId;  // 上级节点 (可为空)
 
     @Column(name = "node_name", nullable = false)
-    private String node_name;  // 节点名称
+    private String nodeName;  // 节点名称
 
     @Column(name = "start_date")
-    private LocalDate start_date;  // 开始日期
+    private LocalDate startDate;  // 开始日期
 
     @Column(name = "end_date")
-    private LocalDate end_date;  // 结束日期
+    private LocalDate endDate;  // 结束日期
 
     @Column(name = "node_info")
-    private String node_info;  // 节点信息
+    private String nodeInfo;  // 节点信息
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)

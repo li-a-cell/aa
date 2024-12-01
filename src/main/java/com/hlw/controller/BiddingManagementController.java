@@ -32,7 +32,7 @@ public class BiddingManagementController {
         } catch (NumberFormatException e) {
             return Result.error("Invalid Employee ID format");
         }
-        biddingManagementService.addTenderRecord(tenderRecord.getProject_id(), tenderRecord.getTenderer_id(), tenderRecord.getRequest_date(), tenderRecord.getBidder_id());
+        biddingManagementService.addTenderRecord(tenderRecord.getProjectId(), tenderRecord.getTendererId(), tenderRecord.getRequestDate(), tenderRecord.getBidderId());
 
         // 返回操作结果
         return Result.success("Tender record added successfully");
@@ -104,7 +104,7 @@ public class BiddingManagementController {
         } catch (NumberFormatException e) {
             return Result.error("Invalid Employee ID format");
         }
-        return Result.success(biddingManagementService.getBiddingRecordsByProjectId(project.getProject_id()));
+        return Result.success(biddingManagementService.getBiddingRecordsByProjectId(project.getProjectId()));
     }
 
     // 获取所有投标人信息

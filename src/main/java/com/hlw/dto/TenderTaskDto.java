@@ -8,11 +8,11 @@ import java.time.LocalDate;
 
 public class TenderTaskDto {
 
-    private Integer tend_task_id;
+    private Integer tendTaskId;
 
-    private int project_id;
+    private int projectId;
 
-    private String project_name;
+    private String projectName;
 
     private LocalDate deadline;
 

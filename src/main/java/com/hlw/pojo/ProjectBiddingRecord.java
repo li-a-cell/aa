@@ -17,17 +17,17 @@ public class ProjectBiddingRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "record_id", nullable = false)
-    private Integer record_id;
+    private Integer recordId;
 
 
     @Column(name = "bidder_id")
-    private int bidder_id;
+    private int bidderId;
 
     @Column(name = "bidding_price", precision = 15, scale = 2)
-    private BigDecimal bidding_price;
+    private BigDecimal biddingPrice;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "bidding_time")
-    private LocalDateTime bidding_time;
+    private LocalDateTime biddingTime;
 
 }

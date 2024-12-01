@@ -32,8 +32,8 @@ public class LoginController {
             System.out.println("ok");
             User user = empMapper.findByAccount(User.getAccount());
             Map<String, Object> claims=new HashMap<>();
-            claims.put("employee_id",user.getEmployee_id());
-            claims.put("job_type",user.getJob_type());
+            claims.put("employee_id",user.getEmployeeId());
+            claims.put("job_type",user.getPassword());
             String jwt=JwtUtils.generateJwt(claims);
            return Result.success(jwt);
 
@@ -47,7 +47,7 @@ public class LoginController {
         Bidder loggedInBidder = bidderService.login(bidder.getAccount(), bidder.getPassword());
         if (loggedInBidder!= null) {
             Map<String, Object> claims=new HashMap<>();
-            claims.put("employee_id",bidder.getBidder_id());
+            claims.put("employee_id",bidder.getBidderId());
             claims.put("job_type","投标人");
             String jwt=JwtUtils.generateJwt(claims);
             return Result.success(jwt);

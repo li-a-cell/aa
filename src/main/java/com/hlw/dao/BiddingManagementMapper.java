@@ -16,7 +16,7 @@ public interface BiddingManagementMapper {
     //
     @Insert("INSERT INTO tenderrecord (project_id, tenderer_id, request_date, bidder_id) " +
             "VALUES (#{projectId}, #{tendererId}, #{requestDate}, #{bidderId})")
-    void addTenderRecord(@Param("projectId") int projectId,
+    void addTenderRecord3(@Param("projectId") int projectId,
                          @Param("tendererId") int tendererId,
 
                          @Param("requestDate") LocalDate requestDate,

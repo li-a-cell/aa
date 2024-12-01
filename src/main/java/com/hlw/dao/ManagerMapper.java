@@ -18,23 +18,36 @@ import java.util.List;
 public interface ManagerMapper {
 @Transactional
     // 插入新的项目节点
-    @Insert("INSERT INTO projectnode (project_id, parent_node_id, node_name, start_date, end_date, node_info, status) " +
-            "SELECT a.project_id, " +
-            "       #{parentNodeId}, " +
-            "       #{nodeName}, " +
-            "       #{startDate}, " +
-            "       #{endDate}, " +
-            "       #{nodeInfo}, " +
-            "       '未开始' " +
-            "FROM project AS a " +
-            "WHERE a.manager_id = #{managerId}")
-    void createProjectNodesByManagerId(
-        @Param("managerId") int managerId,
-        @Param("parentNodeId") int parentNodeId,
+@Insert("INSERT INTO projectnode (project_id, parent_node_id, node_name, start_date, end_date, node_info, status) " +
+        "VALUES( #{projectId}, " +
+        "       #{parentNodeId}, " +
+        "       #{nodeName}, " +
+        "       #{startDate}, " +
+        "       #{endDate}, " +
+        "       #{nodeInfo}, " +
+        "       '未开始' )"
+)
+void createProjectNodesByManagerId(
+        @Param("projectId") int projectId,
+        @Param("parentNodeId")int parentNodeId,
         @Param("nodeName") String nodeName,
         @Param("startDate") LocalDate startDate,
         @Param("endDate") LocalDate endDate,
         @Param("nodeInfo") String nodeInfo);
+
+    @Insert("INSERT INTO projectnode (project_id,  node_name, start_date, end_date, node_info, status) " +
+            "VALUES (#{projectId}, " +
+            "       #{nodeName}, " +
+            "       #{startDate}, " +
+            "       #{endDate}, " +
+            "       #{nodeInfo}, " +
+            "       '未开始' )" )
+    void createParentProjectNodesByManagerId(
+            @Param("projectId") int projectId,
+            @Param("nodeName") String nodeName,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("nodeInfo") String nodeInfo);
 
     // 获取指定状态的父节点为空的顶级项目节点
     @Select("SELECT * FROM projectnode WHERE parent_node_id IS NULL AND status = #{status} AND project_id IN (SELECT project_id FROM project WHERE manager_id=#{managerId} AND project.status IN ('待发布','待招标', '施工中'))")
@@ -208,6 +221,7 @@ List<EquipmentDetails> getEquipmentDetailsByNodeId(@Param("nodeId") int nodeId);
     // 根据施工地名称查询施工地ID
     @Select("SELECT site_id FROM constructionsite WHERE site_name = #{constructionSiteName}")
     Integer getConstructionSiteIdByName(@Param("constructionSiteName") String constructionSiteName);
+    // 插入新的项目
     // 插入新的项目
     @Insert("INSERT INTO project (manager_id, project_name, project.planned_start_date, project.planned_end_date, description, site_id,budget,status,project_type) " +
             "VALUES (#{managerId}, #{projectName}, #{startDate}, #{endDate}, #{projectDescription},  #{constructionSiteId},#{Budget},#{status},#{project_type} )")

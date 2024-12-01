@@ -18,18 +18,18 @@ import java.time.LocalDateTime;
 public class ProjectBiddingRecordDto {
 
 
-    private Integer record_id;
+    private Integer recordId;
 
-    private String project_name;
+    private String projectName;
 
-    private int project_id;
+    private int projectId;
 
-    private String bidder_name;
+    private String bidderName;
 
-    private int bidder_id;
+    private int bidderId;
 
-    private BigDecimal bidding_price;
+    private BigDecimal biddingPrice;
 
-    private LocalDateTime bidding_time;
+    private LocalDateTime biddingTime;
 
 }
