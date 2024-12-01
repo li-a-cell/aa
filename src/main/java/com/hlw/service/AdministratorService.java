@@ -19,7 +19,7 @@ public class AdministratorService {
 
     // 获取招标数量
     public int getBiddingsNum() {
-        return administratorMapper.getBiddingsNum();
+        return administratorMapper.getBiddingNum();
     }
 
     // 获取员工数量
@@ -35,8 +35,8 @@ public class AdministratorService {
         administratorMapper.updateProjects( projectId, projectName, mangerName, startDate, endDate, budget, status, description, projectType);
     }
 
-    public void deleteProject(int project_id) {
-        administratorMapper.deleteProject(project_id);
+    public void deleteProject(int projectId) {
+        administratorMapper.deleteProject(projectId);
     }
     public  int getNodeCountByStatus(int projectId, ProjectNode.NodeStatus status) {
         return administratorMapper.getNodeCountByStatus(projectId, status);

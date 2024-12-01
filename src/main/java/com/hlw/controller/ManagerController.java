@@ -28,7 +28,7 @@ public class ManagerController {
     @PostMapping("/create")
     public Result createProjectNode(@RequestBody ProjectNode projectNode, HttpServletRequest request) {
         // 从请求属性中获取 employee_id
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
 
         // 检查 employee_id 是否为空
         if (employeeIdObj == null) {
@@ -51,7 +51,7 @@ public class ManagerController {
      // 获取顶层节点
      @PostMapping ("/topLevelNodes")
     public Result getTopLevelNodes(@RequestBody ProjectNode projectNode,HttpServletRequest request) {
-         Object employeeIdObj = request.getAttribute("employee_id");
+         Object employeeIdObj = request.getAttribute("employeeId");
 
          if (employeeIdObj == null) {
              return Result.error("employee_id is missing in the request");
@@ -86,11 +86,11 @@ public class ManagerController {
     }
     //添加材料数量
     @PostMapping("/configure")
-    public Result configureMaterial(@RequestBody String meterialNode) {
+    public Result configureMaterial(@RequestBody String materialNode) {
         JsonUtils jsonUtils = new JsonUtils();
-        String nodeId = jsonUtils.getValueFromJson(meterialNode, "node_id");
-        String materialName = jsonUtils.getValueFromJson(meterialNode, "material_name");
-        String requiredQuantity = jsonUtils.getValueFromJson(meterialNode, "required_quantity");
+        String nodeId = jsonUtils.getValueFromJson(materialNode, "nodeId");
+        String materialName = jsonUtils.getValueFromJson(materialNode, "materialName");
+        String requiredQuantity = jsonUtils.getValueFromJson(materialNode, "requiredQuantity");
         return managerService.configureMaterialForNode(Integer.parseInt(nodeId),materialName,Integer.parseInt(requiredQuantity));
     }
     //添加设备
@@ -100,11 +100,11 @@ public class ManagerController {
     }
     //修改材料数量
    @PostMapping("/updateMaterialQuantityByName")
-    public Result updateMaterialQuantityByName(@RequestBody String meterialNode) {
+    public Result updateMaterialQuantityByName(@RequestBody String materialNode) {
         JsonUtils jsonUtils = new JsonUtils();
-        String nodeId = jsonUtils.getValueFromJson(meterialNode, "node_id");
-        String materialName = jsonUtils.getValueFromJson(meterialNode, "material_name");
-        String newQuantity = jsonUtils.getValueFromJson(meterialNode, "new_quantity");
+        String nodeId = jsonUtils.getValueFromJson(materialNode, "nodeId");
+        String materialName = jsonUtils.getValueFromJson(materialNode, "materialName");
+        String newQuantity = jsonUtils.getValueFromJson(materialNode, "newQuantity");
         return managerService.updateMaterialQuantityForNodeByName(Integer.parseInt(nodeId),materialName,Integer.parseInt(newQuantity));
     }
 
@@ -129,7 +129,7 @@ public class ManagerController {
  // 获取项目经理管理的某一状态项目节点的数量
     @PostMapping("/nodes/count")
     public Result getNodeCountByStatus( @RequestBody ProjectNode projectNode,HttpServletRequest request) {
-          Object employeeIdObj = request.getAttribute("employee_id");
+          Object employeeIdObj = request.getAttribute("employeeId");
 
          if (employeeIdObj == null) {
              return Result.error("employee_id is missing in the request");
@@ -150,7 +150,7 @@ public class ManagerController {
     @GetMapping("/nodes/startEndDate")
 public Result getProjectNodeStartEndDate(HttpServletRequest request) {
     // 获取 employee_id
-    Object employeeIdObj = request.getAttribute("employee_id");
+    Object employeeIdObj = request.getAttribute("employeeId");
 
     if (employeeIdObj == null) {
         return Result.error("employee_id is missing in the request");

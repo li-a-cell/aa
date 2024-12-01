@@ -45,7 +45,7 @@ public class ManagerFilter implements Filter {
             if (decodedJwt != null) {
                 log.info("JWT 解析成功，解码信息：{}", decodedJwt);
                 // 将解码后的信息存入请求属性
-                request.setAttribute("job_type", decodedJwt.get("job_type"));
+                request.setAttribute("jobType", decodedJwt.get("jobType"));
             }
         } catch (Exception e) {
             log.info("解析令牌失败，返回未登录错误信息");

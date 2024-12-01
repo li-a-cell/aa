@@ -84,8 +84,8 @@ void createProjectNodesByManagerId(
     @Update("UPDATE equipment SET status = #{status} WHERE equipment_id = #{equipmentId}")
     void updateEquipmentStatus(@Param("equipmentId") int equipmentId, @Param("status") String status);
    //设置设备节点
- @Update("UPDATE equipment SET node_id = #{node_id} WHERE equipment_id = #{equipmentId}")
-    void updateEquipmentnodeID(@Param("equipmentId") int equipmentId, @Param("node_id") int node_id);
+ @Update("UPDATE equipment SET node_id = #{nodeId} WHERE equipment_id = #{equipmentId}")
+    void updateEquipmentNodeID(@Param("equipmentId") int equipmentId, @Param("nodeId") int nodeId);
     // 根据节点ID和材料名称获取当前配置数量（用于后续判断等操作）
     @Select("SELECT mn.required_quantity FROM materialnode AS mn ,material AS m  " +
             "WHERE mn.node_id = #{nodeId} AND m.material_name = #{materialName} AND mn.material_id = m.material_id")
@@ -224,12 +224,12 @@ List<EquipmentDetails> getEquipmentDetailsByNodeId(@Param("nodeId") int nodeId);
     // 插入新的项目
     // 插入新的项目
     @Insert("INSERT INTO project (manager_id, project_name, project.planned_start_date, project.planned_end_date, description, site_id,budget,status,project_type) " +
-            "VALUES (#{managerId}, #{projectName}, #{startDate}, #{endDate}, #{projectDescription},  #{constructionSiteId},#{Budget},#{status},#{project_type} )")
+            "VALUES (#{managerId}, #{projectName}, #{startDate}, #{endDate}, #{projectDescription},  #{constructionSiteId},#{Budget},#{status},#{projectType} )")
     int createProject(@Param("managerId") int managerId, @Param("projectName") String projectName,
                       @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate,
                       @Param("projectDescription") String projectDescription, @Param("constructionSiteId") int constructionSiteId,
                       @Param("Budget") double Budget, @Param("status") String status,
-                      @Param("project_type") String project_type );
+                      @Param("projectType") String projectType );
 
 
     @Select("SELECT regulation_name FROM regulations ")
@@ -237,8 +237,8 @@ List<EquipmentDetails> getEquipmentDetailsByNodeId(@Param("nodeId") int nodeId);
 
     // 添加投标任务
     @Insert("INSERT INTO tender_task (project_id, tender_task_status,deadline) " +
-            "VALUES (#{project_id}, #{tender_task_status}, #{deadline})")
-    boolean addTenderTask(@Param("project_id") int project_id, @Param("tender_task_status") String tender_task_status, @Param("deadline") LocalDate deadline);
+            "VALUES (#{projectId}, #{tender_task_status}, #{deadline})")
+    boolean addTenderTask(@Param("projectId") int project_id, @Param("tenderTaskStatus") String tenderTaskStatus, @Param("deadline") LocalDate deadline);
 
 
     // 根据项目节点ID查找检查任务

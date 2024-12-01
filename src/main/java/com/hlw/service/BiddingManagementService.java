@@ -5,7 +5,7 @@ import com.hlw.dao.AdministratorMapper;
 import com.hlw.dao.BiddingManagementMapper;
 import com.hlw.dto.TenderTaskDto;
 import com.hlw.pojo.*;
-import com.hlw.pojo.ProjectBiddingRecordDto;
+import com.hlw.dto.ProjectBiddingRecordDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

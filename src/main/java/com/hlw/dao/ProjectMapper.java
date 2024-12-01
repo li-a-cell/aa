@@ -18,23 +18,23 @@ public interface ProjectMapper {
             "FROM project p " +
             "LEFT JOIN constructionsite cs ON p.site_id = cs.site_id " +
             "LEFT JOIN bidder b ON p.contractor_id = b.bidder_id " +
-            "WHERE p.manager_id = #{manager_id}")
+            "WHERE p.manager_id = #{managerId}")
     @Results({
-            @Result(property = "project_id", column = "project_id"),
-            @Result(property = "manager_id", column = "manager_id"),
-            @Result(property = "project_name", column = "project_name"),
-            @Result(property = "planned_start_date", column = "planned_start_date"),
-            @Result(property = "planned_end_date", column = "planned_end_date"),
-            @Result(property = "site_id", column = "site_id"),
-            @Result(property = "contractor_id", column = "contractor_id"),
+            @Result(property = "projectId", column = "project_id"),
+            @Result(property = "managerId", column = "manager_id"),
+            @Result(property = "projectName", column = "project_name"),
+            @Result(property = "plannedStartDate", column = "planned_start_date"),
+            @Result(property = "plannedEndDate", column = "planned_end_date"),
+            @Result(property = "siteId", column = "site_id"),
+            @Result(property = "contractorId", column = "contractor_id"),
             @Result(property = "budget", column = "budget"),
             @Result(property = "status", column = "status"),
             @Result(property = "description", column = "description"),
-            @Result(property = "project_type", column = "project_type"),
-            @Result(property = "site_name", column = "construction_site_name"),
-            @Result(property = "bidder_name", column = "bidder_name_result")
+            @Result(property = "projectType", column = "project_type"),
+            @Result(property = "siteName", column = "construction_site_name"),
+            @Result(property = "bidderName", column = "bidder_name_result")
     })
-    List<ProjectDto> findProjectsByManagerId(int manager_id);
+    List<ProjectDto> findProjectsByManagerId(int managerId);
 
     // 获取正在进行的项目
     @Select("SELECT p.project_id, p.manager_id, p.project_name, p.planned_start_date, p.planned_end_date, " +
@@ -43,23 +43,23 @@ public interface ProjectMapper {
             "FROM project p " +
             "LEFT JOIN constructionsite cs ON p.site_id = cs.site_id " +
             "LEFT JOIN bidder b ON p.contractor_id = b.bidder_id " +
-            "WHERE p.manager_id = #{manager_id} AND p.status IN ('待发布', '待招标', '施工中')")
+            "WHERE p.manager_id = #{managerId} AND p.status IN ('待发布', '待招标', '施工中')")
     @Results({
-            @Result(property = "project_id", column = "project_id"),
-            @Result(property = "manager_id", column = "manager_id"),
-            @Result(property = "project_name", column = "project_name"),
-            @Result(property = "planned_start_date", column = "planned_start_date"),
-            @Result(property = "planned_end_date", column = "planned_end_date"),
-            @Result(property = "site_id", column = "site_id"),
-            @Result(property = "contractor_id", column = "contractor_id"),
+            @Result(property = "projectId", column = "project_id"),
+            @Result(property = "managerId", column = "manager_id"),
+            @Result(property = "projectName", column = "project_name"),
+            @Result(property = "plannedStartDate", column = "planned_start_date"),
+            @Result(property = "plannedEndDate", column = "planned_end_date"),
+            @Result(property = "siteId", column = "site_id"),
+            @Result(property = "contractorId", column = "contractor_id"),
             @Result(property = "budget", column = "budget"),
             @Result(property = "status", column = "status"),
             @Result(property = "description", column = "description"),
-            @Result(property = "project_type", column = "project_type"),
-            @Result(property = "site_name", column = "construction_site_name"),
-            @Result(property = "bidder_name", column = "bidder_name_result")
+            @Result(property = "projectType", column = "project_type"),
+            @Result(property = "siteName", column = "construction_site_name"),
+            @Result(property = "bidderName", column = "bidder_name_result")
     })
-    List<ProjectDto> findOngoingProjectsByManagerId(int manager_id);
+    List<ProjectDto> findOngoingProjectsByManagerId(int managerId);
 
     // 获取已完成的项目
     @Select("SELECT p.project_id, p.manager_id, p.project_name, p.planned_start_date, p.planned_end_date, " +
@@ -68,31 +68,31 @@ public interface ProjectMapper {
             "FROM project p " +
             "LEFT JOIN constructionsite cs ON p.site_id = cs.site_id " +
             "LEFT JOIN bidder b ON p.contractor_id = b.bidder_id " +
-            "WHERE p.manager_id = #{manager_id} AND p.status = '已完成'")
+            "WHERE p.manager_id = #{managerId} AND p.status = '已完成'")
     @Results({
-            @Result(property = "project_id", column = "project_id"),
-            @Result(property = "manager_id", column = "manager_id"),
-            @Result(property = "project_name", column = "project_name"),
-            @Result(property = "planned_start_date", column = "planned_start_date"),
-            @Result(property = "planned_end_date", column = "planned_end_date"),
-            @Result(property = "site_id", column = "site_id"),
-            @Result(property = "contractor_id", column = "contractor_id"),
+            @Result(property = "projectId", column = "project_id"),
+            @Result(property = "managerId", column = "manager_id"),
+            @Result(property = "projectName", column = "project_name"),
+            @Result(property = "plannedStartDate", column = "planned_start_date"),
+            @Result(property = "plannedEndDate", column = "planned_end_date"),
+            @Result(property = "siteId", column = "site_id"),
+            @Result(property = "contractorId", column = "contractor_id"),
             @Result(property = "budget", column = "budget"),
             @Result(property = "status", column = "status"),
             @Result(property = "description", column = "description"),
-            @Result(property = "project_type", column = "project_type"),
-            @Result(property = "site_name", column = "construction_site_name"),
-            @Result(property = "bidder_name", column = "bidder_name_result")
+            @Result(property = "projectType", column = "project_type"),
+            @Result(property = "siteName", column = "construction_site_name"),
+            @Result(property = "bidderName", column = "bidder_name_result")
     })
 
-    List<ProjectDto> findCompletedProjectsByManagerId(int manager_id);
+    List<ProjectDto> findCompletedProjectsByManagerId(int managerId);
 
 
     // 获取指定状态的项目节点
     @Select("SELECT node_id, node_name, start_date, end_date, status, node_info " +
             "FROM projectnode " +
-            "WHERE project_id = #{project_id} AND status = #{status}")
-    List<ProjectNode> getProjectNodes(@Param("project_id") int project_id, ProjectNode.NodeStatus status);
+            "WHERE project_id = #{projectId} AND status = #{status}")
+    List<ProjectNode> getProjectNodes(@Param("projectId") int projectId, ProjectNode.NodeStatus status);
 
     @Select("SELECT COUNT(*) FROM project WHERE status=#{status}")
     int getProjectsNum(String status);
@@ -100,13 +100,13 @@ public interface ProjectMapper {
 
 
     // 按类型查询项目数量
-    @Select("SELECT COUNT(*) FROM project WHERE project_type=#{project_type}")
-    int getProjectsNumByType(String project_type);
+    @Select("SELECT COUNT(*) FROM project WHERE project_type=#{projectType}")
+    int getProjectsNumByType(String projectType);
 
 
     // 按类型查询项目金额
-    @Select("SELECT SUM(budget) FROM project WHERE project_type=#{project_type}")
-    double getProjectsCostNumByType(String project_type);
+    @Select("SELECT SUM(budget) FROM project WHERE project_type=#{projectType}")
+    double getProjectsCostNumByType(String projectType);
 
     @Select("SELECT * FROM project_details_view WHERE projectId = #{projectId}")
     ProjectDetailsView findProjectById(Integer projectId);
@@ -121,20 +121,20 @@ public interface ProjectMapper {
             "LEFT JOIN employee e ON p.manager_id =e.employee_id "
     )
     @Results({
-            @Result(property = "project_id", column = "project_id"),
-            @Result(property = "manager_id", column = "manager_id"),
-            @Result(property = "manager_name", column = "name"),
-            @Result(property = "project_name", column = "project_name"),
-            @Result(property = "planned_start_date", column = "planned_start_date"),
-            @Result(property = "planned_end_date", column = "planned_end_date"),
-            @Result(property = "site_id", column = "site_id"),
-            @Result(property = "contractor_id", column = "contractor_id"),
+            @Result(property = "projectId", column = "project_id"),
+            @Result(property = "managerId", column = "manager_id"),
+            @Result(property = "managerName", column = "name"),
+            @Result(property = "projectName", column = "project_name"),
+            @Result(property = "plannedStartDate", column = "planned_start_date"),
+            @Result(property = "plannedEndDate", column = "planned_end_date"),
+            @Result(property = "siteId", column = "site_id"),
+            @Result(property = "contractorId", column = "contractor_id"),
             @Result(property = "budget", column = "budget"),
             @Result(property = "status", column = "status"),
             @Result(property = "description", column = "description"),
-            @Result(property = "project_type", column = "project_type"),
-            @Result(property = "site_name", column = "construction_site_name"),
-            @Result(property = "bidder_name", column = "bidder_name_result")
+            @Result(property = "projectType", column = "project_type"),
+            @Result(property = "siteName", column = "construction_site_name"),
+            @Result(property = "bidderName", column = "bidder_name_result")
     })
     List<ProjectDto> findAllProjects();
 
@@ -149,20 +149,20 @@ public interface ProjectMapper {
             "LEFT JOIN employee e ON p.manager_id = e.employee_id " +
             "WHERE p.status = #{status}")  // 根据状态筛选项目
     @Results({
-            @Result(property = "project_id", column = "project_id"),
-            @Result(property = "manager_id", column = "manager_id"),
-            @Result(property = "project_name", column = "project_name"),
-            @Result(property = "planned_start_date", column = "planned_start_date"),
-            @Result(property = "planned_end_date", column = "planned_end_date"),
-            @Result(property = "site_id", column = "site_id"),
-            @Result(property = "contractor_id", column = "contractor_id"),
+            @Result(property = "projectId", column = "project_id"),
+            @Result(property = "managerId", column = "manager_id"),
+            @Result(property = "projectName", column = "project_name"),
+            @Result(property = "plannedStartDate", column = "planned_start_date"),
+            @Result(property = "plannedEndDate", column = "planned_end_date"),
+            @Result(property = "siteId", column = "site_id"),
+            @Result(property = "contractorId", column = "contractor_id"),
             @Result(property = "budget", column = "budget"),
             @Result(property = "status", column = "status"),
             @Result(property = "description", column = "description"),
-            @Result(property = "project_type", column = "project_type"),
-            @Result(property = "site_name", column = "construction_site_name"),
-            @Result(property = "bidder_name", column = "bidder_name_result"),
-            @Result(property = "manager_name", column = "manager_name")
+            @Result(property = "projectType", column = "project_type"),
+            @Result(property = "siteName", column = "construction_site_name"),
+            @Result(property = "bidderName", column = "bidder_name_result"),
+            @Result(property = "managerName", column = "manager_name")
     })
     List<ProjectDto> findProjectsByStatus(@Param("status") String status); // 方法参数传入状态
 }

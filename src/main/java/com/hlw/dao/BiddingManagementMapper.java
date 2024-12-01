@@ -16,7 +16,7 @@ public interface BiddingManagementMapper {
     //
     @Insert("INSERT INTO tenderrecord (project_id, tenderer_id, request_date, bidder_id) " +
             "VALUES (#{projectId}, #{tendererId}, #{requestDate}, #{bidderId})")
-    void addTenderRecord3(@Param("projectId") int projectId,
+    void addTenderRecord(@Param("projectId") int projectId,
                          @Param("tendererId") int tendererId,
 
                          @Param("requestDate") LocalDate requestDate,
@@ -46,6 +46,7 @@ public interface BiddingManagementMapper {
             "FROM tender_task tt " +
             "JOIN project p ON tt.project_id = p.project_id " )
     List<TenderTaskDto> getTenderTaskWithProjectName();
+
     @Update("UPDATE project SET status = '待招标' WHERE project_id = #{projectId}")
     void updateProjectStatusToPendingTender(@Param("projectId") int projectId);
 
@@ -61,13 +62,13 @@ public interface BiddingManagementMapper {
             "LEFT JOIN bidder b ON pbr.bidder_id = b.bidder_id " +
             "WHERE pbr.project_id = #{projectId}")
     @Results({
-            @Result(property = "record_id", column = "record_id"),
-            @Result(property = "project_id", column = "project_id"),
-            @Result(property = "project_name", column = "project_name"),
-            @Result(property = "bidder_id", column = "bidder_id"),
-            @Result(property = "bidder_name", column = "bidder_name"),
-            @Result(property = "bidding_price", column = "bidding_price"),
-            @Result(property = "bidding_time", column = "bidding_time")
+            @Result(property = "recordId", column = "record_id"),
+            @Result(property = "projectId", column = "project_id"),
+            @Result(property = "projectName", column = "project_name"),
+            @Result(property = "bidderId", column = "bidder_id"),
+            @Result(property = "bidderName", column = "bidder_name"),
+            @Result(property = "biddingPrice", column = "bidding_price"),
+            @Result(property = "biddingTime", column = "bidding_time")
     })
     List<ProjectBiddingRecordDto> findBiddingRecordsByProjectId(@Param("projectId") int projectId);
 
@@ -77,13 +78,13 @@ public interface BiddingManagementMapper {
 
     // 添加投标人
     @Insert("INSERT INTO bidder (account, password, name, phone_number, company_name, status) " +
-            "VALUES (#{account}, #{password}, #{name}, #{phone_number}, #{company_name}, #{status})")
+            "VALUES (#{account}, #{password}, #{name}, #{phoneNumber}, #{companyName}, #{status})")
     void addBidder(Bidder bidder);
 
     // 更新投标人信息
     @Update("UPDATE bidder SET account = #{account}, password = #{password}, name = #{name}, " +
-            "phone_number = #{phone_number}, company_name = #{company_name}, status = #{status} " +
-            "WHERE bidder_id = #{bidder_id}")
+            "phone_number = #{phoneNumber}, company_name = #{companyName}, status = #{status} " +
+            "WHERE bidder_id = #{bidderId}")
     void updateBidder(Bidder bidder);
 
     // 删除投标人

@@ -13,6 +13,6 @@ public class EmpService {
     private EmpMapper empMapper;
 
     public int GetNameByID(String name){
-       return empMapper.findidByName(name);
+       return empMapper.findIdByName(name);
     }
 }

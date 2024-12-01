@@ -1,11 +1,9 @@
-
 package com.hlw.dto;
-
 import com.hlw.pojo.TenderTask;
-import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDate;
-
+@Data
 public class TenderTaskDto {
 
     private Integer tendTaskId;

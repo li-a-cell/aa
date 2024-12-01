@@ -15,27 +15,27 @@ import java.util.List;
 public class ProjectService {
 
     @Autowired
-    private ProjectMapper projectmapper;
+    private ProjectMapper projectMapper;
 
     // 判断员工是否是项目经理，并返回他管理的项目
     public boolean isProjectManager(int employeeId) {
-        List<ProjectDto> projects = projectmapper.findProjectsByManagerId(employeeId);
+        List<ProjectDto> projects = projectMapper.findProjectsByManagerId(employeeId);
         return !projects.isEmpty();
     }
 
     // 获取某个项目经理管理的所有项目
     public List<ProjectDto> getProjectsByManagerId(int employeeId) {
-        return projectmapper.findProjectsByManagerId(employeeId);
+        return projectMapper.findProjectsByManagerId(employeeId);
     }
 
     // 获取某个项目经理管理的所有项目，根据状态过滤
     public List<ProjectDto> getProjectsByStatus(int employeeId, String status) {
         if ("ongoing".equalsIgnoreCase(status)) {
             // 正在进行的项目
-            return projectmapper.findOngoingProjectsByManagerId(employeeId);
+            return projectMapper.findOngoingProjectsByManagerId(employeeId);
         } else if ("completed".equalsIgnoreCase(status)) {
             // 已完成的项目
-            return projectmapper.findCompletedProjectsByManagerId(employeeId);
+            return projectMapper.findCompletedProjectsByManagerId(employeeId);
         } else {
             throw new IllegalArgumentException("Invalid status value: " + status);
         }
@@ -43,32 +43,32 @@ public class ProjectService {
 
     // 获取某个项目节点
     public List<ProjectNode> getProjectNodes(int projectId, ProjectNode.NodeStatus status) {
-        return projectmapper.getProjectNodes(projectId,status);
+        return projectMapper.getProjectNodes(projectId,status);
     }
 
     public int getProjectsNum(String status) {
-        return projectmapper.getProjectsNum(status);
+        return projectMapper.getProjectsNum(status);
     }
 
     public List<ProjectDto> getAllProjects() {
-        return projectmapper.findAllProjects();
+        return projectMapper.findAllProjects();
     }
 
     // 按类型查询项目数量
-    public int getProjectsNumByType(String project_type) {
-        return projectmapper.getProjectsNumByType(project_type);
+    public int getProjectsNumByType(String projectType) {
+        return projectMapper.getProjectsNumByType(projectType);
     }
     // 按类型查询项目金额
-    public double getProjectsCostNumByType(String project_type) {
-        return projectmapper.getProjectsCostNumByType(project_type);
+    public double getProjectsCostNumByType(String projectType) {
+        return projectMapper.getProjectsCostNumByType(projectType);
     }
 
     public ProjectDetailsView findProjectById(Integer projectId) {
-        return projectmapper.findProjectById(projectId);
+        return projectMapper.findProjectById(projectId);
     }
 
 
     public List<ProjectDto> getProjectsByStatus( String status) {
-        return projectmapper.findProjectsByStatus(status);
+        return projectMapper.findProjectsByStatus(status);
     }
 }

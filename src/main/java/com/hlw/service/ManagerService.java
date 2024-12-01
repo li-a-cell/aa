@@ -102,7 +102,7 @@ public class ManagerService {
 
             // 更新设备状态为使用中
             managerMapper.updateEquipmentStatus(equipmentId, "使用中");
-             managerMapper.updateEquipmentnodeID(equipmentId, nodeId);
+             managerMapper.updateEquipmentNodeID(equipmentId, nodeId);
             return Result.success("设备已成功配置到节点。");
         } catch (Exception e) {
             return Result.error("设备配置失败: " + e.getMessage());
@@ -323,10 +323,10 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
         }
     }
 
-    public Result getInspectionTask(String record_name) {
+    public Result getInspectionTask(String recordName) {
         try {
             // 调用 DAO 层方法查询检查任务
-            InspectionTask inspectionTask = managerMapper.getInspectionTaskByName(record_name);
+            InspectionTask inspectionTask = managerMapper.getInspectionTaskByName(recordName);
             // 如果检查任务不存在，返回错误信息
             if (inspectionTask == null) {
                 return Result.error("检查任务不存在");
@@ -354,7 +354,7 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
     }
 
     public Result createProject(int managerId, String projectName, String startDate,
-                                String endDate, String projectDescription, String constructionSiteName,String budget,String status,String project_type)
+                                String endDate, String projectDescription, String constructionSiteName,String budget,String status,String projectType)
     {
 
 
@@ -382,7 +382,7 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
 
 
         // 创建项目
-        int projectId = managerMapper.createProject(managerId, projectName, start, end, projectDescription, validSiteId,Budget,status,project_type );
+        int projectId = managerMapper.createProject(managerId, projectName, start, end, projectDescription, validSiteId,Budget,status,projectType );
 
         return projectId > 0 ? Result.success("项目创建成功") : Result.error("项目创建失败");
     }

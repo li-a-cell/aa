@@ -21,9 +21,9 @@ public class AdministratorController {
     @Autowired
     private AdministratorService administratorService;
     // 获取待招标项目数量
-    @GetMapping ("/biddingnum")
+    @GetMapping ("/biddingNum")
     public Result getBiddingsNum(HttpServletRequest request){
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
 
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
@@ -41,9 +41,9 @@ public class AdministratorController {
     // 获取员工数量
     @GetMapping("/employee")
     public Result getEmployeeNum(HttpServletRequest request){
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
         if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
+            return Result.error("employeeId is missing in the request");
         }
         int employeeId;
         try {
@@ -55,11 +55,11 @@ public class AdministratorController {
     }
 
     // 获取新增员工数量
-    @PostMapping("/newemployee")
+    @PostMapping("/newEmployee")
     public Result getNewEmployeeNum(@RequestBody String employee, HttpServletRequest request){
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
         if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
+            return Result.error("employeeId is missing in the request");
         }
         int employeeId;
         try {
@@ -74,11 +74,11 @@ public class AdministratorController {
         return Result.success(num);
     }
 
-    @PostMapping("/updateprojects")
+    @PostMapping("/updateProjects")
     public Result updateProjects(@RequestBody String projects, HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
         if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
+            return Result.error("employeeId is missing in the request");
         }
         int employeeId;
         try {
@@ -87,32 +87,32 @@ public class AdministratorController {
             return Result.error("Invalid Employee ID format");
         }
         JsonUtils jsonUtils = new JsonUtils();
-        String project_id = jsonUtils.getValueFromJson(projects, "project_id");
-        String project_name = jsonUtils.getValueFromJson(projects, "project_name");
-        String manger_name = jsonUtils.getValueFromJson(projects, "manager_name");
-        String start_date = jsonUtils.getValueFromJson(projects, "planned_start_date");
-        String end_date = jsonUtils.getValueFromJson(projects, "planned_end_date");
+        String projectId = jsonUtils.getValueFromJson(projects, "projectId");
+        String projectName = jsonUtils.getValueFromJson(projects, "projectName");
+        String mangerName = jsonUtils.getValueFromJson(projects, "managerName");
+        String startDate = jsonUtils.getValueFromJson(projects, "plannedStartDate");
+        String endDate = jsonUtils.getValueFromJson(projects, "plannedEndDate");
         String budget = jsonUtils.getValueFromJson(projects, "budget");
         String status = jsonUtils.getValueFromJson(projects, "status");
         String description = jsonUtils.getValueFromJson(projects, "description");
-        String project_type = jsonUtils.getValueFromJson(projects, "project_type");
+        String projectType = jsonUtils.getValueFromJson(projects, "projectType");
         // 定义日期格式
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 // 解析字符串为 LocalDate
 
-        LocalDate localstartDate = LocalDate.parse(start_date, formatter);
+        LocalDate localstartDate = LocalDate.parse(startDate, formatter);
 
-        LocalDate localendDate = LocalDate.parse(end_date, formatter);
-        administratorService.updateProjects(Integer.parseInt(project_id), project_name, manger_name, localstartDate, localendDate, Double.parseDouble(budget), status, description, project_type);
+        LocalDate localendDate = LocalDate.parse(endDate, formatter);
+        administratorService.updateProjects(Integer.parseInt(projectId), projectName, mangerName, localstartDate, localendDate, Double.parseDouble(budget), status, description, projectType);
         return Result.success();
     }
 
-    @PostMapping("/deleteproject")
+    @PostMapping("/deleteProject")
     public Result deleteProject(@RequestBody String project, HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
         if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
+            return Result.error("employeeId is missing in the request");
         }
         int employeeId;
         try {
@@ -121,17 +121,17 @@ public class AdministratorController {
             return Result.error("Invalid Employee ID format");
         }
         JsonUtils jsonUtils = new JsonUtils();
-        String project_id = jsonUtils.getValueFromJson(project, "project_id");
-        administratorService.deleteProject(Integer.parseInt(project_id));
+        String projectId = jsonUtils.getValueFromJson(project, "projectId");
+        administratorService.deleteProject(Integer.parseInt(projectId));
         return Result.success();
     }
 
     //获取新员工数量
-    @PostMapping("/newtender")
+    @PostMapping("/newTender")
     public Result getNewTenderNum(@RequestBody String employee, HttpServletRequest request){
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
         if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
+            return Result.error("employeeId is missing in the request");
         }
         int employeeId;
         try {
@@ -146,7 +146,7 @@ public class AdministratorController {
         return Result.success(num);
     }
     //更新员工信息
-    @PutMapping("/updateemployee/{employeeId}")
+    @PutMapping("/updateEmployee/{employeeId}")
     public Result updateEmployee(@PathVariable("employeeId") int employeeId, @RequestBody User updatedEmployee) {
         boolean success = administratorService.updateEmployeeInfo(employeeId, updatedEmployee);
         if (success) {
@@ -157,7 +157,7 @@ public class AdministratorController {
     }
 
     // 删除员工信息
-    @DeleteMapping("/deleteemployee/{employeeId}")
+    @DeleteMapping("/deleteEmployee/{employeeId}")
     public Result deleteEmployee(@PathVariable("employeeId") int employeeId) {
         boolean success = administratorService.deleteEmployeeById(employeeId);
         if (success) {
@@ -168,7 +168,7 @@ public class AdministratorController {
     }
 
     // 添加新员工
-    @PostMapping("/createemployee")
+    @PostMapping("/createEmployee")
     public Result addEmployee(@RequestBody User newEmployee) {
         boolean success = administratorService.addEmployee(newEmployee);
         if (success) {
@@ -189,18 +189,18 @@ public class AdministratorController {
     }
 
     // 添加材料入库
-    @PostMapping("/materialstorage")
+    @PostMapping("/materialStorage")
     public Result addMaterialStorage(@RequestBody String material ,HttpServletRequest request) {
         JsonUtils jsonUtils = new JsonUtils();
-        String material_name = jsonUtils.getValueFromJson(material, "material_name");
+        String materialName = jsonUtils.getValueFromJson(material, "materialName");
         String quantity = jsonUtils.getValueFromJson(material, "quantity");
-        String entry_date = jsonUtils.getValueFromJson(material, "entry_date");
-        String supplier_name = jsonUtils.getValueFromJson(material, "supplier_name");
+        String entryDate = jsonUtils.getValueFromJson(material, "entryDate");
+        String supplierName = jsonUtils.getValueFromJson(material, "supplierName");
         String price = jsonUtils.getValueFromJson(material, "price");
         String remarks = jsonUtils.getValueFromJson(material, "remarks");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate localDate = LocalDate.parse(entry_date, formatter);
-        return administratorService.addMaterialStorage(material_name, Integer.parseInt(quantity), localDate, supplier_name, Integer.parseInt(price), remarks);
+        LocalDate localDate = LocalDate.parse(entryDate, formatter);
+        return administratorService.addMaterialStorage(materialName, Integer.parseInt(quantity), localDate, supplierName, Integer.parseInt(price), remarks);
 
     }
 

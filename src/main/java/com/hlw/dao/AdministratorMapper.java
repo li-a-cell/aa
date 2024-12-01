@@ -13,7 +13,7 @@ public interface AdministratorMapper {
 
     // 获取待招标项目数量
     @Select("SELECT COUNT(*) FROM project WHERE status='待招标'")
-    int getBiddingsNum();
+    int getBiddingNum();
 
 
     // 获取员工数量
@@ -53,13 +53,13 @@ public interface AdministratorMapper {
     void deleteProject(int projectId);
 
     // 获取指定状态的节点数量
-    @Select("SELECT COUNT(*) FROM projectnode WHERE status = #{status} AND project_id=#{project_id}")
-    int getNodeCountByStatus(@Param("project_id") int project_id, @Param("status") ProjectNode.NodeStatus status);
+    @Select("SELECT COUNT(*) FROM projectnode WHERE status = #{status} AND project_id=#{projectId}")
+    int getNodeCountByStatus(@Param("projectId") int projectId, @Param("status") ProjectNode.NodeStatus status);
 
     @Select("SELECT COUNT(*) FROM tenderrecord WHERE YEAR(request_date)=#{year} AND MONTH(request_date)=#{month}")
     int getNewTenderNum(int year, int month);
     // 更新员工信息
-    @Update("UPDATE employee SET account=#{updatedEmployee.account}, name=#{updatedEmployee.name}, job_type=#{updatedEmployee.job_type}, salary=#{updatedEmployee.salary}, hire_date=#{updatedEmployee.hire_date}, phone_number=#{updatedEmployee.phone_number}, password=#{updatedEmployee.password}, gender=#{updatedEmployee.gender}, birth_date=#{updatedEmployee.birth_date}, address=#{updatedEmployee.address} WHERE employee_id=#{employeeId}")
+    @Update("UPDATE employee SET account=#{updatedEmployee.account}, name=#{updatedEmployee.name}, job_type=#{updatedEmployee.jobType}, salary=#{updatedEmployee.salary}, hire_date=#{updatedEmployee.hireDate}, phone_number=#{updatedEmployee.phoneNumber}, password=#{updatedEmployee.password}, gender=#{updatedEmployee.gender}, birth_date=#{updatedEmployee.birthDate}, address=#{updatedEmployee.address} WHERE employee_id=#{employeeId}")
     boolean updateEmployeeInfo(@Param("employeeId") int employeeId, @Param("updatedEmployee") User updatedEmployee);
 
     // 删除员工
@@ -68,7 +68,7 @@ public interface AdministratorMapper {
 
     // 添加新员工
     @Insert("INSERT INTO employee (account, name, job_type, salary, hire_date, phone_number, password, gender, birth_date, address) " +
-            "VALUES (#{newEmployee.account}, #{newEmployee.name}, #{newEmployee.job_type}, #{newEmployee.salary}, #{newEmployee.hire_date}, #{newEmployee.password}, #{newEmployee.profile_picture}, #{newEmployee.gender}, #{newEmployee.birth_date}, #{newEmployee.address})")
+            "VALUES (#{newEmployee.account}, #{newEmployee.name}, #{newEmployee.jobType}, #{newEmployee.salary}, #{newEmployee.hireDate}, #{newEmployee.password}, #{newEmployee.profilePicture}, #{newEmployee.gender}, #{newEmployee.birthDate}, #{newEmployee.address})")
     boolean addEmployee(@Param("newEmployee") User newEmployee);
     // 获取所有员工信息
     @Select("SELECT * FROM employee")

@@ -29,6 +29,6 @@ public class LoginService {
         }
     }
     public User GetPerson(int employeeID){
-       return empMapper.findByemployeeID( employeeID);
+       return empMapper.findByEmployeeID( employeeID);
     }
 }

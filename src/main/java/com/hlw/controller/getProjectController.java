@@ -14,16 +14,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/project")
-public class GetprojectController {
+public class getProjectController {
 
     @Autowired
     private ProjectService projectservice;
 
 
     // 获取正在进行的项目
-    @GetMapping("/ongoing")
+    @GetMapping("/onGoing")
     public Result getOngoingProjects(HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
 
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
@@ -37,7 +37,7 @@ public class GetprojectController {
         }
 
         if (projectservice.isProjectManager(employeeId)) {
-            List<ProjectDto> projects = projectservice.getProjectsByStatus(employeeId, "ongoing");
+            List<ProjectDto> projects = projectservice.getProjectsByStatus(employeeId, "onGoing");
             return Result.success(projects);
         } else {
             return Result.error("你不是项目经理");
@@ -47,7 +47,7 @@ public class GetprojectController {
     // 获取已完成的项目
     @GetMapping("/completed")
     public Result getCompletedProjects(HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
 
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
@@ -71,7 +71,7 @@ public class GetprojectController {
     // 获取项目的对应状态节点的详细信息
     @PostMapping("/nodes")
     public Result getProjectNodes(@RequestBody ProjectNode projectNode, HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
 
          if (employeeIdObj == null) {
              return Result.error("employee_id is missing in the request");
@@ -88,9 +88,9 @@ public class GetprojectController {
         return Result.success(projectNodes);
     }
     //获取某一状态项目的数量
-    @PostMapping("/projectnum")
+    @PostMapping("/projectNum")
     public Result getProjectsNum(@RequestBody ProjectDto projectDto, HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
         }
@@ -105,9 +105,9 @@ public class GetprojectController {
     }
 
     //更据项目类型返回项目数量
-    @PostMapping("/numbytype")
+    @PostMapping("/numByType")
     public Result getProjectsNumByType(@RequestBody ProjectDto projectDto, HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
         }
@@ -121,9 +121,9 @@ public class GetprojectController {
         return Result.success(num);
     }
     // 按类型查询项目金额
-    @PostMapping("/costbytype")
+    @PostMapping("/costByType")
     public Result getProjectsCostNumByType(@RequestBody ProjectDto projectDto, HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
         }
@@ -139,7 +139,7 @@ public class GetprojectController {
     // 获取所有项目
     @GetMapping("/all")
     public Result getAllProjects(HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
         }
@@ -154,7 +154,7 @@ public class GetprojectController {
     }
     @PostMapping("/status")
     public Result getProjectsByStatus(@RequestBody ProjectDto projectDto,HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
 
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");

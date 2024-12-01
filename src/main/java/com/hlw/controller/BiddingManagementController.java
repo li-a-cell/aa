@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/biddingmanagent")
+@RequestMapping("/biddingManagement")
 public class BiddingManagementController {
     @Autowired
     private BiddingManagementService biddingManagementService;
@@ -20,7 +20,7 @@ public class BiddingManagementController {
     @PostMapping("/tenderRecord")
     public Result addTenderRecord(@RequestBody TenderRecord tenderRecord,HttpServletRequest request) {
         // 调用 Service 层的方法
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
 
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
@@ -38,9 +38,9 @@ public class BiddingManagementController {
         return Result.success("Tender record added successfully");
     }
     // 获取投标任务
-    @GetMapping("/gettendertask")
+    @GetMapping("/getTenderTask")
     public Result getTenderTask(HttpServletRequest request){
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
 
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
@@ -55,9 +55,9 @@ public class BiddingManagementController {
         return Result.success(biddingManagementService.getTenderTask());
     }
     // 获取所有投标记录
-    @GetMapping("/getbiddingrecord")
+    @GetMapping("/getBiddingRecord")
     public Result  getAllBiddingRecords(HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
 
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
@@ -74,7 +74,7 @@ public class BiddingManagementController {
     // 发布招标操作
     @PostMapping("/publishTender")
     public Result publishTender(@RequestBody String tenderRecord, HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
 
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
@@ -88,13 +88,13 @@ public class BiddingManagementController {
         }
 
         JsonUtils jsonUtils = new JsonUtils();
-        String projectId = jsonUtils.getValueFromJson(tenderRecord, "project_id");
+        String projectId = jsonUtils.getValueFromJson(tenderRecord, "projectId");
         biddingManagementService.publishTender(Integer.parseInt(projectId));
         return Result.success("Tender published successfully");
     }
     @PostMapping("/getProjectBiddingRecords")
     Result getProjectBiddingRecords(@RequestBody Project project, HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
         }
@@ -110,7 +110,7 @@ public class BiddingManagementController {
     // 获取所有投标人信息
     @GetMapping("/getAllBidders")
     public Result getAllBidders(HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
 
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
@@ -130,7 +130,7 @@ public class BiddingManagementController {
     // 添加投标人
     @PostMapping("/addBidder")
     public Result addBidder(@RequestBody Bidder bidder, HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
 
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
@@ -150,7 +150,7 @@ public class BiddingManagementController {
     // 更新投标人信息
     @PutMapping("/updateBidder")
     public Result updateBidder(@RequestBody Bidder bidder, HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
 
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
@@ -170,7 +170,7 @@ public class BiddingManagementController {
     // 删除投标人
     @DeleteMapping("/deleteBidder/{bidderId}")
     public Result deleteBidder(@PathVariable("bidderId") int bidderId, HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employee_id");
+        Object employeeIdObj = request.getAttribute("employeeId");
 
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");

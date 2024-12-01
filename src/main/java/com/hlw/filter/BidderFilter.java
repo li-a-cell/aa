@@ -45,8 +45,8 @@ public class BidderFilter  implements Filter {
             if (decodedJwt != null) {
                 log.info("JWT 解析成功，解码信息：{}", decodedJwt);
                 // 将解码后的信息存入请求属性
-                request.setAttribute("job_type", decodedJwt.get("job_type"));
-                if(decodedJwt.get("job_type")==null||(decodedJwt.get("job_type") !="投标人"&&decodedJwt.get("job_type") !="后台管理员")) {
+                request.setAttribute("jobType", decodedJwt.get("jobType"));
+                if(decodedJwt.get("jobType")==null||(decodedJwt.get("jobType") !="投标人"&&decodedJwt.get("jobType") !="后台管理员")) {
                     return ;
                 }
             }

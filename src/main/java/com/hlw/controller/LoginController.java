@@ -32,8 +32,8 @@ public class LoginController {
             System.out.println("ok");
             User user = empMapper.findByAccount(User.getAccount());
             Map<String, Object> claims=new HashMap<>();
-            claims.put("employee_id",user.getEmployeeId());
-            claims.put("job_type",user.getPassword());
+            claims.put("employeeId",user.getEmployeeId());
+            claims.put("jobType",user.getPassword());
             String jwt=JwtUtils.generateJwt(claims);
            return Result.success(jwt);
 
@@ -42,13 +42,13 @@ public class LoginController {
         }
     }
 
-    @PostMapping("/bidderlogin")
+    @PostMapping("/bidderLogin")
     public Result login(@RequestBody Bidder bidder) {
         Bidder loggedInBidder = bidderService.login(bidder.getAccount(), bidder.getPassword());
         if (loggedInBidder!= null) {
             Map<String, Object> claims=new HashMap<>();
-            claims.put("employee_id",bidder.getBidderId());
-            claims.put("job_type","投标人");
+            claims.put("employeeId",bidder.getBidderId());
+            claims.put("jobType","投标人");
             String jwt=JwtUtils.generateJwt(claims);
             return Result.success(jwt);
         } else {
