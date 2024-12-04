@@ -13,19 +13,22 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * 管理员过滤器，用于验证请求中的 Token
+ */
 @Slf4j
 @WebFilter(urlPatterns = "/manage")
 public class ManagerFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
+        // 将 ServletRequest 和 ServletResponse 转换为 HttpServletRequest 和 HttpServletResponse
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         // 获取请求的 URL
         String url = request.getRequestURL().toString();
         log.info("请求的url：{}", url);
-
 
         // 获取请求头中的 Token
         String jwt = request.getHeader("token");

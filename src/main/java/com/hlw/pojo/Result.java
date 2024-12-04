@@ -9,13 +9,15 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Result {
-    //    public Result() {
-    //    }
-    //    public Result(Integer code, String msg, Object data) {
-    //        this.code = code;
-    //        this.msg = msg;
-    //        this.data = data;
-    //    }
+    /**
+     * public Result() {
+     * }
+     * public Result(Integer code, String msg, Object data) {
+     * this.code = code;
+     * this.msg = msg;
+     * this.data = data;
+     * }
+     */
     private Integer code ;//1 成功 , 0 失败
     private String msg; //提示信息
     private Object data; //数据 date

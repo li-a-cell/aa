@@ -17,7 +17,9 @@ public class EquipmentDetails {
     private String equipmentModel;  // 设备型号
     private String remarks;         // 备注
 
-    // 如果需要将设备照片返回为 Base64 格式（前端方便显示）
+    /**
+     * 如果需要将设备照片返回为 Base64 格式（前端方便显示）
+     */
     public String getEquipmentPhotoBase64() {
         return equipmentPhoto != null ? Base64.getEncoder().encodeToString(equipmentPhoto) : null;
     }

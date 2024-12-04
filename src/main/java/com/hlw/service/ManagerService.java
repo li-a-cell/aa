@@ -23,18 +23,26 @@ public class ManagerService {
     @Autowired
     private ManagerMapper managerMapper;
 
-    // 方法：创建项目节点
-    public Result createProjectNode(int ProjectId, Integer parentNodeId, String nodeName, LocalDate startDate, LocalDate endDate, String nodeInfo) {
+    /**
+     * 方法：创建项目节点
+     *
+     * @param projectId    项目ID
+     * @param parentNodeId 父节点ID，如果为null则表示是顶级节点
+     * @param nodeName     节点名称
+     * @param startDate    节点开始日期
+     * @param endDate      节点结束日期
+     * @param nodeInfo     节点信息
+     * @return 返回创建结果，包括成功或错误信息
+     */
+    public Result createProjectNode(int projectId, Integer parentNodeId, String nodeName, LocalDate startDate, LocalDate endDate, String nodeInfo) {
         try {
-            System.out.println(ProjectId);
-            if(parentNodeId!=null){
+            System.out.println(projectId);
+            if (parentNodeId != null) {
                 // 调用 Mapper 层方法，插入数据
-                managerMapper.createProjectNodesByManagerId(ProjectId, parentNodeId, nodeName, startDate, endDate, nodeInfo);
-            }
-            else {
-
+                managerMapper.createProjectNodesByManagerId(projectId, parentNodeId, nodeName, startDate, endDate, nodeInfo);
+            } else {
                 // 调用 Mapper 层方法，插入数据
-                managerMapper.createParentProjectNodesByManagerId(ProjectId,  nodeName, startDate, endDate, nodeInfo);
+                managerMapper.createParentProjectNodesByManagerId(projectId, nodeName, startDate, endDate, nodeInfo);
             }
             return Result.success("Project node created successfully.");
         } catch (Exception e) {
@@ -42,21 +50,35 @@ public class ManagerService {
         }
     }
 
-     // 获取指定状态的顶层节点（父节点为空）
+    /**
+     * 获取指定状态的顶层节点（父节点为空）
+     *
+     * @param managerId 项目经理ID
+     * @param status    节点状态
+     * @return 返回符合条件的项目节点列表
+     */
     public List<ProjectNode> getTopLevelNodesByStatus(int managerId, ProjectNode.NodeStatus status) {
         return managerMapper.getTopLevelNodesByStatus(managerId, status);
     }
 
-    // 根据父节点 ID 获取其子节点
+    /**
+     * 根据父节点 ID 获取其子节点
+     *
+     * @param parentNodeId 父节点ID
+     * @return 返回子节点列表
+     */
     public List<ProjectNode> getChildNodesByParentNodeId(int parentNodeId) {
         return managerMapper.getChildNodesByParentNodeId(parentNodeId);
     }
 
-
-
-
-
-    // 方法：配置节点所需材料
+    /**
+     * 方法：配置节点所需材料
+     *
+     * @param nodeId           节点ID
+     * @param materialName     材料名称
+     * @param requiredQuantity 所需数量
+     * @return 返回配置结果，包括成功或错误信息
+     */
     public Result configureMaterialForNode(int nodeId, String materialName, int requiredQuantity) {
         try {
             // 查询当前材料的库存
@@ -67,28 +89,27 @@ public class ManagerService {
                 return Result.error("库存不足，无法配置该材料");
             }
 
-            // 这里假设通过 materialName 能够找到对应的 materialId，这里需要进一步处理
-             // 通过材料名称查询材料ID
+            // 通过材料名称查询材料ID
             int materialId = managerMapper.getMaterialIdByName(materialName);
-
 
             // 插入节点材料配置
             managerMapper.addMaterialToNode(nodeId, materialId, requiredQuantity);
 
-             managerMapper.updateMaterial(materialName,currentStock-requiredQuantity);
+            // 更新材料库存
+            managerMapper.updateMaterial(materialName, currentStock - requiredQuantity);
             return Result.success("材料配置成功");
         } catch (Exception e) {
             return Result.error("材料配置失败: " + e.getMessage());
         }
     }
 
-
-
-
-
-
-
-    // 为节点配置设备的方法
+    /**
+     * 为节点配置设备的方法
+     *
+     * @param nodeId        节点ID
+     * @param equipmentName 设备名称
+     * @return 返回配置结果，包括成功或错误信息
+     */
     public Result configureEquipmentForNode(int nodeId, String equipmentName) {
         try {
             // 根据设备名称获取设备 ID
@@ -102,17 +123,22 @@ public class ManagerService {
 
             // 更新设备状态为使用中
             managerMapper.updateEquipmentStatus(equipmentId, "使用中");
-             managerMapper.updateEquipmentNodeID(equipmentId, nodeId);
+            // 更新设备的节点ID
+            managerMapper.updateEquipmentNodeID(equipmentId, nodeId);
             return Result.success("设备已成功配置到节点。");
         } catch (Exception e) {
             return Result.error("设备配置失败: " + e.getMessage());
         }
     }
 
-
-
-
-    // 方法：根据材料名称修改节点材料数量，并更新相应材料的库存量
+    /**
+     * 方法：根据材料名称修改节点材料数量，并更新相应材料的库存量
+     *
+     * @param nodeId       节点ID
+     * @param materialName 材料名称
+     * @param newQuantity  新的数量
+     * @return 返回更新结果，包括成功或错误信息
+     */
     public Result updateMaterialQuantityForNodeByName(int nodeId, String materialName, int newQuantity) {
         try {
             // 获取当前节点该材料的配置数量
@@ -124,7 +150,7 @@ public class ManagerService {
             // 获取当前材料的库存
             int currentStock = managerMapper.getCurrentStockQuantityByName(materialName);
             // 计算库存变化量（当前数量 - 新数量），正数表示增加库存，负数表示减少库存
-            int stockChange = currentQuantity-newQuantity ;
+            int stockChange = currentQuantity - newQuantity;
 
             // 更新库存（这里要确保库存更新后不能为负数，可添加更严谨的逻辑判断）
             if (currentStock + stockChange < 0) {
@@ -141,9 +167,14 @@ public class ManagerService {
         }
     }
 
-
-
-     // 方法：将项目节点的某台设备状态改为指定状态（未使用，出现问题，已使用）
+    /**
+     * 方法：将项目节点的某台设备状态改为指定状态（未使用，出现问题，已使用）
+     *
+     * @param nodeId        节点ID
+     * @param equipmentName 设备名称
+     * @param status        新的状态
+     * @return 返回更新结果，包括成功或错误信息
+     */
     public Result updateEquipmentStatus(int nodeId, String equipmentName, String status) {
         try {
             // 根据设备名称获取设备 ID
@@ -164,7 +195,12 @@ public class ManagerService {
         }
     }
 
-    // 方法：将指定项目节点下所有在使用的设备状态改为 '未使用'
+    /**
+     * 方法：将指定项目节点下所有在使用的设备状态改为 '未使用'
+     *
+     * @param nodeId 节点ID
+     * @return 返回更新结果，包括成功或错误信息
+     */
     public Result releaseAllEquipmentFromNode(int nodeId) {
         try {
             // 获取指定节点下所有在使用中的设备 ID
@@ -173,7 +209,8 @@ public class ManagerService {
             for (int equipmentId : equipmentIds) {
                 // 更新设备状态为未使用
                 managerMapper.updateEquipmentStatus(equipmentId, "未使用");
-                   managerMapper.clearEquipmentNodeId(equipmentId);
+                // 清除设备的节点ID
+                managerMapper.clearEquipmentNodeId(equipmentId);
             }
 
             return Result.success("节点下所有设备状态已更新为未使用。");
@@ -182,20 +219,20 @@ public class ManagerService {
         }
     }
 
-
-
-
-    // 方法：更新项目节点状态
-
-
-
+    /**
+     * 方法：更新项目节点状态
+     *
+     * @param nodeId 节点ID
+     * @param status 新的状态
+     * @return 返回更新结果，包括成功或错误信息
+     */
     public Result updateProjectNodeStatus(int nodeId, String status) {
         try {
             // 更新项目节点状态
             managerMapper.updateProjectNodeStatus(nodeId, status);
 
             // 如果状态为已完成，则将该节点下所有设备状态改为未使用
-                if ("已完成".equals(status)) {
+            if ("已完成".equals(status)) {
                 releaseAllEquipmentFromNode(nodeId);
                 // 检查项目下所有节点状态
                 int projectId = managerMapper.getProjectIdByNodeId(nodeId);
@@ -203,7 +240,7 @@ public class ManagerService {
                 boolean allCompleted = nodeStatuses.stream().allMatch(s -> "已完成".equals(s));
                 if (allCompleted) {
                     managerMapper.updateProjectStatus(projectId, "已完成");
-                    return Result.success("项目节点状态已更新为 " + status + "。"+"项目已完成！");
+                    return Result.success("项目节点状态已更新为 " + status + "。" + "项目已完成！");
                 }
             }
 
@@ -213,21 +250,33 @@ public class ManagerService {
         }
     }
 
-    // 获取项目经理管理的某一状态项目节点的数量
+    /**
+     * 获取项目经理管理的某一状态项目节点的数量
+     *
+     * @param managerId 项目经理ID
+     * @param status    节点状态
+     * @return 返回节点数量
+     */
     public int getNodeCountByStatus(int managerId, ProjectNode.NodeStatus status) {
         return managerMapper.getNodeCountByStatus(managerId, status);
     }
 
- // 获取非已完成状态项目节点的开始和结束日期
+    /**
+     * 获取非已完成状态项目节点的开始和结束日期
+     *
+     * @param managerId 项目经理ID
+     * @return 返回项目节点的开始和结束日期列表
+     */
     public List<ProjectNodeIdDto> getProjectNodeStartEndDate(int managerId) {
-
-            return managerMapper.getProjectNodeStartEndDate(managerId);
-
+        return managerMapper.getProjectNodeStartEndDate(managerId);
     }
 
-
-
-    // 获取当前项目经理未完成的项目对应的所有材料名字及使用数量
+    /**
+     * 获取当前项目经理未完成的项目对应的所有材料名字及使用数量
+     *
+     * @param managerId 项目经理ID
+     * @return 返回材料使用情况列表，包括成功或错误信息
+     */
     public Result getMaterialsForIncompleteProjects(int managerId) {
         try {
             // 查询未完成项目对应的材料及其数量
@@ -243,11 +292,12 @@ public class ManagerService {
         }
     }
 
-
-
-
-
-    // 获取某一项目节点的材料名称和数量
+    /**
+     * 获取某一项目节点的材料名称和数量。
+     *
+     * @param nodeId 项目节点ID
+     * @return 包含材料列表的结果对象，如果节点没有使用任何材料或发生异常，返回错误信息
+     */
     public Result getMaterialsByNodeId(int nodeId) {
         try {
             List<nodematerial> materials = managerMapper.getMaterialsByNodeId(nodeId);
@@ -262,9 +312,12 @@ public class ManagerService {
         }
     }
 
-
-
-    // 获取某一节点的设备详情
+    /**
+     * 获取某一节点的设备详情。
+     *
+     * @param nodeId 项目节点ID
+     * @return 包含设备详情列表的结果对象，如果节点没有配置任何设备或发生异常，返回错误信息
+     */
     public Result getEquipmentDetailsByNodeId(int nodeId) {
         try {
             List<EquipmentDetails> equipmentDetails = managerMapper.getEquipmentDetailsByNodeId(nodeId);
@@ -278,30 +331,51 @@ public class ManagerService {
             return Result.error("获取节点设备信息失败: " + e.getMessage());
         }
     }
-  // 创建检查任务
+
+    /**
+     * 创建检查任务。
+     *
+     * @param nodeId 项目节点ID
+     * @param inspectorId 检查员ID
+     * @param status 检查任务状态
+     * @param inspectionType 检查任务类型
+     * @param startDate 开始日期
+     * @param dueDate 截止日期
+     * @return 创建成功的消息或错误信息
+     */
     public Result createInspectionTask(int nodeId, int inspectorId, String status, String inspectionType, LocalDate startDate, LocalDate dueDate) {
-    try {
-        // 校验检查任务必填字段
-        if (status == null || inspectionType == null || startDate == null || dueDate == null) {
-            return Result.error("缺少必要的检查任务字段，创建失败");
+        try {
+            // 校验检查任务必填字段
+            if (status == null || inspectionType == null || startDate == null || dueDate == null) {
+                return Result.error("缺少必要的检查任务字段，创建失败");
+            }
+
+            // 默认检查任务状态为 "未开始"
+            if (status.isEmpty()) {
+                status = "未开始";
+            }
+
+            // 调用 DAO 层方法插入检查任务
+            managerMapper.createInspectionTask(nodeId, inspectorId, status, inspectionType, startDate, dueDate);
+
+            return Result.success("检查任务创建成功！");
+        } catch (Exception e) {
+            return Result.error("检查任务创建失败: " + e.getMessage());
         }
-
-        // 默认检查任务状态为 "未开始"
-        if (status.isEmpty()) {
-            status = "未开始";
-        }
-
-        // 调用 DAO 层方法插入检查任务
-        managerMapper.createInspectionTask(nodeId, inspectorId, status, inspectionType, startDate, dueDate);
-
-        return Result.success("检查任务创建成功！");
-    } catch (Exception e) {
-        return Result.error("检查任务创建失败: " + e.getMessage());
     }
 
-}
-
-public Result updateInspectionTask(int taskId, int inspectorId, String status, String inspectionType, LocalDate startDate, LocalDate dueDate) {
+    /**
+     * 更新检查任务。
+     *
+     * @param taskId 检查任务ID
+     * @param inspectorId 检查员ID
+     * @param status 检查任务状态
+     * @param inspectionType 检查任务类型
+     * @param startDate 开始日期
+     * @param dueDate 截止日期
+     * @return 更新成功的消息或错误信息
+     */
+    public Result updateInspectionTask(int taskId, int inspectorId, String status, String inspectionType, LocalDate startDate, LocalDate dueDate) {
         try {
             // 校验检查任务必填字段
             if (taskId <= 0 || status == null || inspectionType == null || startDate == null || dueDate == null) {
@@ -323,6 +397,12 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
         }
     }
 
+    /**
+     * 获取检查任务。
+     *
+     * @param recordName 检查任务记录名称
+     * @return 包含检查任务详情的结果对象，如果检查任务不存在或发生异常，返回错误信息
+     */
     public Result getInspectionTask(String recordName) {
         try {
             // 调用 DAO 层方法查询检查任务
@@ -335,9 +415,15 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
             return Result.success(inspectionTask);
         } catch (Exception e) {
             return Result.error("检查任务查询失败: " + e.getMessage());
-       }
+        }
     }
 
+    /**
+     * 获取规章制度。
+     *
+     * @param name 规章制度名称
+     * @return 包含规章制度详情的结果对象，如果规章制度不存在或发生异常，返回错误信息
+     */
     public Result getRegulationsByName(String name) {
         try {
             // 调用 DAO 层方法查询检查任务
@@ -350,15 +436,25 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
             return Result.success(regulations);
         } catch (Exception e) {
             return Result.error("规章制度查询失败: " + e.getMessage());
-       }
+        }
     }
 
+    /**
+     * 创建项目。
+     *
+     * @param managerId 项目经理ID
+     * @param projectName 项目名称
+     * @param startDate 开始日期
+     * @param endDate 结束日期
+     * @param projectDescription 项目描述
+     * @param constructionSiteName 施工地名称
+     * @param budget 项目预算
+     * @param status 项目状态
+     * @param projectType 项目类型
+     * @return 创建成功的消息或错误信息
+     */
     public Result createProject(int managerId, String projectName, String startDate,
-                                String endDate, String projectDescription, String constructionSiteName,String budget,String status,String projectType)
-    {
-
-
-
+                                String endDate, String projectDescription, String constructionSiteName, String budget, String status, String projectType) {
 
         // 查询施工地ID
         Integer constructionSiteId = managerMapper.getConstructionSiteIdByName(constructionSiteName);
@@ -366,12 +462,8 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
             return Result.error("施工地名称无效");
         }
 
-
-        // 这里您可以直接使用 supplierId, constructionSiteId, contractorId 作为 Integer 类型
-
         // 如果您需要将 Integer 转换为 int，请先检查是否为 null
         int validSiteId = (constructionSiteId != null) ? constructionSiteId : -1;  // 处理 null
-
 
         // 转换日期格式
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -379,28 +471,40 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
         LocalDate end = LocalDate.parse(endDate, formatter);
         double Budget = Double.parseDouble(budget);
 
-
-
         // 创建项目
-        int projectId = managerMapper.createProject(managerId, projectName, start, end, projectDescription, validSiteId,Budget,status,projectType );
+        int projectId = managerMapper.createProject(managerId, projectName, start, end, projectDescription, validSiteId, Budget, status, projectType);
 
         return projectId > 0 ? Result.success("项目创建成功") : Result.error("项目创建失败");
     }
 
-
+    /**
+     * 获取所有规章制度名称。
+     *
+     * @return 规章制度名称列表
+     */
     public List<String> getAllRegulations() {
         return managerMapper.getAllRegulations();
     }
-    // 创建投标任务
+
+    /**
+     * 创建投标任务。
+     *
+     * @param projectId 项目ID
+     * @param tenderTaskStatus 投标任务状态
+     * @param deadline 截止日期
+     * @return 创建成功的布尔值
+     */
     public boolean createTenderTask(int projectId, String tenderTaskStatus, LocalDate deadline) {
-
-
         // 调用 Mapper 层方法将数据插入数据库
         return managerMapper.addTenderTask(projectId, tenderTaskStatus, deadline);
     }
 
-
-    // 通过项目节点ID查找检查任务
+    /**
+     * 通过项目节点ID查找检查任务。
+     *
+     * @param nodeId 项目节点ID
+     * @return 包含检查任务列表的结果对象，如果节点没有检查任务或发生异常，返回错误信息
+     */
     public Result getInspectionTasksByNodeId(int nodeId) {
         try {
             List<InspectionTask> inspectionTasks = managerMapper.getInspectionTasksByNodeId(nodeId);
@@ -414,4 +518,5 @@ public Result updateInspectionTask(int taskId, int inspectorId, String status, S
             return Result.error("查找检查任务失败: " + e.getMessage());
         }
     }
+
 }

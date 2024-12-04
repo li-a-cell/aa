@@ -42,7 +42,9 @@ public class InspectionTask {
     @Column(name = "due_date")
     private LocalDate dueDate; // 检查任务到期日期
 
-    // 状态枚举：任务状态
+    /**
+     * 状态枚举：任务状态
+     */
     public enum Status {
         未开始, // 任务未开始
         检查中, // 任务正在进行中
@@ -50,7 +52,9 @@ public class InspectionTask {
         已完成  // 任务完成
     }
 
-    // 检查类型枚举：任务类型
+    /**
+     * 检查类型枚举：任务类型
+     */
     public enum InspectionType {
         关键工序, // 关键工序检查
         实测实量, // 实测实量检查

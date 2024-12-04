@@ -36,10 +36,14 @@ public class ProjectDto {
 
     private ProjectType projectType;
 
-    // 施工地名称，与查询的 construction_site_name 字段匹配
+    /**
+     * 施工地名称，与查询的 construction_site_name 字段匹配
+     */
     private String siteName;
 
-    // 投标人名称，与查询的 bidder_name_result 字段匹配
+    /**
+     * 投标人名称，与查询的 bidder_name_result 字段匹配
+     */
     private String bidderName;
 
     public enum ProjectType {

@@ -42,7 +42,9 @@ public class Equipment {
     @Column(name = "remarks")
     private String remarks;  // 备注
 
-    // 枚举：设备状态
+    /**
+     * 枚举：设备状态
+     */
     public enum EquipmentStatus {
         未使用, 使用中, 出现问题
     }

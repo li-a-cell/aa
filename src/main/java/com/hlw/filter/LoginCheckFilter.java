@@ -13,12 +13,26 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * 登录检查过滤器，用于全局过滤，验证用户是否登录
+ * @author haitao Li
+ */
 @Slf4j
 @WebFilter(urlPatterns = "/*")
 public class LoginCheckFilter implements Filter {
+    /**
+     * 执行过滤操作
+     *
+     * @param servletRequest Servlet请求对象
+     * @param servletResponse Servlet响应对象
+     * @param filterChain 过滤链，用于放行请求
+     * @throws IOException 如果发生I/O错误
+     * @throws ServletException 如果发生Servlet错误
+     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
+        // 将请求和响应对象转换为HTTP特定类型
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 

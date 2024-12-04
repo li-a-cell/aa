@@ -40,7 +40,9 @@ public class ProjectNode {
     private NodeStatus status;  // 节点状态
 
 
-    // 枚举：节点状态
+    /**
+     * 枚举：节点状态
+     */
     public enum NodeStatus {
         未开始, 施工中, 已完成
     }

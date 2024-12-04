@@ -1,4 +1,3 @@
-
 package com.hlw.filter;
 
 import com.alibaba.fastjson.JSONObject;
@@ -14,19 +13,22 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * 管理员过滤器，用于验证管理员的登录状态和身份
+ */
 @Slf4j
 @WebFilter(urlPatterns = "/administrator")
 public class Administratorfilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
+        // 将 ServletRequest 和 ServletResponse 转换为 HttpServletRequest 和 HttpServletResponse
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         // 获取请求的 URL
         String url = request.getRequestURL().toString();
         log.info("请求的url：{}", url);
-
 
         // 获取请求头中的 Token
         String jwt = request.getHeader("token");
@@ -47,7 +49,8 @@ public class Administratorfilter implements Filter {
                 log.info("JWT 解析成功，解码信息：{}", decodedJwt);
                 // 将解码后的信息存入请求属性
                 request.setAttribute("jobType", decodedJwt.get("jobType"));
-                if(decodedJwt.get("jobType")==null||decodedJwt.get("jobType") !="后台管理员") {
+                // 检查用户是否为后台管理员
+                if(decodedJwt.get("jobType")==null||!"后台管理员".equals(decodedJwt.get("jobType"))) {
                     return ;
                 }
             }

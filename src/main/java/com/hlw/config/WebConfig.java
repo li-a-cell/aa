@@ -5,12 +5,25 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Web配置类，用于全局的Web配置
+ */
 @Configuration
 public class WebConfig {
 
+    /**
+     * 配置跨域请求处理
+     *
+     * @return WebMvcConfigurer 实例，用于配置Spring MVC的跨域设置
+     */
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
+            /**
+             * 添加跨域映射规则
+             *
+             * @param registry Cors注册表，用于设置跨域策略
+             */
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // 允许所有路径跨域

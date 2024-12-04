@@ -37,7 +37,9 @@ public class Material {
     @Column(name = "remarks", columnDefinition = "TEXT")
     private String remarks; // 备注
 
-    // 枚举：质量状态
+    /**
+     * 枚举：质量状态
+     */
     public enum QualityStatus {
         没问题, 有问题
     }

@@ -36,7 +36,9 @@ public class Bidder {
     @Column(name = "status", nullable = false)
     private Status status; // 状态（黑名单/白名单）
 
-    // 枚举类：状态
+    /**
+     * 枚举类：状态
+     */
     public enum Status {
         黑名单, 白名单
     }

@@ -6,13 +6,10 @@ import com.hlw.service.EmpService;
 import com.hlw.service.ManagerService;
 import com.hlw.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -24,7 +21,9 @@ public class ManagerController {
     @Autowired
     private EmpService empService;
 
-    // 创建项目节点的接口
+    /**
+     * 创建项目节点的接口
+     */
     @PostMapping("/create")
     public Result createProjectNode(@RequestBody ProjectNode projectNode, HttpServletRequest request) {
         // 从请求属性中获取 employee_id
@@ -48,7 +47,9 @@ public class ManagerController {
     }
 
 
-     // 获取顶层节点
+     /**
+      * 获取顶层节点
+      */
      @PostMapping ("/topLevelNodes")
     public Result getTopLevelNodes(@RequestBody ProjectNode projectNode,HttpServletRequest request) {
          Object employeeIdObj = request.getAttribute("employeeId");
@@ -75,7 +76,9 @@ public class ManagerController {
          }
      }
 
-    // 获取指定父节点的子节点
+    /**
+     * 获取指定父节点的子节点
+     */
     @GetMapping("/childNodes/{parentNodeId}")
     public Result getChildNodes(@PathVariable int parentNodeId) {
         List<ProjectNode> childNodes = managerService.getChildNodesByParentNodeId(parentNodeId);
@@ -84,49 +87,63 @@ public class ManagerController {
         }
         return Result.success(childNodes);
     }
-    //添加材料数量
+    /**
+     * 添加材料数量
+     */
     @PostMapping("/configure")
     public Result configureMaterial(@RequestBody String materialNode) {
         JsonUtils jsonUtils = new JsonUtils();
-        String nodeId = jsonUtils.getValueFromJson(materialNode, "nodeId");
-        String materialName = jsonUtils.getValueFromJson(materialNode, "materialName");
-        String requiredQuantity = jsonUtils.getValueFromJson(materialNode, "requiredQuantity");
+        String nodeId = JsonUtils.getValueFromJson(materialNode, "nodeId");
+        String materialName = JsonUtils.getValueFromJson(materialNode, "materialName");
+        String requiredQuantity = JsonUtils.getValueFromJson(materialNode, "requiredQuantity");
         return managerService.configureMaterialForNode(Integer.parseInt(nodeId),materialName,Integer.parseInt(requiredQuantity));
     }
-    //添加设备
+    /**
+     * 添加设备
+     */
        @PostMapping("/configureEquipment")
     public Result configureEquipment(@RequestBody Equipment equipment) {
         return managerService.configureEquipmentForNode(equipment.getNodeId(), equipment.getEquipmentName());
     }
-    //修改材料数量
+    /**
+     * 修改材料数量
+     */
    @PostMapping("/updateMaterialQuantityByName")
     public Result updateMaterialQuantityByName(@RequestBody String materialNode) {
         JsonUtils jsonUtils = new JsonUtils();
-        String nodeId = jsonUtils.getValueFromJson(materialNode, "nodeId");
-        String materialName = jsonUtils.getValueFromJson(materialNode, "materialName");
-        String newQuantity = jsonUtils.getValueFromJson(materialNode, "newQuantity");
+        String nodeId = JsonUtils.getValueFromJson(materialNode, "nodeId");
+        String materialName = JsonUtils.getValueFromJson(materialNode, "materialName");
+        String newQuantity = JsonUtils.getValueFromJson(materialNode, "newQuantity");
         return managerService.updateMaterialQuantityForNodeByName(Integer.parseInt(nodeId),materialName,Integer.parseInt(newQuantity));
     }
 
-    // 控制层方法：将项目节点在使用的设备状态改为指定状态
+    /**
+     * 控制层方法：将项目节点在使用的设备状态改为指定状态
+     */
      @PostMapping("/updateStatus")
     public Result updateEquipmentStatus(@RequestBody Equipment equipment) {
         return managerService.updateEquipmentStatus(equipment.getNodeId(), equipment.getEquipmentName(), equipment.getEquipmentType());
     }
 
-    // 控制层方法：将指定项目节点下所有在使用的设备状态改为 '未使用'
+    /**
+     * 控制层方法：将指定项目节点下所有在使用的设备状态改为 '未使用'
+     */
     @PostMapping("/releaseAllFromNode")
     public Result releaseAllEquipmentFromNode(@RequestBody Equipment equipment) {
         return managerService.releaseAllEquipmentFromNode(equipment.getNodeId());
     }
 
-  // 控制层方法：更新项目节点状态
+  /**
+   * 控制层方法：更新项目节点状态
+   */
     @PostMapping("/updateNodeStatus")
     public Result updateProjectNodeStatus(@RequestBody ProjectNode projectNode) {
         return managerService.updateProjectNodeStatus(projectNode.getNodeId(), String.valueOf(projectNode.getStatus()));
     }
 
- // 获取项目经理管理的某一状态项目节点的数量
+ /**
+  * 获取项目经理管理的某一状态项目节点的数量
+  */
     @PostMapping("/nodes/count")
     public Result getNodeCountByStatus( @RequestBody ProjectNode projectNode,HttpServletRequest request) {
           Object employeeIdObj = request.getAttribute("employeeId");
@@ -146,7 +163,9 @@ public class ManagerController {
     }
 
 
-    // 获取非已完成状态项目节点的开始日期和结束日期
+    /**
+     * 获取非已完成状态项目节点的开始日期和结束日期
+     */
     @GetMapping("/nodes/startEndDate")
 public Result getProjectNodeStartEndDate(HttpServletRequest request) {
     // 获取 employee_id
@@ -173,7 +192,9 @@ public Result getProjectNodeStartEndDate(HttpServletRequest request) {
     }
 }
 
-    // 获取当前项目经理未完成项目的所有材料名字及使用数量
+    /**
+     * 获取当前项目经理未完成项目的所有材料名字及使用数量
+     */
     @GetMapping("/incompleteProjects/materials")
     public Result getMaterialsForIncompleteProjects(HttpServletRequest request) {
         // 获取 `employee_id`（即项目经理 ID）
@@ -194,21 +215,26 @@ public Result getProjectNodeStartEndDate(HttpServletRequest request) {
     }
 
 
-    // 获取某一项目节点的材料名称和数量
+    /**
+     * 获取某一项目节点的材料名称和数量
+     */
     @GetMapping("/node/{nodeId}/materials")
     public Result getMaterialsByNodeId(@PathVariable int nodeId) {
         return managerService.getMaterialsByNodeId(nodeId);
     }
 
     // 获取某一节点的设备详情
-;
 
-    // 获取某一节点的设备详情
+    /**
+     * 获取某一节点的设备详情
+     */
     @GetMapping("/node/{nodeId}/equipment/details")
     public Result getEquipmentDetailsByNodeId(@PathVariable int nodeId) {
         return managerService.getEquipmentDetailsByNodeId(nodeId);
     }
-  // 创建检查任务的接口
+  /**
+   * 创建检查任务的接口
+   */
 @PostMapping("/createInspectionTask")
 public Result createInspectionTask(@RequestBody String inspectionTask, HttpServletRequest request) {
     // 从请求属性中获取 employee_id
@@ -227,12 +253,12 @@ public Result createInspectionTask(@RequestBody String inspectionTask, HttpServl
         return Result.error("Invalid Employee ID format");
     }
     JsonUtils jsonUtils = new JsonUtils();
-    String nodeId = jsonUtils.getValueFromJson(inspectionTask, "node_id");
-    String inspectorName = jsonUtils.getValueFromJson(inspectionTask, "inspector_name");
-    String status = jsonUtils.getValueFromJson(inspectionTask, "status");
-    String inspectionType = jsonUtils.getValueFromJson(inspectionTask, "inspection_type");
-    String startDate = jsonUtils.getValueFromJson(inspectionTask, "start_date");
-    String dueDate = jsonUtils.getValueFromJson(inspectionTask, "due_date");
+    String nodeId = JsonUtils.getValueFromJson(inspectionTask, "node_id");
+    String inspectorName = JsonUtils.getValueFromJson(inspectionTask, "inspector_name");
+    String status = JsonUtils.getValueFromJson(inspectionTask, "status");
+    String inspectionType = JsonUtils.getValueFromJson(inspectionTask, "inspection_type");
+    String startDate = JsonUtils.getValueFromJson(inspectionTask, "start_date");
+    String dueDate = JsonUtils.getValueFromJson(inspectionTask, "due_date");
     int inspectorId = empService.GetNameByID(inspectorName);
 
 
@@ -251,7 +277,9 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     return managerService.createInspectionTask(Integer.parseInt(nodeId), inspectorId, status, inspectionType, localstartDate, localdueDate);
 }
 
-//更新检查任务
+/**
+ * 更新检查任务
+ */
 @PostMapping("/updateInspectionTask")
 public Result updateInspectionTask(@RequestBody String inspectionTask, HttpServletRequest request) {
     // 从请求属性中获取 employee_id
@@ -270,12 +298,12 @@ public Result updateInspectionTask(@RequestBody String inspectionTask, HttpServl
         return Result.error("Invalid Employee ID format");
     }
     JsonUtils jsonUtils = new JsonUtils();
-    String taskId = jsonUtils.getValueFromJson(inspectionTask, "task_id");
-    String inspectorName = jsonUtils.getValueFromJson(inspectionTask, "inspector_name");
-    String status = jsonUtils.getValueFromJson(inspectionTask, "status");
-    String inspectionType = jsonUtils.getValueFromJson(inspectionTask, "inspection_type");
-    String startDate = jsonUtils.getValueFromJson(inspectionTask, "start_date");
-    String dueDate = jsonUtils.getValueFromJson(inspectionTask, "due_date");
+    String taskId = JsonUtils.getValueFromJson(inspectionTask, "task_id");
+    String inspectorName = JsonUtils.getValueFromJson(inspectionTask, "inspector_name");
+    String status = JsonUtils.getValueFromJson(inspectionTask, "status");
+    String inspectionType = JsonUtils.getValueFromJson(inspectionTask, "inspection_type");
+    String startDate = JsonUtils.getValueFromJson(inspectionTask, "start_date");
+    String dueDate = JsonUtils.getValueFromJson(inspectionTask, "due_date");
     int inspectorId = empService.GetNameByID(inspectorName);
 
 
@@ -294,7 +322,9 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     return managerService.updateInspectionTask(Integer.parseInt(taskId), inspectorId, status, inspectionType, localstartDate, localdueDate);
 }
 
-//获取检查任务信息
+/**
+ * 获取检查任务信息
+ */
 @PostMapping("/getInspectionTask")
     public Result selectInspectionTask(@RequestBody String inspectionTask, HttpServletRequest request){
         // 从请求属性中获取 employee_id
@@ -313,11 +343,13 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return Result.error("Invalid Employee ID format");
     }
     JsonUtils jsonUtils = new JsonUtils();
-    String recordName = jsonUtils.getValueFromJson(inspectionTask, "record_name");
+    String recordName = JsonUtils.getValueFromJson(inspectionTask, "record_name");
     return managerService.getInspectionTask(recordName);
     }
 
-    //获取规章制度
+    /**
+     * 获取规章制度
+     */
     @PostMapping("/getRegulations")
     public Result getRegulations(@RequestBody String regulations,HttpServletRequest request){
         Object employeeIdObj = request.getAttribute("employee_id");
@@ -335,12 +367,14 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return Result.error("Invalid Employee ID format");
     }
     JsonUtils jsonUtils = new JsonUtils();
-    String name = jsonUtils.getValueFromJson(regulations, "regulation_name");
+    String name = JsonUtils.getValueFromJson(regulations, "regulation_name");
     return managerService.getRegulationsByName(name);
     }
 
 
-    //创建项目
+    /**
+     * 创建项目
+     */
     @PostMapping("/createProject")
     public Result createProject(@RequestBody String projectDetails, HttpServletRequest request) {
         // 从请求属性中获取 employee_id
@@ -359,14 +393,14 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         // 使用 JsonUtils 获取项目的具体信息
         JsonUtils jsonUtils = new JsonUtils();
-        String projectName = jsonUtils.getValueFromJson(projectDetails, "project_name");
-        String startDate = jsonUtils.getValueFromJson(projectDetails, "planned_start_date");
-        String endDate = jsonUtils.getValueFromJson(projectDetails, "planned_end_date");
-        String  budget=jsonUtils.getValueFromJson(projectDetails, "budget");
-        String projectDescription = jsonUtils.getValueFromJson(projectDetails, "project_description");
-        String constructionSiteName = jsonUtils.getValueFromJson(projectDetails, "site_name");
-        String  status=jsonUtils.getValueFromJson(projectDetails, "status");
-        String  project_type=jsonUtils.getValueFromJson(projectDetails, "project_type");
+        String projectName = JsonUtils.getValueFromJson(projectDetails, "project_name");
+        String startDate = JsonUtils.getValueFromJson(projectDetails, "planned_start_date");
+        String endDate = JsonUtils.getValueFromJson(projectDetails, "planned_end_date");
+        String  budget= JsonUtils.getValueFromJson(projectDetails, "budget");
+        String projectDescription = JsonUtils.getValueFromJson(projectDetails, "project_description");
+        String constructionSiteName = JsonUtils.getValueFromJson(projectDetails, "site_name");
+        String  status= JsonUtils.getValueFromJson(projectDetails, "status");
+        String  project_type= JsonUtils.getValueFromJson(projectDetails, "project_type");
         // 调用 Service 层方法创建项目
         return managerService.createProject(employeeId, projectName, startDate, endDate,
                 projectDescription, constructionSiteName,budget,status,project_type);
@@ -389,14 +423,16 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         List<String> regulations = managerService.getAllRegulations();
         return Result.success(regulations);
     }
-    // 创建招标任务
+    /**
+     * 创建招标任务
+     */
     @PostMapping("/createTask")
     public Result createTenderTask(@RequestBody String task) {
         // 解析输入的 JSON 字符串
         JsonUtils jsonUtils = new JsonUtils();
-        String projectid = jsonUtils.getValueFromJson(task, "project_id");
-        String deadline = jsonUtils.getValueFromJson(task, "deadline");
-        String tenderTaskStatus = jsonUtils.getValueFromJson(task, "tender_task_status");
+        String projectid = JsonUtils.getValueFromJson(task, "project_id");
+        String deadline = JsonUtils.getValueFromJson(task, "deadline");
+        String tenderTaskStatus = JsonUtils.getValueFromJson(task, "tender_task_status");
 
         // 解析项目ID和招标任务状态等字段
         int projectId = Integer.parseInt(projectid);  // project_name 实际上应该是 project_id
@@ -415,11 +451,13 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 
 
-    // 通过项目节点ID查找检查任务
+    /**
+     * 通过项目节点ID查找检查任务
+     */
     @GetMapping("/inspectionTasksByNodeId")
     public Result getInspectionTasksByNodeId(@RequestBody String inspectionTask) {
         JsonUtils jsonUtils = new JsonUtils();
-        String nodeId = jsonUtils.getValueFromJson(inspectionTask, "node_id");
+        String nodeId = JsonUtils.getValueFromJson(inspectionTask, "node_id");
         return managerService.getInspectionTasksByNodeId(Integer.parseInt(nodeId));
     }
 
