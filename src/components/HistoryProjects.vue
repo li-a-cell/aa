@@ -1,13 +1,21 @@
 <template>
   <div class="project-management">
-    <h2>项目管理</h2>
+    <h2>历史项目</h2>
     <!-- 搜索框与筛选条件 -->
     <div class="search-bar">
+      <select v-model="searchOption" @change="filterProjects">
+        <option value="projectName">项目名称</option>
+        <option value="projectType">项目类型</option>
+        <option value="siteName">施工地</option>
+        <option value="bidderName">施工方</option>
+        <option value="budget">预算</option>
+      </select>
       <input
           type="text"
           v-model="searchTerm"
           @input="filterProjects"
-          placeholder="搜索项目（名称、项目类型、施工地、施工方、预算）"
+          :placeholder="`搜索${searchOption}`"
+          class="search-input"
       />
     </div>
     <!-- 项目列表展示 -->
@@ -20,20 +28,30 @@
           <th>施工地</th>
           <th>施工方</th>
           <th>预算</th>
-          <th>开始时间</th> <!-- 新增开始时间表头 -->
+          <th>开始时间</th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(project, index) in filteredProjects" :key="project.project_id">
-          <td>{{ project.project_name }}</td>
-          <td>{{ project.project_type }}</td>
-          <td>{{ project.site_name }}</td>
-          <td>{{ project.bidder_name }}</td>
+        <tr v-for="(project, index) in paginatedProjects" :key="project.projectId">
+          <td>{{ project.projectName }}</td>
+          <td>{{ project.projectType }}</td>
+          <td>{{ project.siteName }}</td>
+          <td>{{ project.bidderName }}</td>
           <td>{{ project.budget }}</td>
-          <td>{{ project.planned_start_date }}</td> <!-- 新增展示开始时间的单元格 -->
+          <td>{{ project.plannedStartDate }}</td>
+        </tr>
+        <tr v-if="paginatedProjects.length < itemsPerPage">
+          <td v-for="i in 6" :key="i">&nbsp;</td>
         </tr>
         </tbody>
       </table>
+    </div>
+    <!-- 分页按钮 -->
+    <div class="pagination fixed-pagination">
+      <button @click="prevPage" :disabled="currentPage === 1">上一页</button>
+      <span>第 {{ currentPage }} 页 / 共 {{ totalPages }} 页</span>
+      <input type="number" v-model.number="inputPage" min="1" :max="totalPages" @change="goToPage" class="page-input" />
+      <button @click="nextPage" :disabled="currentPage === totalPages">下一页</button>
     </div>
   </div>
 </template>
@@ -46,7 +64,11 @@ export default {
   name: 'ProjectManagement',
   setup() {
     const searchTerm = ref('');
+    const searchOption = ref('projectName'); // 新增搜索选项
     const projects = ref([]);  // 用于存储从后端获取到的数据
+    const currentPage = ref(1); // 当前页码
+    const inputPage = ref(1); // 用户输入的页码
+    const itemsPerPage = 6; // 每页显示的数据条数
 
     // 获取项目数据的函数，发送GET请求到后端接口
     const fetchProjects = async () => {
@@ -67,7 +89,7 @@ export default {
         });
 
         // 将返回的数据赋值给 projects，这里假设后端返回的数据在 response.data 下，可根据实际调整
-        projects.value = response.data.data ;
+        projects.value = response.data.data;
       } catch (error) {
         if (error.response) {
           // 如果后端返回错误信息
@@ -87,15 +109,58 @@ export default {
       fetchProjects();
     });
 
+    // 计算分页后的项目列表
+    const paginatedProjects = computed(() => {
+      const start = (currentPage.value - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      return filteredProjects.value.slice(start, end);
+    });
+
+    // 计算总页数
+    const totalPages = computed(() => {
+      return Math.ceil(filteredProjects.value.length / itemsPerPage);
+    });
+
+    // 切换到上一页
+    const prevPage = () => {
+      if (currentPage.value > 1) {
+        currentPage.value--;
+        inputPage.value = currentPage.value;
+      }
+    };
+
+    // 切换到下一页
+    const nextPage = () => {
+      if (currentPage.value < totalPages.value) {
+        currentPage.value++;
+        inputPage.value = currentPage.value;
+      }
+    };
+
+    // 跳转到指定页
+    const goToPage = () => {
+      if (inputPage.value >= 1 && inputPage.value <= totalPages.value) {
+        currentPage.value = inputPage.value;
+      }
+    };
+
     const filteredProjects = computed(() => {
       return projects.value.filter((project) => {
-        return (!searchTerm.value || project.project_name.toLowerCase().includes(searchTerm.value.toLowerCase()));
+        return (!searchTerm.value || project[searchOption.value].toLowerCase().includes(searchTerm.value.toLowerCase()));
       });
     });
 
     return {
       searchTerm,
+      searchOption,
       filteredProjects,
+      paginatedProjects,
+      currentPage,
+      inputPage,
+      totalPages,
+      prevPage,
+      nextPage,
+      goToPage,
       projects
     };
   },
@@ -107,89 +172,60 @@ export default {
   padding: 30px;
   width: 100%;
   box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* 更现代的字体 */
-  background-color: #f4f6f9; /* 背景色稍微浅灰，更加柔和 */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f9;
 }
 
 .search-bar {
   width: 100%;
   display: flex;
-  gap: 15px; /* 增加搜索框和选择框的间距 */
-  margin-bottom: 20px; /* 增加底部的间距 */
-}
-.project-list td button {
-  padding: 10px;
-  cursor: pointer;
-  border: none; /* 移除默认边框 */
-  border-radius: 5px;
-  background-color: #007bff; /* 蓝色背景，统一样式 */
-  color: #ffffff;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  margin-right: 10px; /* 为按钮之间添加间距 */
+  gap: 15px;
+  margin-bottom: 20px;
 }
 
-.project-list td button:last-child {
-  margin-right: 0; /* 确保最后一个按钮没有右边距 */
-}
-
-.search-bar input {
-  flex: 3;
+.search-bar .search-input {
+  flex-grow: 2;
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ddd;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 添加阴影让输入框有立体感 */
-}
-
-.search-bar select {
-  flex: 1;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  background-color: #ffffff; /* 保持选择框背景颜色 */
-}
-
-.delete-confirmation-container button {
-  padding: 10px 20px;
-  margin-right: 15px;
-  font-size: 1em;
-  cursor: pointer;
-  border-radius: 5px;
-  background-color: #ff4d4d; /* 红色按钮，强调删除操作 */
-  color: #ffffff;
-  border: none;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.delete-confirmation-container button:hover {
-  background-color: #cc0000; /* 鼠标悬停时颜色加深 */
-  transform: translateY(-2px);
 }
 
 .project-list table {
   width: 100%;
   border-collapse: collapse;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 为表格增加轻微阴影，使其更有立体感 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background-color: #ffffff;
 }
 
 .project-list th {
-  background-color: #007bff; /* 表头背景色与添加项目按钮保持一致 */
+  background-color: #007bff;
   color: #ffffff;
-  text-transform: uppercase; /* 表头内容大写 */
+  text-transform: uppercase;
   padding: 15px;
   text-align: left;
 }
 
 .project-list td {
   padding: 15px;
-  border: 1px solid #eee; /* 边框颜色稍浅，更柔和 */
+  border: 1px solid #eee;
   text-align: left;
 }
 
 .project-list tr:nth-child(even) {
-  background-color: #f9f9f9; /* 为偶数行添加背景色，提升可读性 */
+  background-color: #f9f9f9;
 }
 
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  position: sticky;
+  bottom: 0;
+  background-color: #f4f6f9;
+  padding: 10px 0;
+}
 
 .pagination button {
   padding: 10px 15px;
@@ -206,52 +242,11 @@ export default {
   transform: translateY(-2px);
 }
 
-button {
-  padding: 10px;
-  cursor: pointer;
-  border: none; /* 移除默认边框 */
-  border-radius: 5px;
-  background-color: #007bff; /* 蓝色背景，统一样式 */
-  color: #ffffff;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-button:hover {
-  background-color: #0056b3; /* 鼠标悬停时颜色加深 */
-  transform: translateY(-2px); /* 鼠标悬停时按钮向上移动 */
-}
-
-.error {
-  color: #ff4d4d; /* 改为更鲜明的红色 */
-  font-size: 0.9em;
-  margin-top: 5px; /* 与输入框保持间距 */
-}
-
-.form-container {
-  margin-bottom: 20px;
-  padding: 20px;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* 添加轻微的阴影 */
-}
-
-.form-field {
-  margin-bottom: 15px;
-}
-
-.form-field label {
-  font-weight: bold;
-  margin-bottom: 5px;
-  display: block;
-}
-
-.form-field input {
-  width: 100%;
-  padding: 10px;
+.page-input {
+  width: 50px;
+  padding: 5px;
+  text-align: center;
   border-radius: 5px;
   border: 1px solid #ddd;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05); /* 内阴影使输入框更有立体感 */
 }
-
 </style>

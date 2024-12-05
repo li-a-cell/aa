@@ -1,28 +1,90 @@
 <template>
   <div class="regulations-container">
-    <div v-for="regulation in regulations" :key="regulation.id" class="regulation-item" @click="handleRowClick(regulation)">
+    <div 
+      v-for="regulation in regulations" 
+      :key="regulation.id" 
+      class="regulation-item" 
+      @click="handleRowClick(regulation)"
+    >
       <div class="regulation-title">{{ regulation.name }}</div>
-      <div class="regulation-date">制定时间：{{ regulation.createdAt }}</div>
     </div>
   </div>
 </template>
 
 <script>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+
 export default {
   name: "RegulationsTable",
-  data() {
-    return {
-      regulations: [
-        { id: 1, name: "制度一", createdAt: "2023-01-15" },
-        { id: 2, name: "制度二", createdAt: "2023-02-10" },
-        { id: 3, name: "制度三", createdAt: "2023-03-05" },
-      ],
+  setup() {
+    // 使用 ref 来创建响应式的数据
+  
+    const regulations = ref([
+      { id: 1, name: "制度一" },
+      { id: 2, name: "制度二" },
+      { id: 3, name: "制度三" },
+    ]);
+    // 使用 useRouter 来获得路由对象
+    const router = useRouter();
+    const error = ref(null); // 用于存储错误信息
+    const users = ref([]); // 用于存储从 API 获取的数据
+    const handleLoginregulation = () => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+        console.log("不为空", token);
+        axios.get(`http://localhost:9528/manager/getAllRegulations`, {
+            headers: {
+                'Token': token
+            },
+        })
+        .then(response => {
+            const data = response.data.data;
+            console.log("data",data);
+            if (!data || Object.keys(data).length === 0) {
+                // 处理空数据的情况
+                console.log('返回的数据为空');
+                // 可以在这里显示提示信息或执行其他操作
+                // 例如，更新UI显示提示信息
+                error.value = '没有正在进行的项目';
+            } else {
+                // 处理非空数据的情况
+                console.log('受保护的数据：', data);
+                // 假设 data 包含一个名为 projects 的数组
+                const parsedData = data.map((name, index) => ({
+          id: index + 1, // 生成唯一的 id
+          name: name,
+        }));
+        regulations.value = parsedData;
+            }
+        })
+        .catch(error => {
+            console.error('获取数据失败', error);
+            error.value = '获取数据失败，请稍后再试';
+        });
+    }
+};
+    handleLoginregulation();
+
+    // 处理点击行的函数
+    const handleRowClick = (row) => {
+      localStorage.setItem('savedName', row.name);
+      router.push({ name: "RegulationDetail", params: { name: row.name, } });
+      // 保存数据到 Local Storage
+    console.log("After setItem, savedName in localStorage:", localStorage.getItem('savedName'));
+
+// 读取并打印数据
+let sane = localStorage.getItem('savedName');
+console.log("savedName", sane);
     };
-  },
-  methods: {
-    handleRowClick(row) {
-      this.$router.push({ name: "RegulationDetail", params: { id: row.id } });
-    },
+
+    return {
+      regulations,
+      handleRowClick,
+      error,
+      users,
+    };
   },
 };
 </script>
@@ -65,4 +127,4 @@ export default {
   background-color: #e0e0e0;
   transform: scale(1.02);
 }
-</style>
+</style> 

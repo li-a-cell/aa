@@ -14,8 +14,8 @@
           <li @click="currentView = 'UserManagement'" :class="{ active: currentView === 'UserManagement' }">
             <i class="icon fas fa-user"></i><span>用户管理</span>
           </li>
-          <li @click="currentView = 'Bidder'" :class="{ active: currentView === 'Bidder' }">
-            <i class="icon fas fa-bidder"></i><span>投标人管理</span>
+          <li @click="currentView = 'MaterialManagement'" :class="{ active: currentView === 'MaterialManagement' }">
+            <i class="icon fas fa-user"></i><span>材料管理</span>
           </li>
         </ul>
       </nav>
@@ -24,8 +24,9 @@
     <!-- 右侧内容区域 -->
     <div class="content">
       <header class="top-bar">
-        <div class="header-title">      </div>
+        <div class="header-title">建筑项目管理系统</div>
         <div class="user-info">
+          <!-- 用户信息显示可以自定义 -->
         </div>
       </header>
       <div class="content-view">
@@ -39,7 +40,8 @@
 import ProjectManagement from '../components/Back_projectManagement.vue';
 import UserManagement from '../components/UserManagement.vue';
 import Home from '../components/Back_home.vue'; // 假设有一个主页组件
-import Bidder from '../components/BidderManagement.vue';
+import MaterialManagement from '../components/MaterialManagement.vue';
+
 
 export default {
   name: 'Dashboard',
@@ -47,7 +49,7 @@ export default {
     Home,
     ProjectManagement,
     UserManagement,
-    Bidder ,
+    MaterialManagement ,
   },
   data() {
     return {
@@ -69,15 +71,13 @@ export default {
 
 /* 左侧侧边栏样式 */
 .sidebar {
-  width: 240px;
-  background-color: #777777;
-  border: #33CC33;
-  color: #ffffff;
+  width: 240px; /* 固定宽度 */
+  background-color: #34495e;
+  color: #fff;
   display: flex;
   flex-direction: column;
-  padding: 20px 10px;
-  /* 增加阴影效果 */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
@@ -85,11 +85,7 @@ export default {
   font-weight: bold;
   text-align: center;
   margin-bottom: 30px;
-}
-
-
-.logo img {
-  max-width: 80%;
+  color: #ecf0f1;
 }
 
 .nav-menu ul {
@@ -108,12 +104,12 @@ export default {
 }
 
 .nav-menu li:hover {
-  background-color: #4c5b72;
+  background-color: #16a085;
   transform: translateY(-3px);
 }
 
 .nav-menu li.active {
-  background-color: #007bff;
+  background-color: #2980b9;
 }
 
 .nav-menu li .icon {
@@ -122,7 +118,7 @@ export default {
 }
 
 .nav-menu li span {
-  color: #ffffff;
+  color: #fff;
   font-size: 1.1em;
 }
 
@@ -131,7 +127,7 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: #f8f9fa;
+  background-color: #ecf0f1;
 }
 
 .top-bar {
@@ -144,9 +140,9 @@ export default {
 }
 
 .header-title {
-  font-size: 1.5em;
+  font-size: 1.8em;
   font-weight: bold;
-  color: #333333;
+  color: #2c3e50;
 }
 
 .user-info {

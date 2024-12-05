@@ -4,9 +4,9 @@
     <!-- 固定项目标题和元数据部分 -->
     <div class="fixed-info">
       <header class="project-header">
-        <h1 class="project-title">{{ currentProject.project_name }}</h1>
+        <h1 class="project-title">{{ currentProject.projectName }}</h1>
         <div class="project-meta" style="display: flex; flex-direction: column;">
-          <span>项目类型: {{ currentProject.project_type }}</span>
+          <span>项目类型: {{ currentProject.projectType }}</span>
         </div>
       </header>
     </div>
@@ -41,10 +41,8 @@
         <div class="flow-title">已通过流程</div>
         <div class="flow-list">
           <div class="flow-item" v-for="(item, index) in passedFlow" :key="index">
-            <router-link :to="item.link" class="flow-link">
-              <span>{{ item.name }}</span>
-            </router-link>
-            <span>{{ item.time }}</span>
+            <span class="flow-link">{{ item.nodeName }}</span>
+            <span>{{ item.endDate }}</span>
           </div>
         </div>
       </section>
@@ -57,46 +55,49 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onActivated } from 'vue';
 import axios from 'axios';
 import router from "@/router/index.js";
 
 export default {
   name: "ProjectOverview",
   watch: {
-    // 监听路由的变化
-    $route(to) {
-      // 如果路由名称属于阶段页面则隐藏可切换内容
-      this.showSwitchableContent = !['Preliminary', 'Construction', 'Acceptance', 'Completion'].includes(to.name);
+    $route(to, from) {
+      // 判断是否是首次加载路由（from.name为空表示首次加载）
+      const isFirstLoad =!from.name;
+      if (isFirstLoad) {
+        this.showSwitchableContent = true;
+      } else {
+        // 如果路由名称属于阶段页面则隐藏可切换内容
+        this.showSwitchableContent =!['Preliminary', 'Construction', 'Acceptance', 'Completion'].includes(to.name);
+      }
     }
   },
   setup() {
     const currentProject = ref({});
     const projectData = ref([]);
     const showSwitchableContent = ref(true);
+    const passedFlow = ref([]);
 
     // 获取项目数据的函数，发送GET请求到后端接口
     const fetchProjectData = async () => {
       try {
-        // 从localStorage获取JWT token
         const token = localStorage.getItem('jwtToken');
         if (!token) {
           console.error('JWT Token is missing!');
           return;
         }
 
-        // 发送GET请求，带上token
-        const response = await axios.get('http://localhost:9528/project/ongoing', {
+        const response = await axios.get('http://localhost:9528/project/onGoing', {
           headers: {
-            'token': token  // 请求头包含'token'字段，值为从localStorage获取的JWT token
-          },
+            'token': token
+          }
         });
-
-        // 对后端返回数据结构进行校验，确保是包含项目数据的对象后再赋值on
         if (Array.isArray(response.data.data) && response.data.data.length > 0) {
-          console.log(response.data.data);
           projectData.value = response.data.data;
           currentProject.value = projectData.value[0];
+          localStorage.setItem('userData', JSON.stringify(projectData.value[0]));
+          await fetchPassedFlow(currentProject.value.projectId);
         } else {
           console.error('后端返回的数据格式不符合预期，没有可用的项目数据');
           alert('暂时无法加载项目数据，请稍后重试或联系管理员');
@@ -117,24 +118,73 @@ export default {
       }
     };
 
+    // 获取已完成流程的函数，发送POST请求到后端接口
+    const fetchPassedFlow = async (projectId) => {
+      try {
+        const token = localStorage.getItem('jwtToken');
+        if (!token) {
+          console.error('JWT Token is missing!');
+          return;
+        }
+
+        const requestData = {
+          projectId: projectId,
+          status: "已完成"
+        };
+
+        const response = await axios.post('http://localhost:9528/project/nodes', requestData, {
+          headers: {
+            'token': token
+          }
+        });
+
+        if (Array.isArray(response.data.data)) {
+          passedFlow.value = response.data.data.map(item => ({
+            nodeName: item.nodeName,
+            endDate: item.endDate
+          }));
+        } else {
+          console.error('后端返回的数据格式不符合预期，没有可用的已完成流程数据');
+        }
+      } catch (error) {
+        if (error.response) {
+          console.error('后端错误：', error.response.data);
+          alert('获取已完成流程数据时出现错误，请联系管理员');
+        } else {
+          console.error('请求失败：', error.message);
+          alert('网络出现问题，请检查网络连接后重试');
+        }
+      }
+    };
+
     // 在组件挂载时调用接口获取项目数据
     onMounted(() => {
       fetchProjectData();
     });
 
+    // 组件激活时重置相关状态并重新获取数据
+    onActivated(() => {
+      projectData.value = [];
+      passedFlow.value = [];
+      showSwitchableContent.value = true;
+      fetchProjectData();
+    });
+
     // 跳转到项目阶段页面
     const goToPhase = (phase) => {
-      router.push({ name: phase });
+      router.push({name: phase});
     };
 
     return {
-      projectData ,
+      projectData,
       currentProject,
       showSwitchableContent,
+      passedFlow,
       goToPhase
     };
   }
 };
+
 </script>
 
 <style scoped>
@@ -212,9 +262,11 @@ export default {
   font-size: 20px;
   color: #1890ff;
 }
+
 .phase-name:hover {
-  color: #0056b3; /* 鼠标悬停时颜色变化 */
+  color: #0056b3; /* 鼠标悬浮时颜色变化 */
 }
+
 /* 已通过流程部分样式 */
 .project-flow {
   background-color: #fff;

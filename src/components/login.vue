@@ -108,44 +108,60 @@ export default {
         return;
       }
       // 构造 JSON 格式的数据，包含 User 对象
-      const data = {
+      const data1 = {
           account: account.value,
           password: password.value
       };
+      const token1=ref('');
+      // const response1=axios.post('http://localhost:9528/auth/bidderlogin',data1)
+      // response1.then((result)=> {
+      //    token1.value=result.data.data;
+      // })
+      // if(token1.value){
+      //   router.push('/bidder-view');
+      // }
       // 向后端发送用户名和密码
-      axios.post('http://localhost:9528/auth/login', data, {
+      axios.post('http://localhost:9528/auth/login', data1, {
       })
           .then(response => {
             console.log('响应数据：', response.data); // 打印响应数据以检查结构
             const { code, msg, data } = response.data;
             console.log('响应数据：', response.data.data.type ); // 打印响应数据以检查结构
             if (code === 0) {
+              console.log(token1)
               // 登录失败，显示错误信息
-              ElMessage.error(msg || '登录失败，请检查用户名或密码');
               return;
             }
             // 获取JWT令牌，注意 data 是 token 的位置
             const token= data;
-            if (!token) {
+            if ((!token)) {
               ElMessage.error('登录失败，未获取到有效的令牌');
+              router.push('/bidder-view');
               return;
             }
             try {
               // 解码JWT以获取用户类型
               const decodedToken = jwt_decode(token);
-              const { job_type } = decodedToken;
+              const { jobType } = decodedToken;
+              console.log(decodedToken );
               // 判断用户类型是否为后台管理员
-              if (job_type === '项目经理') {
+              if (jobType === '项目经理') {
                 // 存储JWT到localStorage，方便后续的身份验证
                 localStorage.setItem('jwtToken', token);
                 console.log(localStorage.getItem('jwtToken'));
                 // 跳转到后台管理面板
                 router.push('/manadashboard');
               }
-              else if(job_type ==='后台管理员'){
+              else if(jobType ==='后台管理员'){
                 localStorage.setItem('jwtToken', token);
                 // 跳转到后台管理面板
                 router.push('/admindashboard');
+              }
+              else if(jobType ==='招标人员'){
+                console.log('招标人员');
+                localStorage.setItem('jwtToken', token);
+                // 跳转到后台管理面板
+                router.push({name: 'zhaobiaoboard'});
               }
               else {
                 // 如果用户类型不正确，提示无访问权限
@@ -156,11 +172,7 @@ export default {
               ElMessage.error('无效的令牌，请联系管理员');
             }
           })
-          .catch(error => {
-            // 登录失败处理
-            console.error('登录失败', error.response ? error.response.data : error);
-            ElMessage.error('登录失败，请检查用户名或密码');
-          });
+
     };
 
 

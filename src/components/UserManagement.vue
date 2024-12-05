@@ -1,190 +1,267 @@
 <template>
   <div class="user-management">
     <h2>用户管理</h2>
-
     <!-- 搜索框与筛选条件 -->
     <div class="search-bar">
-      <el-input
+      <input
           v-model="searchTerm"
           @input="filterUsers"
           placeholder="搜索用户（姓名、职位类型、部门）"
-          clearable
-          style="flex: 3;"
+          class="search-input"
       />
-      <el-select v-model="filterRole" @change="filterUsers" style="flex: 1;">
-        <el-option label="全部职位类型" value=""></el-option>
-        <el-option label="检查人员" value="检查人员"></el-option>
-        <el-option label="招标人员" value="招标人员"></el-option>
-        <el-option label="项目经理" value="项目经理"></el-option>
-        <el-option label="后台管理员" value="后台管理员"></el-option>
-      </el-select>
+      <select v-model="filterRole" @change="filterUsers" class="select-box">
+        <option value="">全部职位类型</option>
+        <option value="检查人员">检查人员</option>
+        <option value="招标人员">招标人员</option>
+        <option value="项目经理">项目经理</option>
+        <option value="后台管理员">后台管理员</option>
+      </select>
     </div>
-
     <!-- 添加用户按钮 -->
     <div class="add-user-button-container">
-      <el-button @click="openAddUserForm" type="primary">添加新用户</el-button>
+      <button @click="openAddUserForm" class="add-user-button">添加新用户</button>
     </div>
-
     <!-- 添加或编辑用户表单 -->
-    <el-dialog :visible.sync="showUserForm" :title="currentUser ? '编辑用户' : '添加新用户'">
-      <el-form :model="formData" :rules="formRules" ref="form" label-width="100px">
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="formData.name" placeholder="用户姓名" />
-        </el-form-item>
-        <el-form-item label="账号" prop="account">
-          <el-input v-model="formData.account" placeholder="用户账号" />
-        </el-form-item>
-        <el-form-item label="手机号" prop="phone">
-          <el-input v-model="formData.phone" placeholder="用户手机号" />
-        </el-form-item>
-        <el-form-item label="职位类型" prop="position">
-          <el-select v-model="formData.position" placeholder="请选择职位类型">
-            <el-option label="检查人员" value="检查人员"></el-option>
-            <el-option label="招标人员" value="招标人员"></el-option>
-            <el-option label="项目经理" value="项目经理"></el-option>
-            <el-option label="后台管理员" value="后台管理员"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="性别" prop="gender">
-          <el-select v-model="formData.gender" placeholder="请选择性别">
-            <el-option label="男" value="男"></el-option>
-            <el-option label="女" value="女"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="薪水" prop="salary">
-          <el-input v-model="formData.salary" type="number" placeholder="薪水" />
-        </el-form-item>
-        <el-form-item label="入职日期" prop="startDate">
-          <el-date-picker v-model="formData.startDate" type="date" placeholder="入职日期" />
-        </el-form-item>
-        <el-form-item label="出生年月" prop="birthDate">
-          <el-date-picker v-model="formData.birthDate" type="date" placeholder="出生年月" />
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="closeUserForm">取消</el-button>
-        <el-button type="primary" @click="submitForm">{{ currentUser ? '确认修改' : '确认添加' }}</el-button>
-      </span>
-    </el-dialog>
-
+    <div v-if="showUserForm" class="modal-overlay">
+      <div class="user-form-popup">
+        <h3>{{ currentUser ? '编辑用户' : '添加新用户' }}</h3>
+        <form @submit.prevent="submitForm">
+          <div class="form-row">
+            <div class="form-col">
+              <label for="name">姓名</label>
+              <input v-model="formData.name" type="text" placeholder="用户姓名" @blur="validateField('name')" />
+              <span v-if="errors.name" class="error">{{ errors.name }}</span>
+            </div>
+            <div class="form-col">
+              <label for="account">账号</label>
+              <input v-model="formData.account" type="text" placeholder="用户账号" @blur="validateField('account')" />
+              <span v-if="errors.account" class="error">{{ errors.account }}</span>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-col">
+              <label for="phone">手机号</label>
+              <input v-model="formData.phoneNumber" type="text" placeholder="用户手机号" @blur="validateField('phoneNumber')" />
+              <span v-if="errors.phoneNumber" class="error">{{ errors.phoneNumber }}</span>
+            </div>
+            <div class="form-col">
+              <label for="password">密码</label>
+              <div class="password-container">
+                <input v-model="formData.password" :type="passwordVisible ? 'text' : 'password'" placeholder="用户密码" @blur="validateField('password')" />
+                <span v-if="errors.password" class="error">{{ errors.password }}</span>
+                <button type="button" @click="togglePasswordVisibility" class="password-toggle-button">{{ passwordVisible ? '隐藏' : '显示' }}</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-col">
+              <label for="position">职位类型</label>
+              <select v-model="formData.jobType" @blur="validateField('jobType')">
+                <option value="检查人员">检查人员</option>
+                <option value="招标人员">招标人员</option>
+                <option value="项目经理">项目经理</option>
+                <option value="后台管理员">后台管理员</option>
+              </select>
+              <span v-if="errors.jobType" class="error">{{ errors.jobType }}</span>
+            </div>
+            <div class="form-col">
+              <label for="gender">性别</label>
+              <select v-model="formData.gender" @blur="validateField('gender')">
+                <option value="男">男</option>
+                <option value="女">女</option>
+              </select>
+              <span v-if="errors.gender" class="error">{{ errors.gender }}</span>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-col">
+              <label for="salary">薪水</label>
+              <input v-model="formData.salary" type="number" placeholder="薪水" @blur="validateField('salary')" />
+              <span v-if="errors.salary" class="error">{{ errors.salary }}</span>
+            </div>
+            <div class="form-col">
+              <label for="address">家庭住址</label>
+              <input v-model="formData.address" type="text" placeholder="家庭住址" @blur="validateField('address')" />
+              <span v-if="errors.address" class="error">{{ errors.address }}</span>
+            </div>
+          </div>
+          <div class="form-col">
+            <label for="startDate">入职日期</label>
+            <input v-model="formData.hireDate" type="date" @blur="validateField('hireDate')" />
+            <span v-if="errors.hireDate" class="error">{{ errors.hireDate }}</span>
+          </div>
+          <div class="form-row">
+            <div class="form-col">
+              <label for="birthDate">出生年月</label>
+              <input v-model="formData.birthDate" type="date" @blur="validateField('birthDate')" />
+              <span v-if="errors.birthDate" class="error">{{ errors.birthDate }}</span>
+            </div>
+          </div>
+          <!-- 根据当前是编辑还是添加状态显示不同按钮文本 -->
+          <button type="submit" class="common-button submit-button">{{ currentUser ? '确认修改' : '确认添加' }}</button>
+          <button @click="closeUserForm" type="button" class="common-button cancel-button">取消</button>
+        </form>
+      </div>
+    </div>
     <!-- 用户列表展示 -->
-    <el-table :data="paginatedUsers" style="width: 100%" border>
-      <el-table-column prop="name" label="姓名" />
-      <el-table-column prop="account" label="账号" />
-      <el-table-column prop="password" label="密码" />
-      <el-table-column prop="phone" label="手机号" />
-      <el-table-column prop="position" label="职位类型" />
-      <el-table-column prop="gender" label="性别" />
-      <el-table-column prop="salary" label="薪水" />
-      <el-table-column :label="'年龄'" :formatter="(row) => calculateAge(row.birthDate)" />
-      <el-table-column prop="startDate" label="入职日期" />
-      <el-table-column label="操作">
-        <template #default="scope">
-          <el-button @click="editUserDetails(scope.row)" size="small" type="primary">编辑</el-button>
-          <el-button @click="confirmDelete(scope.row.id)" size="small" type="danger">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
+    <table class="user-table">
+      <thead>
+      <tr>
+        <th>姓名</th>
+        <th>账号</th>
+        <th>密码</th>
+        <th>性别</th>
+        <th>职位类型</th>
+        <th>手机号</th>
+        <th>薪水</th>
+        <th>年龄</th>
+        <th>家庭住址</th>
+        <th>入职日期</th>
+        <th>操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="(user, index) in paginatedUsers" :key="user.id">
+        <td>{{ user.name }}</td>
+        <td>{{ user.account }}</td>
+        <td>{{ user.password }}</td>
+        <td>{{ user.gender }}</td>
+        <td>{{ user.jobType }}</td>
+        <td>{{ user.phoneNumber }}</td>
+        <td>{{ user.salary }}</td>
+        <td>{{ calculateAge(user.birthDate) }}</td>
+        <td>{{ user.address }}</td>
+        <td>{{ user.hireDate }}</td>
+        <td>
+          <button @click="editUserDetails(user)" class="common-button edit-button">编辑</button>
+          <button @click="confirmDelete(user.employee_id)" class="common-button delete-button">删除</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
     <!-- 分页 -->
-    <el-pagination
-        :current-page="currentPage"
-        :page-size="pageSize"
-        :total="filteredUsers.length"
-        @current-change="changePage"
-        layout="prev, pager, next"
-    />
+    <div class="pagination">
+      <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1" class="common-button prev-button">上一页</button>
+      <span>第 {{ currentPage }} 页</span>
+      <button @click="changePage(currentPage + 1)" :disabled="currentPage * pageSize >= filteredUsers.length" class="common-button next-button">下一页</button>
+    </div>
   </div>
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import {ref, computed, onMounted} from 'vue';
 import Swal from 'sweetalert2';
-import { useForm } from 'vee-validate';
-import * as yup from 'yup';
-import { ElInput, ElSelect, ElOption, ElButton, ElForm, ElFormItem, ElDatePicker, ElDialog, ElTable, ElTableColumn, ElPagination } from 'element-plus';
+import axios from 'axios';
 
 export default {
   name: 'UserManagement',
-  components: {
-    ElInput,
-    ElSelect,
-    ElOption,
-    ElButton,
-    ElForm,
-    ElFormItem,
-    ElDatePicker,
-    ElDialog,
-    ElTable,
-    ElTableColumn,
-    ElPagination,
-  },
   setup() {
-    const users = ref([
-      {
-        id: 1,
-        name: '张三',
-        account: '123456',
-        password: '123456',
-        phone: '12345678901',
-        position: '项目经理',
-        gender: '男',
-        salary: 12000,
-        birthDate: '1985-06-15',
-        startDate: '2024-01-01',
-      },
-      {
-        id: 2,
-        name: '李四',
-        account: '12345',
-        password: '123456',
-        phone: '19876543210',
-        position: '招标人员',
-        gender: '女',
-        salary: 10000,
-        birthDate: '1990-09-10',
-        startDate: '2024-02-01',
-      },
-    ]);
-
     const searchTerm = ref('');
     const filterRole = ref('');
     const currentPage = ref(1);
     const pageSize = ref(5);
-
+    const users = ref([]);
     const showUserForm = ref(false);
     const currentUser = ref(null);
+    const passwordVisible = ref(false);
     const formData = ref({
       name: '',
       account: '',
-      phone: '',
-      position: '',
+      phoneNumber: '',
+      password: '',
+      jobType: '',
       gender: '',
       salary: '',
       birthDate: '',
-      startDate: '',
+      hireDate: '',
+      address: '',
+    });
+    const errors = ref({
+      name: '',
+      account: '',
+      phoneNumber: '',
+      password: '',
+      jobType: '',
+      gender: '',
+      salary: '',
+      birthDate: '',
+      hireDate: '',
+      address: '',
     });
 
-    // 表单验证规则
-    const formRules = {
-      name: [{ required: true, message: '姓名是必填项', trigger: 'blur' }],
-      account: [{ required: true, message: '账号是必填项', trigger: 'blur' }],
-      phone: [
-        { required: true, message: '手机号是必填项', trigger: 'blur' },
-        { pattern: /^\d{11}$/, message: '手机号格式不正确', trigger: 'blur' },
-      ],
-      position: [{ required: true, message: '职位类型是必填项', trigger: 'change' }],
-      gender: [{ required: true, message: '性别是必填项', trigger: 'change' }],
-      salary: [{ required: true, message: '薪水是必填项', trigger: 'blur' }, { type: 'number', min: 0, message: '薪水必须为正数', trigger: 'blur' }],
-      startDate: [{ required: true, message: '入职日期是必填项', trigger: 'change' }],
-      birthDate: [{ required: true, message: '出生年月是必填项', trigger: 'change' }],
+    const validateField = (field) => {
+      switch (field) {
+        case 'name':
+          errors.value.name = formData.value.name.trim() === '' ? '姓名是必填项' : '';
+          break;
+        case 'account':
+          errors.value.account = formData.value.account.trim() === '' ? '账号是必填项' : '';
+          break;
+        case 'phoneNumber':
+          errors.value.phoneNumber =
+              !/^\d{11}$/.test(formData.value.phoneNumber)
+                  ? '手机号格式不正确，必须为11位数字'
+                  : '';
+          break;
+        case 'password':
+          errors.value.password = formData.value.password.trim() === '' ? '密码是必填项' : '';
+          break;
+        case 'jobType':
+          errors.value.jobType = formData.value.jobType === '' ? '职位类型是必填项' : '';
+          break;
+        case 'gender':
+          errors.value.gender = formData.value.gender === '' ? '性别是必填项' : '';
+          break;
+        case 'salary':
+          errors.value.salary =
+              formData.value.salary === '' || formData.value.salary < 0
+                  ? '薪水是必填项且必须为正数'
+                  : '';
+          break;
+        case 'address':
+          errors.value.address = formData.value.address.trim() === '' ? '地址是必填项' : '';
+          break;
+        case 'hireDate':
+          errors.value.hireDate = formData.value.hireDate === '' ? '入职日期是必填项' : '';
+          break;
+        case 'birthDate':
+          errors.value.birthDate = formData.value.birthDate === '' ? '出生年月是必填项' : '';
+          break;
+        default:
+          break;
+      }
+    };
+
+    const validateForm = () => {
+      Object.keys(formData.value).forEach((field) => validateField(field));
+      return !Object.values(errors.value).some((error) => error !== '');
+    };
+
+    const token = localStorage.getItem('jwtToken');
+    // 获取用户数据的函数，通过GET请求获取所有用户数据
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get('http://localhost:9528/administrator/employees', {
+          headers: {
+            'token': token
+          }
+        });
+        if (response.data && response.data.data) {
+          users.value = response.data.data;
+          console.log(users.value);
+        } else {
+          Swal.fire('错误', '后端返回数据格式不符合预期，请检查接口', 'error');
+        }
+      } catch (error) {
+        Swal.fire('错误', '获取用户数据出错：' + error.message, 'error');
+      }
     };
 
     const filteredUsers = computed(() => {
       return users.value.filter((user) => {
         return (
             (!searchTerm.value || user.name.toLowerCase().includes(searchTerm.value.toLowerCase())) &&
-            (!filterRole.value || user.position === filterRole.value)
+            (!filterRole.value || user.jobType === filterRole.value)
         );
       });
     });
@@ -202,13 +279,28 @@ export default {
       formData.value = {
         name: '',
         account: '',
-        phone: '',
-        position: '',
+        phoneNumber: '',
+        password: '',
+        jobType: '',
         gender: '',
         salary: '',
         birthDate: '',
-        startDate: '',
+        hireDate: '',
+        address: '',
       };
+      errors.value = {
+        name: '',
+        account: '',
+        phoneNumber: '',
+        password: '',
+        jobType: '',
+        gender: '',
+        salary: '',
+        birthDate: '',
+        hireDate: '',
+        address: '',
+      };
+      console.log(formData.value.phone_number );
     };
 
     // 关闭表单
@@ -216,30 +308,78 @@ export default {
       showUserForm.value = false;
     };
 
+    // 切换密码可见性
+    const togglePasswordVisibility = () => {
+      passwordVisible.value = !passwordVisible.value;
+    };
+
     // 提交表单
-    const submitForm = () => {
-      if (currentUser.value) {
-        // 编辑用户
-        Object.assign(currentUser.value, formData.value);
-        Swal.fire('成功', '用户信息已更新', 'success');
-      } else {
-        // 添加用户
-        const newUser = { ...formData.value, id: Date.now() };
-        users.value.push(newUser);
-        Swal.fire('成功', '新用户已添加', 'success');
+    const submitForm = async () => {
+      if (!validateForm()) {
+        Swal.fire('错误', '请修正表单中的错误后再提交', 'error');
+        return;
       }
-      showUserForm.value = false;
+
+      try {
+        if (currentUser.value) {
+          // 编辑用户，调用更新接口，添加employee_id到请求参数中
+          const updatedUser = {...formData.value};
+          const {employeeId} = currentUser.value;
+          console.log(currentUser.value);
+          const response = await axios.put(`http://localhost:9528/administrator/updateemployee/${employeeId}`, updatedUser, {
+            headers: {
+              'token': token
+            }
+          });
+          // 前端更新本地数据
+          const index = users.value.findIndex(user => user.employeeId === currentUser.value.employeeId);
+          if (index !== -1) {
+            users.value.splice(index, 1, updatedUser);
+          }
+          Swal.fire('成功', '用户信息已更新', 'success');
+
+        } else {
+          // 添加用户，调用添加接口
+          const newUser = {...formData.value};
+          console.log(newUser);
+          const response = await axios.post('http://localhost:9528/administrator/createemployee', newUser, {
+            headers: {
+              'token': token
+            }
+          });
+          users.value.push(newUser);
+          Swal.fire('成功', '新用户已添加', 'success');
+        }
+      } catch (error) {
+        Swal.fire('错误', '提交表单出错：' + error.message, 'error');
+      } finally {
+        showUserForm.value = false;
+        // 重新获取数据刷新列表，可根据业务需求决定是否重置页码等
+        await fetchUsers();
+      }
     };
 
     // 编辑用户
     const editUserDetails = (user) => {
       currentUser.value = user;
-      formData.value = { ...user };
+      formData.value = {...user};
+      errors.value = {
+        name: '',
+        account: '',
+        phoneNumber: '',
+        password: '',
+        jobType: '',
+        gender: '',
+        salary: '',
+        birthDate: '',
+        hireDate: '',
+        address: '',
+      };
       showUserForm.value = true;
     };
 
     // 删除用户
-    const confirmDelete = (userId) => {
+    const confirmDelete = (employeeId) => {
       Swal.fire({
         title: '确认删除?',
         text: '删除后将无法恢复!',
@@ -249,8 +389,30 @@ export default {
         cancelButtonText: '取消',
       }).then((result) => {
         if (result.isConfirmed) {
-          users.value = users.value.filter(user => user.id !== userId);
-          Swal.fire('已删除', '用户已被删除', 'success');
+          // 这里使用 fetch 发起 DELETE 请求
+          fetch(`http://localhost:9528/administrator/deleteemployee/${parseInt(employeeId)}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'token': token
+            },
+          })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('删除失败，请稍后再试');
+                }
+                return response.json();
+              })
+              .then(() => {
+                // 前端删除本地数据
+                users.value = users.value.filter(user => user.employeeId !== employeeId);
+                Swal.fire('已删除', '用户已被删除', 'success');
+                // 重新获取数据刷新列表
+                fetchUsers();
+              })
+              .catch((error) => {
+                Swal.fire('删除失败', error.message, 'error');
+              });
         }
       });
     };
@@ -265,7 +427,12 @@ export default {
     // 分页切换
     const changePage = (page) => {
       currentPage.value = page;
+      fetchUsers();
     };
+
+    onMounted(async () => {
+      await fetchUsers();
+    });
 
     return {
       searchTerm,
@@ -277,21 +444,26 @@ export default {
       paginatedUsers,
       showUserForm,
       currentUser,
+      passwordVisible,
       formData,
-      formRules,
+      errors,
       openAddUserForm,
       closeUserForm,
+      togglePasswordVisibility,
       submitForm,
       editUserDetails,
       confirmDelete,
       calculateAge,
       changePage,
+      validateField,
     };
-  },
+  }
 };
 </script>
 
 <style scoped>
+/* 样式保持不变 */
+/* 用户管理整体区域样式 */
 .user-management {
   padding: 30px;
   width: 100%;
@@ -299,72 +471,235 @@ export default {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f4f6f9;
 }
-
+/* 搜索框与筛选条件所在区域的样式 */
 .search-bar {
   width: 100%;
   display: flex;
   gap: 15px;
   margin-bottom: 20px;
 }
-
+.search-input {
+  flex: 3;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.select-box {
+  flex: 1;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  background-color: #ffffff;
+}
+/* 添加用户按钮相关样式 */
 .add-user-button-container {
   margin-bottom: 20px;
   text-align: right;
 }
-
-.add-user-button-container .el-button {
-  padding: 10px 20px;
-  background-color: #007bff;
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.user-form-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  max-width: 90%;
+  height: auto;
+  padding: 40px;
+  background: linear-gradient(135deg, #ffffff, #f3f4f6);
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.user-form-popup h3 {
+  font-size: 24px;
+  color: #222;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+.user-form-popup form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+/* 表单行样式 */
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+/* 表单列样式 */
+.form-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.form-col label {
+  font-weight: 600;
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 5px;
+}
+.form-col input,
+.form-col select {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  color: #333;
+  background-color: #f8f8f8;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+.form-col input:focus,
+.form-col select:focus {
+  border-color: #007bff;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+  background-color: #ffffff;
+  outline: none;
+}
+.form-col input::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+.submit-button {
+  background: linear-gradient(90deg, #007bff, #0056b3);
   color: #ffffff;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
+  padding: 15px 30px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+.submit-button:hover {
+  background: linear-gradient(90deg, #0056b3, #003f7f);
+  transform: translateY(-3px);
+}
+.cancel-button {
+  background: linear-gradient(90deg, #e0e0e0, #bbbbbb);
+  color: #333;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 30px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+.cancel-button:hover {
+  background: linear-gradient(90deg, #bbbbbb, #999999);
+  transform: translateY(-3px);
+}
+.user-form-popup__buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.add-user-button {
+  padding: 15px 30px;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+  transition: background 0.3s ease, transform 0.2s ease;
 }
-
-.add-user-button-container .el-button:hover {
-  background-color: #0056b3;
+.add-user-button:hover {
+  background: linear-gradient(90deg, #0056b3, #003f7f);
   transform: translateY(-2px);
 }
-
-.el-dialog__footer {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.el-table .el-table__body-wrapper {
+/* 用户列表表格的整体样式 */
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background-color: #ffffff;
 }
-
-.el-table th {
+.user-table th {
   background-color: #007bff;
   color: #ffffff;
   text-transform: uppercase;
   padding: 15px;
   text-align: left;
 }
-
-.el-table td {
+.user-table td {
   padding: 15px;
   border: 1px solid #eee;
   text-align: left;
 }
-
-.el-table tr:nth-child(even) {
+.user-table tr:nth-child(even) {
   background-color: #f9f9f9;
 }
-
-.el-pagination {
+.user-table td button {
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: #ffffff;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-right: 10px;
+}
+.user-table td button:last-child {
+  margin-right: 0;
+}
+.edit-button {
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.edit-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+.delete-button {
+  background-color: #ff4d4d;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.delete-button:hover {
+  background-color: #cc0000;
+  transform: translateY(-2px);
+}
+/* 分页区域的样式 */
+.pagination {
   margin-top: 30px;
   display: flex;
   justify-content: center;
   gap: 15px;
 }
-
-.el-pagination .el-button {
+.prev-button {
   padding: 10px 15px;
   background-color: #007bff;
   color: #ffffff;
@@ -373,57 +708,43 @@ export default {
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
-
-.el-pagination .el-button:hover {
+.prev-button:hover {
   background-color: #0056b3;
   transform: translateY(-2px);
 }
-
-button {
-  padding: 10px;
-  cursor: pointer;
-  border: none;
-  border-radius: 5px;
+.next-button {
+  padding: 10px 15px;
   background-color: #007bff;
   color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
-
-button:hover {
+.next-button:hover {
   background-color: #0056b3;
   transform: translateY(-2px);
 }
-
+/* 错误提示信息的样式 */
 .error {
   color: #ff4d4d;
   font-size: 0.9em;
   margin-top: 5px;
 }
-
-.form-container {
-  margin-bottom: 20px;
-  padding: 20px;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+.password-container {
+  position: relative;
 }
-
-.form-field {
-  margin-bottom: 15px;
+.password-toggle-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
 }
-
-.form-field label {
-  font-weight: bold;
-  margin-bottom: 5px;
-  display: block;
-}
-
-.form-field input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+.password-toggle-button:hover {
+  color: #0056b3;
 }
 </style>

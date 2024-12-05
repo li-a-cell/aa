@@ -6,9 +6,9 @@
       <div class="project-overview">
         <!-- 项目标题部分 -->
         <header class="project-header">
-          <h1 class="project-title">{{ currentProject.project_name }}</h1>
+          <h1 class="project-title">{{ currentProject.projectName }}</h1>
           <div class="project-meta">
-            <span>项目类型: {{ currentProject.project_type }}</span>
+            <span>项目类型: {{ currentProject.projectType }}</span>
           </div>
         </header>
 
@@ -22,19 +22,19 @@
           <div class="summary-content">
             <div class="info-item">
               <i class="icon-construction-site"></i>
-              施工地: {{ currentProject.site_name }}
+              施工地: {{ currentProject.siteName }}
             </div>
             <div class="info-item">
               <i class="icon-builder"></i>
-              施工方: {{ currentProject.bidder_name }}
+              施工方: {{ currentProject.bidderName }}
             </div>
             <div class="info-item">
               <i class="icon-clock-start"></i>
-              开始时间: {{ currentProject.planned_start_date }}
+              开始时间: {{ currentProject.plannedStartDate }}
             </div>
             <div class="info-item">
               <i class="icon-clock-end"></i>
-              计划结束时间: {{ currentProject.planned_end_date }}
+              计划结束时间: {{ currentProject.plannedEndDate }}
             </div>
             <div class="info-item">
               <i class="icon-budget"></i>
@@ -48,7 +48,7 @@
           </div>
           <div class="project-deadline">
             <i class="icon-calendar"></i>
-            项目剩余时间: <span class="days-left">{{ calculateRemainingDays(currentProject.planned_end_date) }}</span> 天
+            项目剩余时间: <span class="days-left">{{ calculateRemainingDays(currentProject.plannedEndDate) }}</span> 天
           </div>
         </section>
       </div>
@@ -78,7 +78,7 @@ export default {
         }
 
         // 发送GET请求，带上token
-        const response = await axios.get('http://localhost:9528/project/ongoing', {
+        const response = await axios.get('http://localhost:9528/project/onGoing', {
           headers: {
             'token': token  // 请求头包含'token'字段，值为从localStorage获取的JWT token
           },

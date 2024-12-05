@@ -1,119 +1,214 @@
 <template>
   <div class="main-content-wrapper">
-    <!-- 上边栏 -->
-    <div class="top-bar">
-      <img src="../assert/上边栏.png" alt="Top Bar" class="top-bar-image" />
-    </div>
-
     <div class="main-content">
-      <div class="main-left">
-        <!-- 项目资金图 -->
-        <div class="chart-container card">
-          <h3 class="chart-title">项目资金图</h3>
-          <canvas ref="financeChartRef" class="chart"></canvas>
+      <!-- 项目资金图 -->
+      <div class="materials-chart card">
+        <h3 class="chart-title">项目材料柱状图</h3>
+        <canvas ref="materialsChartRef" class="chart"></canvas>
+      </div>
+      <!-- 项目完成情况饼状图 -->
+      <div class="chart-container card chart-full-height">
+        <h3 class="chart-title">项目完成情况饼状图</h3>
+        <canvas ref="statusChartRef" class="chart"></canvas>
+      </div>
+
+      <!-- 项目进度情况 -->
+      <div class="progress-summary card">
+        <h3 class="progress-title">项目进度情况</h3>
+        <div class="progress-bar">
+          <div class="progress-bar-filled" :style="{ width: project.status + '%' }"></div>
         </div>
+        <p class="progress-text">项目已经完成 {{ project.jindu }}%</p>
       </div>
 
-      <div class="main-center">
-        <!-- 项目进度情况 -->
-        <div class="progress-block card">
-          <h3 class="progress-title">项目进度情况</h3>
-          <div class="progress-bar">
-            <div class="progress-bar-filled" :style="{ width: progress + '%' }"></div>
-          </div>
-          <p class="progress-text">{{ progress }}% 完成</p>
+      <!-- 结算目前项目预算金额 -->
+      <div class="summary-amount card" style="grid-column: span 3;">
+        <h3 class="summary-title">结算目前项目预算金额</h3>
+        <p class="summary-amount-value">&yen; {{ project.budget }}</p>
+      </div>
+
+      <!-- 项目日历 -->
+      <div class="calendar-container card">
+        <h3 class="calendar-title">项目日历</h3>
+        <div class="calendar-header">
+          <button @click="prevMonth" class="calendar-nav button-primary">&laquo;</button>
+          <h3 class="calendar-title">{{ currentMonth }}</h3>
+          <button @click="nextMonth" class="calendar-nav button-primary">&raquo;</button>
         </div>
-      </div>
 
-      <div class="main-right">
-        <!-- 项目完成情况饼状图 -->
-        <div class="chart-block card">
-          <h3 class="chart-title">项目完成情况饼状图</h3>
-          <canvas ref="statusChartRef" class="chart"></canvas>
+        <!-- Days of the Week -->
+        <div class="days-of-week">
+          <div class="day-header" v-for="day in daysOfWeek" :key="day">{{ day }}</div>
         </div>
-      </div>
-    </div>
 
-    <div class="notification-summary">
-      <!-- 通知栏 -->
-      <div v-if="showNotification" class="notification-bar card">
-        <h3 class="notification-title">通知</h3>
-        <div class="notification-content">
-          <div class="message" v-for="(msg, index) in messages.slice(0, 5)" :key="index">
-            <span>{{ msg }}</span>
-          </div>
-        </div>
-        <button @click="closeNotification" class="close-button">&times;</button>
-      </div>
-
-      <!-- 统计结算金额 -->
-      <div class="summary-amount card glass-card">
-        <h3 class="summary-title">统计结算金额</h3>
-        <p class="summary-amount-value">¥ 123,456,789</p>
-      </div>
-    </div>
-
-    <!-- 项目日历 -->
-    <div class="calendar-container card">
-      <h3 class="calendar-title">项目日历</h3>
-      <div class="calendar-header">
-        <button @click="prevMonth" class="calendar-nav button-primary">&laquo;</button>
-        <h3 class="calendar-title">{{ currentMonth }}</h3>
-        <button @click="nextMonth" class="calendar-nav button-primary">&raquo;</button>
-      </div>
-
-      <!-- Days of the Week -->
-      <div class="days-of-week">
-        <div class="day-header" v-for="day in daysOfWeek" :key="day">{{ day }}</div>
-      </div>
-
-      <!-- Calendar Days -->
-      <div class="days">
-        <div
+        <!-- Calendar Days -->
+        <div class="days">
+          <div
             class="day"
             v-for="date in calendarDays"
             :key="date.toISOString()"
             @click="selectDate(date)"
             :class="{
-            'highlight': isHighlighted(date),
-            'today': isToday(date),
-            'disabled': date.getMonth() !== currentDate.getMonth()
-          }"
-        >
-          <span>{{ date.getDate() }}</span>
+              'highlight': isHighlighted(date),
+              'special-date': isSpecialDate(date),
+              'today': isToday(date),
+              'disabled': date.getMonth() !== currentDate.getMonth()
+            }"
+          >
+            <span>{{ date.getDate() }}</span>
+          </div>
         </div>
       </div>
     </div>
-
-    <!-- 右下角功能按钮 -->
   </div>
 </template>
 
-
 <script>
-import { ref, onMounted, computed, watch } from 'vue';
-import Chart from 'chart.js/auto';
+import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
+import Chart from 'chart.js/auto';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'Home',
   setup() {
+    const router = useRouter();
+    const materialsChartRef = ref(null);
     const currentDate = ref(new Date());
-    const progress = ref(80);
-    const markedDates = ref(['2024-06-01', '2024-06-10', '2024-11-15']);
-    const showNotification = ref(true);
-    const messages = ref([
-      '消息一：系统更新',
-      '消息二：检查项目进度',
-      '消息三：新增项目A',
-      '消息四：项目B已完成',
-      '消息五：请检查系统日志',
-    ]);
-
-    // 图表引用
+    const project = ref({
+      projectId: null,
+      projectName: '',
+      status: null, // 代表进度百分比
+      managerId: null,
+      budget: "",
+      jindu: "",
+      plannedEndDate: '',
+      plannedStartDate: '',
+      description: '',
+      siteName: "",
+      siteId:null,
+      materials: [] // 添加 materials 属性
+    });
+    const notifications = ref([]);
     const financeChartRef = ref(null);
     const statusChartRef = ref(null);
-
+    const ongoingnode= ref(1);
+    const completedtNodeCount = ref(1);
+    const redotNodeCount = ref(1);
+    const update = async () => {
+      const token = localStorage.getItem('jwtToken');
+      console.log("更新的token", token);
+      if (token) {
+        try {
+          const response = await axios.get('http://localhost:9528/project/onGoing', {
+            headers: { 'token': token }
+          });
+          const data = response.data.data;
+          if (!data || data.length === 0) {
+            console.log('没有正在进行的项目');
+            router.push({ name: 'CreateProject' });
+          } else {
+            project.value = { ...project.value, ...data[0] };
+            console.log('项目数据更新成功');
+            console.log(data[0]);
+            console.log(project.value.plannedEndDate);
+          }
+        } catch (error) {
+          console.error('获取数据失败', error);
+        }
+      }
+    };
+ const material = async () => {
+      const token = localStorage.getItem('jwtToken');
+      console.log("材料的token", token);
+      try {
+        const response = await axios.get('http://localhost:9528/manager/incompleteProjects/materials', {
+          headers: { 'Token': token }
+        });
+        const data = response.data.data;
+        console.log("材料数据", data[0].materialName);
+        project.value.materials = data; // 将材料数据赋值给 project.materials
+        console.log("材料数据", project.value.materials);
+      } catch (error) {
+        console.error('获取数据失败', error);
+      }
+    };
+    const chartData = computed(() => {
+  return {
+    labels: project.value.materials.map(item => item.materialName),
+    datasets: [{
+      label: '项目材料数量',
+      data: project.value.materials.map(item => item.totalQuantity),
+      backgroundColor: '#00BFFF',
+    }]
+  };
+});
+const getongoingtNodeCount = async () => {
+  const token = localStorage.getItem('jwtToken');
+  console.log("节点的token", token);
+  const status="施工中";
+  try {
+    const response = await axios.post('http://localhost:9528/manager/nodes/count',{status} ,{
+        headers: { 
+          'Token': token,
+          'Content-Type': 'application/json'
+        }
+         }
+      );
+    console.log("正在进行节点数量", response.data.data);
+    ongoingnode.value = response.data.data;
+  } catch (error) {
+    console.error('获取节点数量失败', error);
+  }
+};
+const getcompletedtNodeCount = async () => {
+  const token = localStorage.getItem('jwtToken');
+  console.log("节点的token", token);
+  const status="已完成";
+  try {
+    const response = await axios.post('http://localhost:9528/manager/nodes/count',{status} ,{
+        headers: { 
+          'Token': token,
+          'Content-Type': 'application/json'
+        }
+         }
+      );
+    console.log("已经完成节点数量", response.data);
+    completedtNodeCount.value = response.data.data;
+  } catch (error) {
+    console.error('获取节点数量失败', error);
+  }
+};
+const getredotNodeCount = async () => {
+  const token = localStorage.getItem('jwtToken');
+  console.log("节点的token", token);
+  const status="未开始";
+  try {
+    const response = await axios.post('http://localhost:9528/manager/nodes/count',{status} ,{
+        headers: { 
+          'Token': token,
+          'Content-Type': 'application/json'
+        }
+         }
+      );
+    console.log("未开始节点数量", response.data);
+    redotNodeCount.value = response.data.data;
+  } catch (error) {
+    console.error('获取节点数量失败', error);
+  }
+};
+const updateProjectStatus = (newStatus) => {
+  project.value.status = newStatus;
+  project.value.jindu=Math.floor(newStatus);
+  console.log("项目状态更新为：", (completedtNodeCount.value /(completedtNodeCount.value+redotNodeCount.value+ongoingnode.value)));
+};
+updateProjectStatus((completedtNodeCount.value /(completedtNodeCount.value+redotNodeCount.value+ongoingnode.value))*100);
+// 使用示例
+getongoingtNodeCount ();
+      getcompletedtNodeCount ();
+      getredotNodeCount ();
+      update();
+      material();
     const currentMonth = computed(() => {
       return currentDate.value.toLocaleString('default', { month: 'long', year: 'numeric' });
     });
@@ -121,59 +216,48 @@ export default {
     const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     const calendarDays = computed(() => {
-      const startOfMonth = new Date(
-          currentDate.value.getFullYear(),
-          currentDate.value.getMonth(),
-          1
-      );
-      const endOfMonth = new Date(
-          currentDate.value.getFullYear(),
-          currentDate.value.getMonth() + 1,
-          0
-      );
-      const startDay = startOfMonth.getDay();
-      const endDay = endOfMonth.getDay();
-
+      const year = currentDate.value.getFullYear();
+      const month = currentDate.value.getMonth();
+      const startOfMonth = new Date(year, month, 1);
+      const endOfMonth = new Date(year, month + 1, 0);
+      const startDayOfWeek = startOfMonth.getDay();
       const days = [];
 
-      // 填充上个月的日期
-      for (let i = 0; i < startDay; i++) {
-        const date = new Date(startOfMonth);
-        date.setDate(startOfMonth.getDate() - startDay + i);
-        days.push(date);
+      for (let i = startDayOfWeek - 1; i >= 0; i--) {
+        days.push(new Date(year, month, 1 - i - 1));
       }
 
-      // 填充本月的日期
-      for (let i = 1; i <= endOfMonth.getDate(); i++) {
-        days.push(new Date(currentDate.value.getFullYear(), currentDate.value.getMonth(), i));
+      for (let day = 1; day <= endOfMonth.getDate(); day++) {
+        days.push(new Date(year, month, day));
       }
 
-      // 填充下个月的日期
-      for (let i = 1; i <= 6 - endDay; i++) {
-        const date = new Date(endOfMonth);
-        date.setDate(endOfMonth.getDate() + i);
-        days.push(date);
+      const remainingDays = 42 - days.length;
+      for (let i = 1; i <= remainingDays; i++) {
+        days.push(new Date(year, month + 1, i));
       }
 
       return days;
     });
 
     const isHighlighted = (date) => {
-      return markedDates.value.includes(date.toISOString().split('T')[0]);
-    };
+  const updatedDate = new Date(date);
+  updatedDate.setDate(updatedDate.getDate() + 1);
+  //console.log('Checking date:', updatedDate.toISOString().split('T')[0]); // 打印日期
+  return updatedDate.toISOString().split('T')[0] === project.value.planned_end_date;
+};
+
 
     const isToday = (date) => {
       const today = new Date();
       return (
-          date.getDate() === today.getDate() &&
-          date.getMonth() === today.getMonth() &&
-          date.getFullYear() === today.getFullYear()
+        date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
       );
     };
+    const isSpecialDate = (date) => Array.isArray(notifications.value) && notifications.value.some((msg) => msg.date === date.toISOString().split('T')[0]);
 
-    const selectDate = (date) => {
-      console.log(`Selected date: ${date}`);
-    };
+    const selectDate = (date) => console.log(`Selected date: ${date}`);
 
     const prevMonth = () => {
       currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() - 1, 1);
@@ -183,36 +267,41 @@ export default {
       currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() + 1, 1);
     };
 
-    const closeNotification = () => {
-      showNotification.value = false;
+    const fetchProjectData = async () => {
+      try {
+        const response = await axios.get('/api/projects/1');
+        Object.assign(project.value, response.data);
+      } catch (error) {
+        console.error('Error fetching project data:', error);
+      }
     };
 
-    const renderFinanceChart = (ctx) => {
-      if (!ctx) return;
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['项目A', '项目B', '项目C', '项目D', '项目E'],
-          datasets: [
-            {
-              label: '项目自有资金',
-              data: [24900000, 52748000, 2852000, 47245989, 31000000],
-              backgroundColor: '#00BFFF',
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              ticks: {
-                callback: (value) => '¥' + value.toLocaleString(),
-              },
-            },
+    const fetchNotifications = async () => {
+      try {
+        const response = await axios.get('/api/notifications');
+        notifications.value = response.data;
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    };
+
+    const renderMaterialsChart = (ctx) => {
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'bar',
+    data: chartData.value,
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          ticks: {
+            callback: (value) =>  value.toLocaleString(),
           },
         },
-      });
-    };
+      },
+    },
+  });
+};
 
     const renderStatusChart = (ctx) => {
       if (!ctx) return;
@@ -222,7 +311,7 @@ export default {
           labels: ['进行中', '已完成', '暂停'],
           datasets: [
             {
-              data: [60, 30, 10],
+              data: [ongoingnode,completedtNodeCount ,redotNodeCount ],
               backgroundColor: ['#4CAF50', '#00BFFF', '#FF9800'],
             },
           ],
@@ -230,20 +319,17 @@ export default {
       });
     };
 
-    onMounted(() => {
-      if (financeChartRef.value) {
-        renderFinanceChart(financeChartRef.value);
-      }
-      if (statusChartRef.value) {
-        renderStatusChart(statusChartRef.value);
-      }
-    });
+    onMounted(async () => {
+      await fetchProjectData();
+      await fetchNotifications();
 
-    watch(currentDate, () => {
-      console.log('Current date changed:', currentDate.value);
+      if (financeChartRef.value) renderFinanceChart(financeChartRef.value);
+      if (statusChartRef.value) renderStatusChart(statusChartRef.value);
+      if (materialsChartRef.value) renderMaterialsChart(materialsChartRef.value);
     });
 
     return {
+      materialsChartRef,
       currentDate,
       currentMonth,
       daysOfWeek,
@@ -252,11 +338,10 @@ export default {
       nextMonth,
       isHighlighted,
       isToday,
+      isSpecialDate,
       selectDate,
-      closeNotification,
-      progress,
-      showNotification,
-      messages,
+      project,
+      notifications,
       financeChartRef,
       statusChartRef,
     };
@@ -265,266 +350,224 @@ export default {
 </script>
 
 <style scoped>
+/* 主容器布局 */
 .main-content-wrapper {
   display: flex;
   flex-direction: column;
-  width: calc(100vw - 250px);
+  width: 86vw;
   height: 100vh;
-  overflow: hidden;
-  background-color: #F0F4FF;
+  background-color: #F0F4FA; /* 更柔和的背景色 */
+  padding: 0;
+  box-sizing: border-box;
+  border: 1px solid #E0E6ED; /* 增加边框 */
 }
 
+/* 上边栏样式 */
 .top-bar {
   width: 100%;
-  height: 150px;
-  background-color: #E6F7FF;
+  height: 60px;
+  background-color: #005B96; /* 深蓝色调 */
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* 轻微阴影 */
+  border-bottom: 1px solid #E0E6ED; /* 增加底部边框 */
 }
 
 .top-bar-image {
-  position: relative;
   max-height: 100%;
-  max-width: 90%;
 }
 
+/* 主内容布局 */
 .main-content {
-  flex-grow: 1;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 20px;
-  padding: 20px;
-  background-color: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-left: 250px;
+  grid-template-columns: 2fr 2fr 1fr;
+  grid-template-rows: auto auto auto; /* 增加一行 */
+  grid-gap: 15px; /* 加大间距 */
+  padding: 20px; /* 增加内边距 */
+  background-color: #ffffff; /* 白色背景 */
+  border: 1px solid #e0ebedd2; /* 增加边框 */
+  border-radius: 12px; /* 圆角 */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* 更柔和的阴影 */
 }
-
+/* 各个卡片样式 */
 .card {
-  padding: 20px;
-  border-radius: 15px;
-background: #FFFFFF;
-box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
-margin-bottom: 20px;
+  padding: 20px; /* 增加内边距 */
+  border-radius: 12px; /* 更大的圆角 */
+  background: linear-gradient(to bottom, #FFFFFF, #F0F4FA); /* 渐变背景 */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* 更柔和的阴影 */
+  border: 1px solid #E0E6ED; /* 增加边框 */
 }
 
-.glass-card {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.avatar-icon {
-  border-radius: 50%;
-  border: 2px solid #D1E9FF;
-}
-
-.button-primary {
-  background-color: #0077B6;
-  color: #ffffff;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.button-primary:hover {
-  background-color: #005F8C;
-}
-
-.main-left,
-.main-center,
-.main-right {
-  padding: 15px;
-  background: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.notification-summary {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-gap: 20px;
-  padding: 20px;
-}
-
-.notification-bar {
-  background-color: #FFF7E6;
-  padding: 15px;
-  text-align: center;
-  color: #333;
-  font-weight: bold;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  position: relative;
-}
-
-.notification-title {
-  margin-bottom: 10px;
-}
-
-.notification-content {
-  overflow-y: auto;
-  max-height: 150px;
-}
-
-.message {
-  margin-bottom: 10px;
-  padding: 10px;
-  background-color: #ffffff;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-}
-
-.close-button {
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: #333;
-  cursor: pointer;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
-.summary-amount {
-  padding: 15px;
-  background: #D1E9FF;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  text-align: center;
-  color: #003366;
-}
-
-.summary-title {
-  margin-bottom: 10px;
-  font-weight: bold;
-  color: #003366;
-}
-
-.summary-amount-value {
-  font-size: 28px;
-  font-weight: bold;
-  color: #0077B6;
+.chart-container {
+  min-height: 200px; /* 调整高度 */
 }
 
 .chart {
-  max-height: 300px;
-  margin: auto;
+  max-height: 160px;
+  margin: 10px 0;
+}
+
+/* 项目进度情况 */
+.progress-summary {
+  min-height: 120px; /* 调整高度 */
+  background-color: #f8f0fa; /* 浅蓝色背景 */
+  border: 1px solid #e0edec; /* 增加边框 */
 }
 
 .progress-bar {
-  background: #F0F0F0;
-  height: 25px;
-  border-radius: 12px;
+  width: 100%;
+  height: 24px; /* 增加高度 */
+  background: #E0E6ED; /* 浅灰色背景 */
+  border-radius: 12px; /* 圆角条 */
   overflow: hidden;
+  margin-top: 15px;
 }
 
 .progress-bar-filled {
-  background: linear-gradient(90deg, #4CAF50, #85e085);
   height: 100%;
+  background: #4CAF50; /* 保留绿色 */
   transition: width 0.5s;
 }
 
-.calendar-container {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 15px;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  margin: 20px 0;
+.progress-text {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #333; /* 深灰色字体 */
 }
 
-.days-of-week {
-  display: flex;
-  justify-content: space-between;
-  font-weight: bold;
+/* 通知栏 */
+.notification-bar {
+  min-height: 120px; /* 调整高度 */
+  background-color: #FFF8E1; /* 浅黄色背景 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 柔和阴影 */
+  border: 1px solid #E0E6ED; /* 增加边框 */
+}
+
+.notification-title {
   color: #333;
-}
-
-.days {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-
-.day {
-  width: 13%;
-  padding: 10px;
-  text-align: center;
-  cursor: pointer;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: background-color 0.3s;
-}
-
-.day.highlight {
-  background-color: rgba(0, 191, 255, 0.7);
-  color: white;
+  font-size: 18px;
   font-weight: bold;
 }
 
-.day.today {
-  background-color: #00BFFF;
-  color: white;
+.notification-content {
+  margin-top: 10px;
+}
+
+/* 累计结算金额 */
+.summary-amount {
+  min-height: 120px; /* 调整高度 */
+  background: linear-gradient(to bottom, #e0e4fa, #ffffff); /* 渐变浅蓝色 */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #E0E6ED; /* 增加边框 */
+  color: #00796B; /* 蓝绿色文字 */
+  grid-column: span 3; /* 占据三列 */
+}
+
+.summary-title {
+  font-size: 18px;
   font-weight: bold;
 }
 
-.calendar-nav {
-  background: none;
-  border: none;
+.summary-amount-value {
   font-size: 24px;
-  cursor: pointer;
-  color: #00BFFF;
-  transition: color 0.3s;
+  font-weight: bold;
+}
+/* 日历样式 */
+.calendar-container {
+  grid-column: span 3;
+  min-height: 380px; /* 调整高度 */
+  text-align: center;
+  padding: 20px;
+  background: #faf0f000; /* 新的背景颜色，可以根据需要调整 */
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #E0E6ED; /* 增加边框 */
 }
 
-.calendar-nav:hover {
-  color: #0077b3;
-}
 
-.bottom-right-feature {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
+.calendar-header {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  background: #ffffff;
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.feature-item {
-  display: flex;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
 }
 
-.feature-icon {
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
+.days-of-week,
+.days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px; /* 增加间距 */
 }
 
-.feature-text {
-  text-align: right;
-}
-
-.feature-title {
-  font-size: 16px;
+.day-header {
+  flex: 1;
   font-weight: bold;
-  margin: 0;
+  color: #333;
 }
 
-.feature-description {
-  font-size: 12px;
-  color: #666;
-  margin: 0;
+.day {
+  flex: 1 0 14%;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 10px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  background-color: #FFFFFF;
+}
+
+.day:hover {
+  background-color: #E3F2FD; /* 浅蓝色悬停效果 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.day.highlight {
+  background-color: rgba(255, 0, 0, 0.6);
+  color: white;
+  border: none;
+}
+
+.day.today {
+  background-color: #00d0ff;
+  color: white;
+  font-weight: bold;
+}
+
+.day.special-date {
+  background-color: #FFE6E6; /* 红色背景标记特殊日期 */
+  color: #D9534F;
+  font-weight: bold;
+}
+
+.button-primary {
+  background: #007BFF;
+  border: none;
+  font-size: 14px;
+  color: #FFF;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.button-primary:hover {
+  background: #0056b3;
+}
+
+.calendar-nav {
+  font-size: 16px;
+  padding: 6px 12px;
+  background: transparent;
+  color: #ff00f22c;
+  border: 2px solid #ff000000;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.calendar-nav:hover {
+  background-color: #007BFF;
+  color: #FFF;
 }
 </style>

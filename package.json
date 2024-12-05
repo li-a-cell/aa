@@ -9,8 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vee-validate/rules": "^4.14.7",
     "axios": "^1.7.7",
     "chart.js": "^4.4.6",
+    "chartjs": "^0.3.24",
     "cors": "^2.8.5",
     "element-plus": "^2.8.8",
     "jwt-decode": "^3.1.2",
