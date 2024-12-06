@@ -15,13 +15,13 @@ public class ProjectNode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "node_id")
-    private int nodeId;  // 节点 ID
+    private Integer nodeId;  // 节点 ID
 
     @Column(name = "project_id", nullable = false)
     private int projectId;  // 关联的项目
 
     @Column(name = "parent_node_id")
-    private int  parentNodeId;  // 上级节点 (可为空)
+    private Integer  parentNodeId;  // 上级节点 (可为空)
 
     @Column(name = "node_name", nullable = false)
     private String nodeName;  // 节点名称

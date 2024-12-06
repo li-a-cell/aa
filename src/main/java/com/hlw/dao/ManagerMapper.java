@@ -25,7 +25,7 @@ public interface ManagerMapper {
      * @param endDate      结束日期
      * @param nodeInfo     节点信息
      */
-    @Transactional
+
     @Insert("INSERT INTO projectnode (project_id, parent_node_id, node_name, start_date, end_date, node_info, status) " +
             "VALUES( #{projectId}, " +
             "       #{parentNodeId}, " +
@@ -161,6 +161,7 @@ public interface ManagerMapper {
      * @param equipmentId 设备ID
      * @param nodeId      节点ID
      */
+    @Transactional
     @Update("UPDATE equipment SET node_id = #{nodeId} WHERE equipment_id = #{equipmentId}")
     void updateEquipmentNodeID(@Param("equipmentId") int equipmentId, @Param("nodeId") int nodeId);
 
@@ -197,6 +198,7 @@ public interface ManagerMapper {
      *
      * @param equipmentId 设备ID
      */
+    @Transactional
     @Update("UPDATE equipment SET node_id = NULL WHERE equipment_id = #{equipmentId}")
     void clearEquipmentNodeId(@Param("equipmentId") int equipmentId);
 
@@ -215,6 +217,7 @@ public interface ManagerMapper {
      * @param nodeId 节点ID
      * @param status 新状态
      */
+    @Transactional
     @Update("UPDATE projectnode SET status = #{status} WHERE node_id = #{nodeId}")
     void updateProjectNodeStatus(int nodeId, String status);
 
@@ -242,6 +245,7 @@ public interface ManagerMapper {
      * @param projectId 项目ID
      * @param status    新状态
      */
+    @Transactional
     @Update("UPDATE project SET status = #{status} WHERE project_id = #{projectId}")
     void updateProjectStatus(int projectId, String status);
 
@@ -348,6 +352,7 @@ public interface ManagerMapper {
      * @param startDate      开始日期
      * @param dueDate        截止日期
      */
+    @Transactional
     @Update("UPDATE inspectiontask " +
             "SET inspector_id = #{inspectorId}, " +
             "status = #{status}, " +

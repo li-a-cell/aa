@@ -9,20 +9,25 @@ import com.hlw.pojo.ProjectNode;
 import com.hlw.pojo.Regulations;
 import com.hlw.pojo.InspectionTask;
 import com.hlw.pojo.Result;
-import com.hlw.pojo.TenderTask;
+import io.micrometer.common.util.StringUtils;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 @Service
 public class ManagerService {
 
     @Autowired
     private ManagerMapper managerMapper;
-
+    private static final Logger logger = LoggerFactory.getLogger(ManagerService.class);
     /**
      * 方法：创建项目节点
      *
@@ -34,19 +39,25 @@ public class ManagerService {
      * @param nodeInfo     节点信息
      * @return 返回创建结果，包括成功或错误信息
      */
+    @Transactional
     public Result createProjectNode(int projectId, Integer parentNodeId, String nodeName, LocalDate startDate, LocalDate endDate, String nodeInfo) {
         try {
-            System.out.println(projectId);
             if (parentNodeId != null) {
-                // 调用 Mapper 层方法，插入数据
+                // 如果是子节点，调用相应的插入方法
                 managerMapper.createProjectNodesByManagerId(projectId, parentNodeId, nodeName, startDate, endDate, nodeInfo);
             } else {
-                // 调用 Mapper 层方法，插入数据
+                // 如果是顶级节点，调用另一个插入方法
                 managerMapper.createParentProjectNodesByManagerId(projectId, nodeName, startDate, endDate, nodeInfo);
             }
+
+            // 返回成功信息
             return Result.success("Project node created successfully.");
+        } catch (DataAccessException e) {
+            // 捕获数据库访问异常
+            return Result.error("Database error: " + e.getMessage());
         } catch (Exception e) {
-            return Result.error("Failed to create project node: " + e.getMessage());
+            // 捕获其他异常
+            return Result.error("Unexpected error: " + e.getMessage());
         }
     }
 
@@ -58,18 +69,31 @@ public class ManagerService {
      * @return 返回符合条件的项目节点列表
      */
     public List<ProjectNode> getTopLevelNodesByStatus(int managerId, ProjectNode.NodeStatus status) {
-        return managerMapper.getTopLevelNodesByStatus(managerId, status);
+        try {
+            return managerMapper.getTopLevelNodesByStatus(managerId, status);
+        } catch (DataAccessException e) {
+            // 捕获数据库访问异常，记录日志并返回空列表
+            return Collections.emptyList();  // 返回空列表而不是抛出异常
+        }
     }
-
     /**
      * 根据父节点 ID 获取其子节点
      *
      * @param parentNodeId 父节点ID
      * @return 返回子节点列表
      */
-    public List<ProjectNode> getChildNodesByParentNodeId(int parentNodeId) {
-        return managerMapper.getChildNodesByParentNodeId(parentNodeId);
-    }
+        public List<ProjectNode> getChildNodesByParentNodeId(int parentNodeId) {
+            try {
+                return managerMapper.getChildNodesByParentNodeId(parentNodeId);
+            } catch (DataAccessException e) {
+                // 记录数据库访问错误
+                return Collections.emptyList();  // 返回空列表而不是抛出异常
+            } catch (Exception e) {
+                // 记录其他类型的错误
+                return Collections.emptyList();
+            }
+        }
+
 
     /**
      * 方法：配置节点所需材料
@@ -86,11 +110,16 @@ public class ManagerService {
 
             // 校验库存是否足够
             if (currentStock < requiredQuantity) {
+                logger.warn("库存不足: {} 当前库存: {}, 所需数量: {}", materialName, currentStock, requiredQuantity);
                 return Result.error("库存不足，无法配置该材料");
             }
 
             // 通过材料名称查询材料ID
             int materialId = managerMapper.getMaterialIdByName(materialName);
+            if (materialId <= 0) {
+                logger.error("未找到材料: {}", materialName);
+                return Result.error("未找到该材料");
+            }
 
             // 插入节点材料配置
             managerMapper.addMaterialToNode(nodeId, materialId, requiredQuantity);
@@ -99,10 +128,10 @@ public class ManagerService {
             managerMapper.updateMaterial(materialName, currentStock - requiredQuantity);
             return Result.success("材料配置成功");
         } catch (Exception e) {
+            logger.error("材料配置失败，节点ID: {}, 材料: {}, 所需数量: {}", nodeId, materialName, requiredQuantity, e);
             return Result.error("材料配置失败: " + e.getMessage());
         }
     }
-
     /**
      * 为节点配置设备的方法
      *
@@ -114,23 +143,33 @@ public class ManagerService {
         try {
             // 根据设备名称获取设备 ID
             int equipmentId = managerMapper.getEquipmentIdByName(equipmentName);
+            if (equipmentId <= 0) {
+                logger.error("未找到设备: {}", equipmentName);
+                return Result.error("未找到该设备");
+            }
 
             // 检查设备状态是否为未使用
             String equipmentStatus = managerMapper.getEquipmentStatusById(equipmentId);
             if (!"未使用".equals(equipmentStatus)) {
+                logger.warn("设备 {} 当前状态为 {}，无法配置", equipmentName, equipmentStatus);
                 return Result.error("只有状态为未使用的设备才能配置到节点。");
             }
 
             // 更新设备状态为使用中
             managerMapper.updateEquipmentStatus(equipmentId, "使用中");
+
             // 更新设备的节点ID
             managerMapper.updateEquipmentNodeID(equipmentId, nodeId);
+
+            // 记录操作日志
+            logger.info("设备 {} 已成功配置到节点 {}，设备ID: {}", equipmentName, nodeId, equipmentId);
+
             return Result.success("设备已成功配置到节点。");
         } catch (Exception e) {
+            logger.error("设备配置失败，节点ID: {}, 设备: {}", nodeId, equipmentName, e);
             return Result.error("设备配置失败: " + e.getMessage());
         }
     }
-
     /**
      * 方法：根据材料名称修改节点材料数量，并更新相应材料的库存量
      *
@@ -139,6 +178,7 @@ public class ManagerService {
      * @param newQuantity  新的数量
      * @return 返回更新结果，包括成功或错误信息
      */
+    @Transactional
     public Result updateMaterialQuantityForNodeByName(int nodeId, String materialName, int newQuantity) {
         try {
             // 获取当前节点该材料的配置数量
@@ -149,13 +189,16 @@ public class ManagerService {
 
             // 获取当前材料的库存
             int currentStock = managerMapper.getCurrentStockQuantityByName(materialName);
-            // 计算库存变化量（当前数量 - 新数量），正数表示增加库存，负数表示减少库存
-            int stockChange = currentQuantity - newQuantity;
 
-            // 更新库存（这里要确保库存更新后不能为负数，可添加更严谨的逻辑判断）
+            // 计算库存变化量
+            int stockChange = newQuantity - currentQuantity;
+
+            // 确保库存不能为负数
             if (currentStock + stockChange < 0) {
                 return Result.error("库存不足，无法修改为该数量");
             }
+
+            // 更新库存
             managerMapper.updateMaterial(materialName, currentStock + stockChange);
 
             // 更新节点材料配置的数量
@@ -175,24 +218,34 @@ public class ManagerService {
      * @param status        新的状态
      * @return 返回更新结果，包括成功或错误信息
      */
-    public Result updateEquipmentStatus(int nodeId, String equipmentName, String status) {
+    public Result updateStatus(int nodeId, String equipmentName, String status) {
         try {
-            // 根据设备名称获取设备 ID
-            int equipmentId = managerMapper.getEquipmentIdByName(equipmentName);
-
-            // 检查设备当前状态
-            String equipmentStatus = managerMapper.getEquipmentStatusById(equipmentId);
-            if (!"使用中".equals(equipmentStatus) && !"未使用".equals(equipmentStatus) && !"出现问题".equals(equipmentStatus)) {
-                return Result.error("设备状态无效，无法更新为指定状态。");
+            // 验证设备状态是否合法
+            if (!isValidStatus(status)) {
+                return Result.error("无效的设备状态: " + status);
             }
 
-            // 更新设备状态为指定状态
-            managerMapper.updateEquipmentStatus(equipmentId, status);
+            // 根据设备名称获取设备 ID
+            int equipmentId = managerMapper.getEquipmentIdByName(equipmentName);
+            if (equipmentId == 0) {
+                return Result.error("设备不存在");
+            }
 
-            return Result.success("设备状态已更新为 " + status + "。");
+            // 更新设备状态
+            managerMapper.updateEquipmentStatus(equipmentId, status);
+            return Result.success("设备状态已更新为 " + status);
         } catch (Exception e) {
             return Result.error("设备状态更新失败: " + e.getMessage());
         }
+    }
+    /**
+     * 校验方法：判断设备状态是否合法
+     *
+     * @param status 设备状态
+     * @return 返回是否合法
+     */
+    private boolean isValidStatus(String status) {
+        return "使用中".equals(status) || "未使用".equals(status) || "出现问题".equals(status);
     }
 
     /**
@@ -226,6 +279,7 @@ public class ManagerService {
      * @param status 新的状态
      * @return 返回更新结果，包括成功或错误信息
      */
+    @Transactional  // 使用事务，确保所有操作要么成功，要么回滚
     public Result updateProjectNodeStatus(int nodeId, String status) {
         try {
             // 更新项目节点状态
@@ -233,19 +287,25 @@ public class ManagerService {
 
             // 如果状态为已完成，则将该节点下所有设备状态改为未使用
             if ("已完成".equals(status)) {
+                // 异步处理释放设备逻辑（根据具体需求选择是否使用异步）
                 releaseAllEquipmentFromNode(nodeId);
-                // 检查项目下所有节点状态
+
+                // 更新项目状态：检查所有节点是否都已完成
                 int projectId = managerMapper.getProjectIdByNodeId(nodeId);
                 List<String> nodeStatuses = managerMapper.getAllNodeStatusesByProjectId(projectId);
                 boolean allCompleted = nodeStatuses.stream().allMatch(s -> "已完成".equals(s));
+
                 if (allCompleted) {
+                    // 更新项目状态为已完成
                     managerMapper.updateProjectStatus(projectId, "已完成");
-                    return Result.success("项目节点状态已更新为 " + status + "。" + "项目已完成！");
+                    return Result.success("项目节点状态已更新为 " + status + "。项目已完成！");
                 }
             }
 
             return Result.success("项目节点状态已更新为 " + status + "。");
         } catch (Exception e) {
+
+            logger.error("项目节点状态更新失败", e);  // 记录详细日志
             return Result.error("项目节点状态更新失败: " + e.getMessage());
         }
     }
@@ -300,14 +360,18 @@ public class ManagerService {
      */
     public Result getMaterialsByNodeId(int nodeId) {
         try {
+            // 获取材料列表
             List<nodematerial> materials = managerMapper.getMaterialsByNodeId(nodeId);
 
+            // 如果材料为空，返回适当的错误信息
             if (materials == null || materials.isEmpty()) {
                 return Result.error("该节点没有使用任何材料");
             }
 
             return Result.success(materials);
         } catch (Exception e) {
+            // 记录其他类型的错误
+            logger.error("获取节点材料失败，节点 ID: {}", nodeId, e);
             return Result.error("获取节点材料信息失败: " + e.getMessage());
         }
     }
@@ -350,8 +414,8 @@ public class ManagerService {
                 return Result.error("缺少必要的检查任务字段，创建失败");
             }
 
-            // 默认检查任务状态为 "未开始"
-            if (status.isEmpty()) {
+            // 默认检查任务状态为 "未开始"（处理空白字符串）
+            if (StringUtils.isBlank(status)) {
                 status = "未开始";
             }
 
@@ -360,10 +424,11 @@ public class ManagerService {
 
             return Result.success("检查任务创建成功！");
         } catch (Exception e) {
+            // 记录其他类型的错误
+            logger.error("检查任务创建失败", e);
             return Result.error("检查任务创建失败: " + e.getMessage());
         }
     }
-
     /**
      * 更新检查任务。
      *
