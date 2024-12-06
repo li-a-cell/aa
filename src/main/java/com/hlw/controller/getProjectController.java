@@ -7,6 +7,8 @@ import com.hlw.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -20,6 +22,7 @@ public class getProjectController {
     @Autowired
     private ProjectService projectservice;
 
+    private static final Logger logger = LoggerFactory.getLogger(AdministratorController.class);
     /**
      * 获取正在进行的项目
      *
@@ -28,6 +31,7 @@ public class getProjectController {
      */
     @GetMapping("/onGoing")
     public Result getOngoingProjects(HttpServletRequest request) {
+        // 从请求中获取员工ID
         Object employeeIdObj = request.getAttribute("employeeId");
 
         if (employeeIdObj == null) {
@@ -41,13 +45,21 @@ public class getProjectController {
             return Result.error("Invalid Employee ID format");
         }
 
+        // 确保用户是项目经理
         if (projectservice.isProjectManager(employeeId)) {
-            List<ProjectDto> projects = projectservice.getProjectsByStatus(employeeId, "onGoing");
-            return Result.success(projects);
+            try {
+                // 获取项目状态为“onGoing”的项目
+                List<ProjectDto> projects = projectservice.getProjectsByStatus(employeeId, "onGoing");
+                return Result.success(projects);
+            } catch (Exception e) {
+                logger.error("Error fetching ongoing projects for employeeId: {}", employeeId, e);
+                return Result.error("系统异常，无法获取进行中的项目");
+            }
         } else {
             return Result.error("你不是项目经理");
         }
     }
+
 
     /**
      * 获取已完成的项目
@@ -57,26 +69,41 @@ public class getProjectController {
      */
     @GetMapping("/completed")
     public Result getCompletedProjects(HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employeeId");
-
-        if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
+        // 从请求中获取员工ID
+        int employeeId = extractEmployeeId(request);
+        if (employeeId == -1) {
+            return Result.error("employee_id is missing or invalid in the request");
         }
 
-        int employeeId;
-        try {
-            employeeId = Integer.parseInt(employeeIdObj.toString());
-        } catch (NumberFormatException e) {
-            return Result.error("Invalid Employee ID format");
-        }
-
+        // 确保用户是项目经理
         if (projectservice.isProjectManager(employeeId)) {
-            List<ProjectDto> projects = projectservice.getProjectsByStatus(employeeId, "completed");
-            return Result.success(projects);
+            try {
+                // 获取项目状态为“completed”的项目
+                List<ProjectDto> projects = projectservice.getProjectsByStatus(employeeId, "completed");
+                return Result.success(projects);
+            } catch (Exception e) {
+                logger.error("Error fetching completed projects for employeeId: {}", employeeId, e);
+                return Result.error("系统异常，无法获取已完成的项目");
+            }
         } else {
             return Result.error("你不是项目经理");
         }
     }
+
+    // 提取员工ID的方法
+    private int extractEmployeeId(HttpServletRequest request) {
+        Object employeeIdObj = request.getAttribute("employeeId");
+        if (employeeIdObj == null) {
+            return -1;  // 表示员工ID缺失
+        }
+
+        try {
+            return Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            return -1;  // 返回-1表示无效的员工ID格式
+        }
+    }
+
 
     /**
      * 获取项目的对应状态节点的详细信息
@@ -87,22 +114,30 @@ public class getProjectController {
      */
     @PostMapping("/nodes")
     public Result getProjectNodes(@RequestBody ProjectNode projectNode, HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employeeId");
-
-        if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
+        // 提取并验证员工ID
+        int employeeId = extractEmployeeId(request);
+        if (employeeId == -1) {
+            return Result.error("employee_id is missing or invalid in the request");
         }
 
-        int employeeId;
+        // 检查 projectNode 是否有效
+        if (projectNode == null || projectNode.getProjectId() == null || projectNode.getStatus() == null) {
+            return Result.error("Invalid request data: projectId or status is missing");
+        }
+
         try {
-            employeeId = Integer.parseInt(employeeIdObj.toString());
-        } catch (NumberFormatException e) {
-            return Result.error("Invalid Employee ID format");
+            // 获取项目节点列表
+            List<ProjectNode> projectNodes = projectservice.getProjectNodes(projectNode.getProjectId(), projectNode.getStatus());
+            return Result.success(projectNodes);
+        } catch (Exception e) {
+            // 记录错误日志
+            logger.error("Error fetching project nodes for projectId: {}, status: {}",
+                    projectNode.getProjectId(), projectNode.getStatus(), e);
+            return Result.error("系统异常，无法获取项目节点");
         }
-
-        List<ProjectNode> projectNodes = projectservice.getProjectNodes(projectNode.getProjectId(), projectNode.getStatus());
-        return Result.success(projectNodes);
     }
+
+
 
     /**
      * 获取某一状态项目的数量
@@ -113,19 +148,29 @@ public class getProjectController {
      */
     @PostMapping("/projectNum")
     public Result getProjectsNum(@RequestBody ProjectDto projectDto, HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employeeId");
-        if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
+        // 提取并验证员工ID
+        int employeeId = extractEmployeeId(request);
+        if (employeeId == -1) {
+            return Result.error("employee_id is missing or invalid in the request");
         }
-        int employeeId;
+
+        // 检查 projectDto 是否有效
+        if (projectDto == null || projectDto.getStatus() == null) {
+            return Result.error("Invalid request data: status is missing");
+        }
+
         try {
-            employeeId = Integer.parseInt(employeeIdObj.toString());
-        } catch (NumberFormatException e) {
-            return Result.error("Invalid Employee ID format");
+            // 获取项目数量
+            int num = projectservice.getProjectsNum(projectDto.getStatus());
+            return Result.success(num);
+        } catch (Exception e) {
+            // 记录异常日志
+            logger.error("Error fetching project count for status: {}", projectDto.getStatus(), e);
+            return Result.error("系统异常，无法获取项目数量");
         }
-        int num = projectservice.getProjectsNum(projectDto.getStatus());
-        return Result.success(num);
     }
+
+
 
     /**
      * 根据项目类型返回项目数量
@@ -136,19 +181,29 @@ public class getProjectController {
      */
     @PostMapping("/numByType")
     public Result getProjectsNumByType(@RequestBody ProjectDto projectDto, HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employeeId");
-        if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
+        // 提取并验证员工ID
+        int employeeId = extractEmployeeId(request);
+        if (employeeId == -1) {
+            return Result.error("employee_id is missing or invalid in the request");
         }
-        int employeeId;
+
+        // 校验 projectDto 是否有效
+        if (projectDto == null || projectDto.getProjectType() == null) {
+            return Result.error("Invalid request data: projectType is missing");
+        }
+
         try {
-            employeeId = Integer.parseInt(employeeIdObj.toString());
-        } catch (NumberFormatException e) {
-            return Result.error("Invalid Employee ID format");
+            // 获取按项目类型统计的项目数量
+            int num = projectservice.getProjectsNumByType(String.valueOf(projectDto.getProjectType()));
+            return Result.success(num);
+        } catch (Exception e) {
+            // 记录异常日志
+            logger.error("Error fetching project count by type: {}", projectDto.getProjectType(), e);
+            return Result.error("系统异常，无法获取项目数量");
         }
-        int num = projectservice.getProjectsNumByType(String.valueOf(projectDto.getProjectType()));
-        return Result.success(num);
     }
+
+
 
     /**
      * 按类型查询项目金额
@@ -159,19 +214,28 @@ public class getProjectController {
      */
     @PostMapping("/costByType")
     public Result getProjectsCostNumByType(@RequestBody ProjectDto projectDto, HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employeeId");
-        if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
+        // 提取并验证员工ID
+        int employeeId = extractEmployeeId(request);
+        if (employeeId == -1) {
+            return Result.error("employee_id is missing or invalid in the request");
         }
-        int employeeId;
+
+        // 校验 projectDto 是否有效
+        if (projectDto == null || projectDto.getProjectType() == null) {
+            return Result.error("Invalid request data: projectType is missing");
+        }
+
         try {
-            employeeId = Integer.parseInt(employeeIdObj.toString());
-        } catch (NumberFormatException e) {
-            return Result.error("Invalid Employee ID format");
+            // 获取按项目类型统计的项目成本
+            double cost = projectservice.getProjectsCostNumByType(String.valueOf(projectDto.getProjectType()));
+            return Result.success(cost);
+        } catch (Exception e) {
+            // 记录异常日志
+            logger.error("Error fetching project cost by type: {}", projectDto.getProjectType(), e);
+            return Result.error("系统异常，无法获取项目成本");
         }
-        double cost = projectservice.getProjectsCostNumByType(String.valueOf(projectDto.getProjectType()));
-        return Result.success(cost);
     }
+
 
     /**
      * 获取所有项目
@@ -181,18 +245,21 @@ public class getProjectController {
      */
     @GetMapping("/all")
     public Result getAllProjects(HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employeeId");
-        if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
+        // 提取并验证员工ID
+        int employeeId = extractEmployeeId(request);
+        if (employeeId == -1) {
+            return Result.error("employee_id is missing or invalid in the request");
         }
-        int employeeId;
+
         try {
-            employeeId = Integer.parseInt(employeeIdObj.toString());
-        } catch (NumberFormatException e) {
-            return Result.error("Invalid Employee ID format");
+            // 获取所有项目
+            List<ProjectDto> projects = projectservice.getAllProjects();
+            return Result.success(projects);
+        } catch (Exception e) {
+            // 记录异常日志
+            logger.error("Error fetching all projects", e);
+            return Result.error("系统异常，无法获取项目列表");
         }
-        List<ProjectDto> projects = projectservice.getAllProjects();
-        return Result.success(projects);
     }
 
     /**
@@ -204,19 +271,25 @@ public class getProjectController {
      */
     @PostMapping("/status")
     public Result getProjectsByStatus(@RequestBody ProjectDto projectDto, HttpServletRequest request) {
-        Object employeeIdObj = request.getAttribute("employeeId");
-
-        if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
+        // 提取并验证员工ID
+        int employeeId = extractEmployeeId(request);
+        if (employeeId == -1) {
+            return Result.error("employee_id is missing or invalid in the request");
         }
 
-        int employeeId;
+        // 检查传入的ProjectDto是否有效
+        if (projectDto == null || projectDto.getStatus() == null) {
+            return Result.error("Invalid project status provided");
+        }
+
         try {
-            employeeId = Integer.parseInt(employeeIdObj.toString());
-        } catch (NumberFormatException e) {
-            return Result.error("Invalid Employee ID format");
+            // 根据项目状态获取项目列表
+            List<ProjectDto> projects = projectservice.getProjectsByStatus(projectDto.getStatus());
+            return Result.success(projects);
+        } catch (Exception e) {
+            // 记录异常日志
+            logger.error("Error fetching projects by status", e);
+            return Result.error("系统异常，无法获取项目列表");
         }
-
-        return Result.success(projectservice.getProjectsByStatus(projectDto.getStatus()));
     }
 }

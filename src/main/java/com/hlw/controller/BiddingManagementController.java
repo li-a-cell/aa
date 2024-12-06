@@ -1,11 +1,15 @@
 package com.hlw.controller;
 
+import com.hlw.dto.ProjectBiddingRecordDto;
+import com.hlw.dto.TenderTaskDto;
 import com.hlw.pojo.*;
 import com.hlw.service.BiddingManagementService;
 import com.hlw.utils.JsonUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -20,6 +24,25 @@ public class BiddingManagementController {
      */
     @Autowired
     private BiddingManagementService biddingManagementService;
+    // 提取员工ID解析逻辑
+    private int parseEmployeeId(Object employeeIdObj) {
+        try {
+            return Integer.parseInt(employeeIdObj.toString());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid Employee ID format");
+        }
+    }
+
+    // 将字符串转换为整数，若转换失败则抛出异常
+    private int parseInt(String value, String fieldName) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(fieldName + " should be a valid number");
+        }
+    }
+
+    private static final Logger logger = LoggerFactory.getLogger(AdministratorController.class);
 
     /**
      * 添加投标记录
@@ -46,12 +69,25 @@ public class BiddingManagementController {
             return Result.error("Invalid Employee ID format");
         }
 
-        // 调用Service层方法添加投标记录
-        biddingManagementService.addTenderRecord(tenderRecord.getProjectId(), tenderRecord.getTendererId(), tenderRecord.getRequestDate(), tenderRecord.getBidderId());
+        // 参数校验：确保投标记录的必填字段不为空
+        if (tenderRecord == null || tenderRecord.getProjectId() == null || tenderRecord.getTendererId() == null
+                || tenderRecord.getRequestDate() == null || tenderRecord.getBidderId() == null) {
+            return Result.error("Missing required tender record information");
+        }
 
-        // 返回操作结果
-        return Result.success("Tender record added successfully");
+        try {
+            // 调用Service层方法添加投标记录
+            biddingManagementService.addTenderRecord(tenderRecord.getProjectId(), tenderRecord.getTendererId(), tenderRecord.getRequestDate(), tenderRecord.getBidderId());
+
+            // 返回操作结果
+            return Result.success("Tender record added successfully");
+        } catch (Exception e) {
+            // 记录异常日志
+            logger.error("Error adding tender record: {}", e.getMessage());
+            return Result.error("Failed to add tender record, system error occurred");
+        }
     }
+
 
     /**
      * 获取投标任务
@@ -66,15 +102,32 @@ public class BiddingManagementController {
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
         }
+
         int employeeId;
         try {
             employeeId = Integer.parseInt(employeeIdObj.toString());
         } catch (NumberFormatException e) {
             return Result.error("Invalid Employee ID format");
         }
-        // 返回投标任务列表
-        return Result.success(biddingManagementService.getTenderTask());
+
+        try {
+            // 获取投标任务列表
+            List<TenderTaskDto> tenderTasks = biddingManagementService.getTenderTask();
+
+            // 如果没有任务，返回合适的提示
+            if (tenderTasks == null || tenderTasks.isEmpty()) {
+                return Result.error("No tender tasks found");
+            }
+
+            // 返回投标任务列表
+            return Result.success(tenderTasks);
+        } catch (Exception e) {
+            // 记录异常日志
+            logger.error("Error fetching tender tasks: {}", e.getMessage(), e);
+            return Result.error("Failed to fetch tender tasks, system error occurred");
+        }
     }
+
 
     /**
      * 获取所有投标记录
@@ -89,15 +142,32 @@ public class BiddingManagementController {
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
         }
+
         int employeeId;
         try {
             employeeId = Integer.parseInt(employeeIdObj.toString());
         } catch (NumberFormatException e) {
             return Result.error("Invalid Employee ID format");
         }
-        // 返回所有投标记录
-        return Result.success(biddingManagementService.getAllBiddingRecords());
+
+        try {
+            // 获取所有投标记录
+            List<ProjectBiddingRecordDto> biddingRecords = biddingManagementService.getAllBiddingRecords();
+
+            // 如果没有投标记录，返回合适的提示
+            if (biddingRecords == null || biddingRecords.isEmpty()) {
+                return Result.error("No bidding records found");
+            }
+
+            // 返回投标记录列表
+            return Result.success(biddingRecords);
+        } catch (Exception e) {
+            // 记录异常日志
+            logger.error("Error fetching bidding records: {}", e.getMessage(), e);
+            return Result.error("Failed to fetch bidding records, system error occurred");
+        }
     }
+
 
     /**
      * 发布招标操作
@@ -113,6 +183,7 @@ public class BiddingManagementController {
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
         }
+
         int employeeId;
         try {
             employeeId = Integer.parseInt(employeeIdObj.toString());
@@ -120,12 +191,31 @@ public class BiddingManagementController {
             return Result.error("Invalid Employee ID format");
         }
 
-        // 解析JSON字符串获取项目ID并调用Service层方法发布招标
-        JsonUtils jsonUtils = new JsonUtils();
-        String projectId = JsonUtils.getValueFromJson(tenderRecord, "projectId");
-        biddingManagementService.publishTender(Integer.parseInt(projectId));
-        return Result.success("Tender published successfully");
+        try {
+            // 解析JSON字符串获取项目ID
+            JsonUtils jsonUtils = new JsonUtils();
+            String projectIdStr = JsonUtils.getValueFromJson(tenderRecord, "projectId");
+
+            if (projectIdStr == null || projectIdStr.isEmpty()) {
+                return Result.error("Project ID is missing in the request");
+            }
+
+            int projectId = Integer.parseInt(projectIdStr);
+
+            // 发布招标
+            biddingManagementService.publishTender(projectId);
+
+            // 记录成功日志
+            logger.info("Employee {} successfully published tender for project {}", employeeId, projectId);
+
+            return Result.success("Tender published successfully");
+        } catch (Exception e) {
+            // 记录异常日志
+            logger.error("Error occurred while publishing tender: {}", e.getMessage(), e);
+            return Result.error("Failed to publish tender, please try again later");
+        }
     }
+
 
     /**
      * 获取项目相关的投标记录
@@ -135,21 +225,49 @@ public class BiddingManagementController {
      * @return 返回项目相关的投标记录列表
      */
     @PostMapping("/getProjectBiddingRecords")
-    Result getProjectBiddingRecords(@RequestBody Project project, HttpServletRequest request) {
-        // 从请求中获取员工ID并进行有效性检查
+    public Result getProjectBiddingRecords(@RequestBody Project project, HttpServletRequest request) {
+        // 获取并验证员工ID
+        int employeeId = getEmployeeIdFromRequest(request);
+        if (employeeId == -1) {
+            return Result.error("employee_id is missing or invalid in the request");
+        }
+
+        try {
+            // 获取项目ID并校验
+            int projectId = project.getProjectId();
+            if (projectId <= 0) {
+                return Result.error("Invalid Project ID");
+            }
+
+            // 获取项目相关的投标记录
+            List<ProjectBiddingRecordDto> biddingRecords = biddingManagementService.getBiddingRecordsByProjectId(projectId);
+            if (biddingRecords == null || biddingRecords.isEmpty()) {
+                return Result.error("No bidding records found for the given project ID");
+            }
+
+            // 返回投标记录
+            return Result.success(biddingRecords);
+
+        } catch (Exception e) {
+            // 捕获并记录异常
+            logger.error("Error occurred while fetching bidding records for project {}: {}", project.getProjectId(), e.getMessage(), e);
+            return Result.error("Failed to retrieve bidding records, please try again later");
+        }
+    }
+
+    // 封装获取员工ID的逻辑
+    private int getEmployeeIdFromRequest(HttpServletRequest request) {
         Object employeeIdObj = request.getAttribute("employeeId");
         if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
+            return -1; // 返回-1表示员工ID缺失
         }
-        int employeeId;
         try {
-            employeeId = Integer.parseInt(employeeIdObj.toString());
+            return Integer.parseInt(employeeIdObj.toString());
         } catch (NumberFormatException e) {
-            return Result.error("Invalid Employee ID format");
+            return -1; // 返回-1表示员工ID格式无效
         }
-        // 返回项目相关的投标记录
-        return Result.success(biddingManagementService.getBiddingRecordsByProjectId(project.getProjectId()));
     }
+
 
     /**
      * 获取所有投标人信息
@@ -159,22 +277,32 @@ public class BiddingManagementController {
      */
     @GetMapping("/getAllBidders")
     public Result getAllBidders(HttpServletRequest request) {
-        // 从请求中获取员工ID并进行有效性检查
-        Object employeeIdObj = request.getAttribute("employeeId");
-        if (employeeIdObj == null) {
-            return Result.error("employee_id is missing in the request");
-        }
-        int employeeId;
-        try {
-            employeeId = Integer.parseInt(employeeIdObj.toString());
-        } catch (NumberFormatException e) {
-            return Result.error("Invalid Employee ID format");
+        // 获取并验证员工ID
+        int employeeId = getEmployeeIdFromRequest(request);
+        if (employeeId == -1) {
+            return Result.error("employee_id is missing or invalid in the request");
         }
 
-        // 获取所有投标人信息并返回
-        List<Bidder> bidders = biddingManagementService.getAllBidders();
-        return Result.success(bidders);
+        try {
+            // 获取所有投标人信息
+            List<Bidder> bidders = biddingManagementService.getAllBidders();
+
+            // 如果没有找到投标人信息，返回相应提示
+            if (bidders == null || bidders.isEmpty()) {
+                return Result.error("No bidders found");
+            }
+
+            // 返回投标人信息
+            return Result.success(bidders);
+
+        } catch (Exception e) {
+            // 捕获异常并记录日志
+            logger.error("Error occurred while fetching bidders: {}", e.getMessage(), e);
+            return Result.error("Failed to retrieve bidders, please try again later");
+        }
     }
+
+
 
     /**
      * 添加投标人

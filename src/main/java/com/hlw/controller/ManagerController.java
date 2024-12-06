@@ -393,17 +393,17 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         // 使用 JsonUtils 获取项目的具体信息
         JsonUtils jsonUtils = new JsonUtils();
-        String projectName = JsonUtils.getValueFromJson(projectDetails, "project_name");
-        String startDate = JsonUtils.getValueFromJson(projectDetails, "planned_start_date");
-        String endDate = JsonUtils.getValueFromJson(projectDetails, "planned_end_date");
+        String projectName = JsonUtils.getValueFromJson(projectDetails, "projectName");
+        String startDate = JsonUtils.getValueFromJson(projectDetails, "plannedStartDate");
+        String endDate = JsonUtils.getValueFromJson(projectDetails, "plannedEndDate");
         String  budget= JsonUtils.getValueFromJson(projectDetails, "budget");
-        String projectDescription = JsonUtils.getValueFromJson(projectDetails, "project_description");
-        String constructionSiteName = JsonUtils.getValueFromJson(projectDetails, "site_name");
+        String projectDescription = JsonUtils.getValueFromJson(projectDetails, "projectDescription");
+        String constructionSiteName = JsonUtils.getValueFromJson(projectDetails, "siteName");
         String  status= JsonUtils.getValueFromJson(projectDetails, "status");
-        String  project_type= JsonUtils.getValueFromJson(projectDetails, "project_type");
+        String  projectType= JsonUtils.getValueFromJson(projectDetails, "projectType");
         // 调用 Service 层方法创建项目
         return managerService.createProject(employeeId, projectName, startDate, endDate,
-                projectDescription, constructionSiteName,budget,status,project_type);
+                projectDescription, constructionSiteName,budget,status,projectType);
     }
 
     @GetMapping("/getAllRegulations")
