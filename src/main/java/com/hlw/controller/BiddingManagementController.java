@@ -177,9 +177,10 @@ public class BiddingManagementController {
      * @return 返回操作结果，包括成功或错误信息
      */
     @PostMapping("/publishTender")
-    public Result publishTender(@RequestBody String tenderRecord, HttpServletRequest request) {
+    public Result publishTender(@RequestBody TenderRecord tenderRecord, HttpServletRequest request) {
         // 从请求中获取员工ID并进行有效性检查
         Object employeeIdObj = request.getAttribute("employeeId");
+        System.out.println("tenderRecord: " + tenderRecord);
         if (employeeIdObj == null) {
             return Result.error("employee_id is missing in the request");
         }
@@ -192,21 +193,11 @@ public class BiddingManagementController {
         }
 
         try {
-            // 解析JSON字符串获取项目ID
-            JsonUtils jsonUtils = new JsonUtils();
-            String projectIdStr = JsonUtils.getValueFromJson(tenderRecord, "projectId");
-
-            if (projectIdStr == null || projectIdStr.isEmpty()) {
-                return Result.error("Project ID is missing in the request");
-            }
-
-            int projectId = Integer.parseInt(projectIdStr);
-
             // 发布招标
-            biddingManagementService.publishTender(projectId);
+            biddingManagementService.publishTender(tenderRecord.getProjectId());
 
             // 记录成功日志
-            logger.info("Employee {} successfully published tender for project {}", employeeId, projectId);
+            logger.info("Employee {} successfully published tender for project {}", employeeId, tenderRecord.getProjectId());
 
             return Result.success("Tender published successfully");
         } catch (Exception e) {
