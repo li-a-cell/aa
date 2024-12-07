@@ -38,8 +38,7 @@ public class LoginController {
             User user = empMapper.findByAccount(User.getAccount());
             Map<String, Object> claims=new HashMap<>();
             claims.put("employeeId",user.getEmployeeId());
-            // 注意：这里将用户密码作为jobType放入claims可能存在安全风险
-            claims.put("jobType",user.getPassword());
+            claims.put("jobType",user.getJobType());
             String jwt=JwtUtils.generateJwt(claims);
             return Result.success(jwt);
 
