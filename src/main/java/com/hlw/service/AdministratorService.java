@@ -172,8 +172,8 @@ public class AdministratorService {
         return administratorMapper.getAllEquipment();
     }
 
-    public Equipment getEquipment(int equipmentId) {
-        return administratorMapper.getEquipment(equipmentId);
+    public Equipment getEquipment(String equipmentName) {
+        return administratorMapper.getEquipment(equipmentName);
     }
 
     public void updateEquipment(Equipment equipment) {

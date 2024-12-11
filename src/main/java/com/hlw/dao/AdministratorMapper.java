@@ -236,7 +236,7 @@ public interface AdministratorMapper {
     List<Equipment> getAllEquipment();
 
     @Select("SELECT * FROM equipment WHERE equipment_name = #{equipmentName}")
-    Equipment getEquipment(int equipmentId);
+    Equipment getEquipment(String equipmentName);
 
     @Update("UPDATE equipment SET equipment_name = #{equipment.equipmentName}, equipment_photo = #{equipment.equipmentPhoto}, " +
             "equipment_type = #{equipment.equipmentType}, equipment_model = #{equipment.equipmentModel}, status = #{equipment.status}, " +

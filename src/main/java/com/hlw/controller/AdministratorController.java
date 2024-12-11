@@ -632,7 +632,7 @@ public class AdministratorController {
 
     @PostMapping("/getEquipment")
     public Result getEquipment(@RequestBody Equipment equipment){
-        Equipment equipment1 = administratorService.getEquipment(equipment.getEquipmentId());
+        Equipment equipment1 = administratorService.getEquipment(equipment.getEquipmentName());
         return Result.success(equipment1);
     }
 
