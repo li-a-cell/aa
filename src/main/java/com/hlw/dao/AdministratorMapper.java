@@ -228,7 +228,21 @@ public interface AdministratorMapper {
 
     // 插入新设备
     @Insert("INSERT INTO equipment (equipment_name, equipment_photo, equipment_type, equipment_model, status,  remarks) " +
-            "VALUES (#{newEquipment.equipment_name}, #{newEquipment.equipment_photo}, #{newEquipment.equipment_type}, #{newEquipment.equipment_model}, " +
+            "VALUES (#{newEquipment.equipmentName}, #{newEquipment.equipmentPhoto}, #{newEquipment.equipmentType}, #{newEquipment.equipmentModel}, " +
             "#{newEquipment.status}, #{newEquipment.remarks})")
     boolean addEquipment(@Param("newEquipment") Equipment newEquipment);
+
+    @Select("SELECT * FROM equipment")
+    List<Equipment> getAllEquipment();
+
+    @Select("SELECT * FROM equipment WHERE equipment_id = #{equipmentId}")
+    Equipment getEquipment(int equipmentId);
+
+    @Update("UPDATE equipment SET equipment_name = #{equipment.equipmentName}, equipment_photo = #{equipment.equipmentPhoto}, " +
+            "equipment_type = #{equipment.equipmentType}, equipment_model = #{equipment.equipmentModel}, status = #{equipment.status}, " +
+            "remarks = #{equipment.remarks} WHERE equipment_id = #{equipment.equipmentId}")
+    void updateEquipment(Equipment equipment);
+
+    @Delete("DELETE FROM equipment WHERE equipment_id = #{equipmentId}")
+    void deleteEquipment(int equipmentId);
 }

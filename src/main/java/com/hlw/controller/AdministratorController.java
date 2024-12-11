@@ -593,7 +593,7 @@ public class AdministratorController {
     }
 
     // 添加设备
-    @PostMapping("/createequipment")
+    @PostMapping("/createEquipment")
     public Result addEquipment(@RequestBody Equipment newEquipment) {
         if (newEquipment == null) {
             return Result.error("设备信息不能为空");
@@ -620,6 +620,32 @@ public class AdministratorController {
             logger.error("Error occurred while adding equipment: {}", e.getMessage());
             return Result.error("设备添加失败，系统错误");
         }
+    }
+
+
+    @GetMapping("/getAllEquipment")
+    public Result getAllEquipment(){
+        List<Equipment> equipmentList = administratorService.getAllEquipment();
+        return Result.success(equipmentList);
+
+    }
+
+    @PostMapping("/getEquipment")
+    public Result getEquipment(@RequestBody Equipment equipment){
+        Equipment equipment1 = administratorService.getEquipment(equipment.getEquipmentId());
+        return Result.success(equipment1);
+    }
+
+    @PostMapping("/updateEquipment")
+    public Result updateEquipment(@RequestBody Equipment equipment){
+        administratorService.updateEquipment(equipment);
+        return Result.success();
+    }
+
+    @PostMapping("/deleteEquipment")
+    public Result deleteEquipment(@RequestBody Equipment equipment){
+        administratorService.deleteEquipment(equipment.getEquipmentId());
+        return Result.success();
     }
 
 }

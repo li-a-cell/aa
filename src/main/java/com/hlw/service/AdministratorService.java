@@ -167,4 +167,20 @@ public class AdministratorService {
     public boolean addEquipment(Equipment newEquipment) {
         return administratorMapper.addEquipment(newEquipment);
     }
+
+    public List<Equipment> getAllEquipment() {
+        return administratorMapper.getAllEquipment();
+    }
+
+    public Equipment getEquipment(int equipmentId) {
+        return administratorMapper.getEquipment(equipmentId);
+    }
+
+    public void updateEquipment(Equipment equipment) {
+        administratorMapper.updateEquipment(equipment);
+    }
+
+    public void deleteEquipment(int equipmentId) {
+        administratorMapper.deleteEquipment(equipmentId);
+    }
 }
