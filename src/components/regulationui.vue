@@ -33,7 +33,7 @@
     console.log("token", token);
     if (token) {
       const response = await axios.post(
-        `http://localhost:9528/manager/getRegulations`,
+        `/api/manager/getRegulations`,
         JSON.stringify({
           regulationName: rname
         }),

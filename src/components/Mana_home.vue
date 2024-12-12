@@ -100,7 +100,7 @@ export default {
       console.log("更新的token", token);
       if (token) {
         try {
-          const response = await axios.get('http://localhost:9528/project/onGoing', {
+          const response = await axios.get('/api/project/onGoing', {
             headers: { 'token': token }
           });
           const data = response.data.data;
@@ -122,7 +122,7 @@ export default {
       const token = localStorage.getItem('jwtToken');
       console.log("材料的token", token);
       try {
-        const response = await axios.get('http://localhost:9528/manager/incompleteProjects/materials', {
+        const response = await axios.get('/api/manager/incompleteProjects/materials', {
           headers: { 'Token': token }
         });
         const data = response.data.data;
@@ -148,7 +148,7 @@ const getongoingtNodeCount = async () => {
   console.log("节点的token", token);
   const status="施工中";
   try {
-    const response = await axios.post('http://localhost:9528/manager/nodes/count',{status} ,{
+    const response = await axios.post('/api/manager/nodes/count',{status} ,{
         headers: { 
           'Token': token,
           'Content-Type': 'application/json'
@@ -166,7 +166,7 @@ const getcompletedtNodeCount = async () => {
   console.log("节点的token", token);
   const status="已完成";
   try {
-    const response = await axios.post('http://localhost:9528/manager/nodes/count',{status} ,{
+    const response = await axios.post('/api/manager/nodes/count',{status} ,{
         headers: { 
           'Token': token,
           'Content-Type': 'application/json'
@@ -184,7 +184,7 @@ const getredotNodeCount = async () => {
   console.log("节点的token", token);
   const status="未开始";
   try {
-    const response = await axios.post('http://localhost:9528/manager/nodes/count',{status} ,{
+    const response = await axios.post('/api/manager/nodes/count',{status} ,{
         headers: { 
           'Token': token,
           'Content-Type': 'application/json'

@@ -90,7 +90,7 @@
   console.log("待发布项目token", token);
   const status = "待发布";
   try {
-    const response = await axios.post('http://localhost:9528/project/status', { status }, {
+    const response = await axios.post('/api/project/status', { status }, {
       headers: { 
         'Token': token,
         'Content-Type': 'application/json'

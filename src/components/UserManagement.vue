@@ -241,7 +241,7 @@ export default {
     // 获取用户数据的函数，通过GET请求获取所有用户数据
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:9528/administrator/employees', {
+        const response = await axios.get('/api/administrator/employees', {
           headers: {
             'token': token
           }
@@ -326,7 +326,7 @@ export default {
           const updatedUser = {...formData.value};
           const {employeeId} = currentUser.value;
           console.log(currentUser.value);
-          const response = await axios.put(`http://localhost:9528/administrator/updateemployee/${employeeId}`, updatedUser, {
+          const response = await axios.put(`/api/administrator/updateemployee/${employeeId}`, updatedUser, {
             headers: {
               'token': token
             }
@@ -342,7 +342,7 @@ export default {
           // 添加用户，调用添加接口
           const newUser = {...formData.value};
           console.log(newUser);
-          const response = await axios.post('http://localhost:9528/administrator/createemployee', newUser, {
+          const response = await axios.post('/api/administrator/createemployee', newUser, {
             headers: {
               'token': token
             }
@@ -390,7 +390,7 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           // 这里使用 fetch 发起 DELETE 请求
-          fetch(`http://localhost:9528/administrator/deleteemployee/${parseInt(employeeId)}`, {
+          fetch(`/api/administrator/deleteemployee/${parseInt(employeeId)}`, {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',

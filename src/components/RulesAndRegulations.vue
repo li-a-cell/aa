@@ -34,7 +34,7 @@ export default {
     const token = localStorage.getItem('jwtToken');
     if (token) {
         console.log("不为空", token);
-        axios.get(`http://localhost:9528/manager/getAllRegulations`, {
+        axios.get(`/api/manager/getAllRegulations`, {
             headers: {
                 'Token': token
             },

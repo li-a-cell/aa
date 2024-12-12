@@ -185,7 +185,7 @@ export default {
         return;
       }
       try {
-        const response = await axios.get('http://localhost:9528/project/all', {
+        const response = await axios.get('/api/project/all', {
           params: {
             page: currentPage.value,
             pageSize: pageSize.value,
@@ -265,7 +265,7 @@ export default {
           ...editFormData.value  // 包含了所有编辑后的字段数据，包括projectId和description
         };
         console.log(requestData);
-        await axios.post(`http://localhost:9528/administrator/updateProjects`, requestData, {
+        await axios.post(`/api/administrator/updateProjects`, requestData, {
           headers: {
             'token': token
           }

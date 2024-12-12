@@ -23,7 +23,11 @@ import zhaobiaoluoji from '@/components/zhaobiaoluoji.vue';
 import unbid from '@/components/unbid.vue';
 import unlogo from '@/components/unlogo.vue';
 import BidderView from '../components/BidderView.vue';
-
+import ProjectManagement from '../components/Back_projectManagement.vue';
+import UserManagement from '../components/UserManagement.vue';
+import Home from '../components/Back_home.vue';
+import MaterialManagement from '../components/MaterialManagement.vue';
+import MaterialDetails from '../components/MaterialDetails.vue';
 const routes = [
     // 登录页面使用 LoginLayout
     {
@@ -65,6 +69,33 @@ const routes = [
     {
         path: '/admindashboard',
         component: Admindashboard ,
+        children :[
+            {
+                path: '/materialdetails',
+                name: 'MaterialDetails',
+                component: MaterialDetails
+            },
+            {
+                path: '/projectmanagement',
+                name: 'ProjectManagement',
+                component: ProjectManagement,
+            },
+            {
+                path: '/usermanagement',
+                name: 'UserManagement',
+                component: UserManagement,
+            },
+            {
+                path: '',
+                name: 'Home',
+                component: Home,
+            },
+            {
+                path: '/materialmanagement',
+                name: 'MaterialManagement',
+                component: MaterialManagement,
+            },
+        ]
     },
     {
         path: '/pro-card',

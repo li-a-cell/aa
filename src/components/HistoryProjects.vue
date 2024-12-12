@@ -82,7 +82,7 @@ export default {
         }
 
         // 发送 GET 请求，带上 token
-        const response = await axios.get('http://localhost:9528/project/completed', {
+        const response = await axios.get('/api/project/completed', {
           headers: {
             'token': token  // 请求头包含 'token' 字段，值为从 localStorage 获取的 JWT token
           },

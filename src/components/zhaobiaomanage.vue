@@ -96,7 +96,7 @@ const reloggnum  = async () => {
   console.log("待发布token", token);
   const status="待发布";
   try {
-    const response = await axios.post('http://localhost:9528/project/projectnum',{status} ,{
+    const response = await axios.post('/api/project/projectnum',{status} ,{
         headers: { 
           'Token': token,
           'Content-Type': 'application/json'
@@ -114,7 +114,7 @@ const relogthing = async () => {
   console.log("待发布项目token", token);
   const status = "待发布";
   try {
-    const response = await axios.post('http://localhost:9528/project/status', { status }, {
+    const response = await axios.post('/api/project/status', { status }, {
       headers: { 
         'Token': token,
         'Content-Type': 'application/json'
@@ -152,7 +152,7 @@ const undothing = async () => {
   console.log("待招标项目token", token);
   const status = "待招标";
   try {
-    const response = await axios.post('http://localhost:9528/project/status', { status }, {
+    const response = await axios.post('/api/project/status', { status }, {
       headers: { 
         'Token': token,
         'Content-Type': 'application/json'
@@ -189,7 +189,7 @@ const ongoingnum = async () => {
   console.log("施工中token", token);
   const status="施工中";
   try {
-    const response = await axios.post('http://localhost:9528/project/projectnum',{status} ,{
+    const response = await axios.post('/api/project/projectnum',{status} ,{
         headers: { 
           'Token': token,
           'Content-Type': 'application/json'
@@ -207,7 +207,7 @@ const biddingnum= async () => {
   console.log("带招标token", token);
   const status="待招标";
   try {
-    const response = await axios.post('http://localhost:9528/project/projectnum',{status} ,{
+    const response = await axios.post('/api/project/projectnum',{status} ,{
         headers: { 
           'Token': token,
           'Content-Type': 'application/json'
@@ -225,7 +225,7 @@ const unlog = async () => {
       //console.log("待发布项目列表token", token);
       if (token) {
         try {
-          const response = await axios.get('http://localhost:9528/biddingmanagent/getbiddingrecord', {
+          const response = await axios.get('/api/biddingmanagent/getbiddingrecord', {
             headers: { 'Token': token,
                'Content-Type': 'application/json'
              }

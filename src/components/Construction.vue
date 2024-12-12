@@ -116,10 +116,12 @@
 
 <script>
 import axios from 'axios';
+import {useStore} from "vuex";
 import Swal from'sweetalert2'; // 引入SweetAlert库，用于展示提示信息
 import router from '@/router';
 import { onMounted, onActivated, ref } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
+import store from "@/store.js";
 
 export default {
   name: "SubNodesPage",
@@ -181,7 +183,7 @@ export default {
         };
         console.log(requestData)
         // 使用 POST 请求发送数据
-        const response = await axios.post('http://localhost:9528/manager/topLevelNodes', requestData, {
+        const response = await axios.post('/api/manager/topLevelNodes', requestData, {
           headers: {
             'token': token
           }
@@ -226,7 +228,7 @@ export default {
       };
       console.log(newNode);
       try {
-        const response = await axios.post('http://localhost:9528/manager/create', newNode, {
+        const response = await axios.post('/api/manager/create', newNode, {
           headers: {
             'token': token
           }
@@ -288,7 +290,7 @@ export default {
       };
       console.log(newSubNode);
       try {
-        const response = await axios.post('http://localhost:9528/manager/create', newSubNode, {
+        const response = await axios.post('/api/manager/create', newSubNode, {
           headers: {
             'token': token
           }
@@ -312,15 +314,10 @@ export default {
     const handleRowClick = (row) => {
       // 判断点击的行数据中是否有标识其为子节点的属性（这里假设子节点数据对象中有isSubNode属性，值为true表示是子节点，可根据实际情况调整）
       if (isSubNodePage.value ) {
-        console.log(row.nodeId)
+        const node=row;
+        store.commit('setDataAndSave', { key: 'node', data: node });
         // 如果是子节点，进行跳转到节点详情界面的操作，这里使用vue-router的编程式导航进行路由跳转，跳转到NodeDetailPage，并传递子节点id作为参数（假设子节点数据对象中有node_id属性）
-        router.push({ name:'NodeDetailPage', params: {
-            nodeName:row.nodeName ,
-            startDate:row.startDate ,
-            endDate:row.endDate ,
-            nodeInfo:row.nodeInfo ,
-            nodeId:row.nodeId,
-        } });
+        router.push({ name:'NodeDetailPage' });
       } else {
         // 如果不是子节点（即父节点），执行原来展示子节点列表的逻辑
         isSubNodePage.value = true;
@@ -338,7 +335,7 @@ export default {
           return;
         }
 
-        const response = await axios.get(`http://localhost:9528/manager/childNodes/${parentNodeId}`, {
+        const response = await axios.get(`/api/manager/childNodes/${parentNodeId}`, {
           headers: {
             'token': token
           }

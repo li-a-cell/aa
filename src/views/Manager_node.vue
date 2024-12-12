@@ -88,7 +88,7 @@ export default {
           return;
         }
 
-        const response = await axios.get('http://localhost:9528/project/onGoing', {
+        const response = await axios.get('/api/project/onGoing', {
           headers: {
             'token': token
           }
@@ -132,7 +132,7 @@ export default {
           status: "已完成"
         };
 
-        const response = await axios.post('http://localhost:9528/project/nodes', requestData, {
+        const response = await axios.post('/api/project/nodes', requestData, {
           headers: {
             'token': token
           }

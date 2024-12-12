@@ -79,7 +79,7 @@ export default {
   console.log("待发布项目token", token);
   const status = "待发布";
   try {
-    const response = await axios.get('http://localhost:9528/biddingmanagent/getAllBidders', {
+    const response = await axios.get('/api/biddingmanagent/getAllBidders', {
           headers: { 'Token': token }
         });
     console.log("投标人信息", response.data);
@@ -110,7 +110,7 @@ const deleteBidder = async (bid) => {
       console.log("删除投标人的id", bid.id);
       try {
        // console.log("删除投标人的id", bid.id);
-        await axios.delete(`http://localhost:9528/biddingmanagent/deleteBidder/${bid.id}`, {
+        await axios.delete(`/api/biddingmanagent/deleteBidder/${bid.id}`, {
           headers: { 'Token': token }
         });
         // 从本地数据中移除投标人

@@ -5,16 +5,16 @@
       <div class="logo">建筑项目管理系统</div>
       <nav class="nav-menu">
         <ul>
-          <li @click="currentView = 'Home'" :class="{ active: currentView === 'Home' }">
+          <li @click="navigateTo('Home')" :class="{ active: isActive('Home') }">
             <i class="icon fas fa-home"></i><span>主界面</span>
           </li>
-          <li @click="currentView = 'ProjectManagement'" :class="{ active: currentView === 'ProjectManagement' }">
+          <li @click="navigateTo('ProjectManagement')" :class="{ active: isActive('ProjectManagement') }">
             <i class="icon fas fa-tasks"></i><span>项目管理</span>
           </li>
-          <li @click="currentView = 'UserManagement'" :class="{ active: currentView === 'UserManagement' }">
+          <li @click="navigateTo('UserManagement')" :class="{ active: isActive('UserManagement') }">
             <i class="icon fas fa-user"></i><span>用户管理</span>
           </li>
-          <li @click="currentView = 'MaterialManagement'" :class="{ active: currentView === 'MaterialManagement' }">
+          <li @click="navigateTo('MaterialManagement')" :class="{ active: isActive('MaterialManagement') }">
             <i class="icon fas fa-user"></i><span>材料管理</span>
           </li>
         </ul>
@@ -30,18 +30,18 @@
         </div>
       </header>
       <div class="content-view">
-        <component :is="currentView" />
+        <router-view></router-view> <!-- 使用router-view来渲染对应路由组件 -->
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import router from "@/router/index.js";  // 假设你的路由实例是从这里引入，需根据实际情况调整路径
 import ProjectManagement from '../components/Back_projectManagement.vue';
 import UserManagement from '../components/UserManagement.vue';
-import Home from '../components/Back_home.vue'; // 假设有一个主页组件
+import Home from '../components/Back_home.vue';
 import MaterialManagement from '../components/MaterialManagement.vue';
-
 
 export default {
   name: 'Dashboard',
@@ -49,13 +49,29 @@ export default {
     Home,
     ProjectManagement,
     UserManagement,
-    MaterialManagement ,
+    MaterialManagement,
   },
   data() {
     return {
-      currentView: 'Home', // 默认显示主页视图
+      currentView: 'Home'
     };
   },
+  methods: {
+    navigateTo(routeName) {
+      this.$router.push({ name: routeName });
+    },
+    isActive(routeName) {
+      return this.$route.name === routeName;
+    }
+  },
+  mounted() {
+    const firstEnter = localStorage.getItem('firstEnter');
+    if (firstEnter === null) {
+      // 如果是首次进入，跳转到主界面
+      this.$router.push({ name: 'Home' });
+      localStorage.setItem('firstEnter', 'false');
+    }
+  }
 };
 </script>
 
@@ -112,7 +128,7 @@ export default {
   background-color: #2980b9;
 }
 
-.nav-menu li .icon {
+.nav-menu li.icon {
   margin-right: 10px;
   font-size: 1.2em;
 }

@@ -33,22 +33,22 @@
               </div>
               <!-- 使用v-if控制编辑材料表单显示隐藏 -->
               <div v-if="showEditMaterial===scope.row" class="modal-overlay">
-              <div class="edit-material-form-wrapper">
-                <div class="modal-content">
-                  <el-form :model="editMaterialData">
-                    <el-form-item label="数量">
-                      <el-input type="number" v-model="editMaterialData.newQuantity"></el-input>
-                    </el-form-item>
-                  </el-form>
-                  <div class="dialog-footer">
-                    <el-button @click="hideEditMaterial()">取消</el-button>
-                    <el-button type="primary" @click="editMaterial(scope.row)">确认</el-button>
+                <div class="edit-material-form-wrapper">
+                  <div class="modal-content">
+                    <el-form :model="editMaterialData">
+                      <el-form-item label="数量">
+                        <el-input type="number" v-model="editMaterialData.newQuantity"></el-input>
+                      </el-form-item>
+                    </el-form>
+                    <div class="dialog-footer">
+                      <el-button @click="hideEditMaterial()">取消</el-button>
+                      <el-button type="primary" @click="editMaterial(scope.row)">确认</el-button>
+                    </div>
                   </div>
                 </div>
               </div>
-              </div>
             </template>
-            </el-table-column>
+          </el-table-column>
         </el-table>
         <div class="button-group" style="float: right; margin-top: 10px;">
           <el-button type="primary" @click="showAddMaterial = true">增加材料</el-button>
@@ -56,28 +56,28 @@
         <!-- 使用v-if控制增加材料表单显示隐藏 -->
         <div v-if="showAddMaterial" class="modal-overlay">
           <div class="add-material-form-wrapper">
-          <div class="modal-content">
-            <el-form :model="newMaterial">
-              <el-form-item label="材料名称">
-                <el-select v-model="newMaterial.materialName" placeholder="请选择材料">
-                  <el-option
-                      v-for="material in materialOptions"
-                      :key="material"
-                      :label="material"
-                      :value="material"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="数量">
-                <el-input type="number" v-model="newMaterial.requiredQuantity"></el-input>
-              </el-form-item>
-            </el-form>
-            <div class="dialog-footer">
-              <el-button @click="showAddMaterial = false">取消</el-button>
-              <el-button type="primary" @click="addMaterial">确认添加</el-button>
+            <div class="modal-content">
+              <el-form :model="newMaterial">
+                <el-form-item label="材料名称">
+                  <el-select v-model="newMaterial.materialName" placeholder="请选择材料">
+                    <el-option
+                        v-for="material in materialOptions"
+                        :key="material"
+                        :label="material"
+                        :value="material"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="数量">
+                  <el-input type="number" v-model="newMaterial.requiredQuantity"></el-input>
+                </el-form-item>
+              </el-form>
+              <div class="dialog-footer">
+                <el-button @click="showAddMaterial = false">取消</el-button>
+                <el-button type="primary" @click="addMaterial">确认添加</el-button>
+              </div>
             </div>
           </div>
-        </div>
         </div>
       </el-tab-pane>
       <el-tab-pane label="设备详情" name="equipment">
@@ -101,21 +101,21 @@
         <!-- 使用v-if控制增加设备表单显示隐藏 -->
         <div v-if="showAddEquipment"  class="modal-overlay" >
           <div class="add-equipment-form-wrapper">
-          <div class="modal-content">
-            <el-form :model="newEquipment">
-              <el-form-item label="设备名称">
-                <el-input v-model="newEquipment.equipmentName"></el-input>
-              </el-form-item>
-              <el-form-item label="型号">
-                <el-input v-model="newEquipment.equipmentModel"></el-input>
-              </el-form-item>
-            </el-form>
-            <div class="dialog-footer">
-              <el-button @click="showAddEquipment = false">取消</el-button>
-              <el-button type="primary" @click="addEquipment">确认添加</el-button>
+            <div class="modal-content">
+              <el-form :model="newEquipment">
+                <el-form-item label="设备名称">
+                  <el-input v-model="newEquipment.equipmentName"></el-input>
+                </el-form-item>
+                <el-form-item label="型号">
+                  <el-input v-model="newEquipment.equipmentModel"></el-input>
+                </el-form-item>
+              </el-form>
+              <div class="dialog-footer">
+                <el-button @click="showAddEquipment = false">取消</el-button>
+                <el-button type="primary" @click="addEquipment">确认添加</el-button>
+              </div>
             </div>
           </div>
-        </div>
         </div>
       </el-tab-pane>
       <el-tab-pane label="检查任务栏" name="checkTasks">
@@ -138,18 +138,18 @@
         <!-- 使用v-if控制增加任务表单显示隐藏 -->
         <div v-if="showAddTask" class="modal-overlay" >
           <div class="add-task-form-wrapper">
-          <div class="modal-content">
-            <el-form :model="newTask">
-              <el-form-item label="任务名称">
-                <el-input v-model="newTask.taskName"></el-input>
-              </el-form-item>
-            </el-form>
-            <div class="dialog-footer">
-              <el-button @click="showAddTask = false">取消</el-button>
-              <el-button type="primary" @click="addTask">确认添加</el-button>
+            <div class="modal-content">
+              <el-form :model="newTask">
+                <el-form-item label="任务名称">
+                  <el-input v-model="newTask.taskName"></el-input>
+                </el-form-item>
+              </el-form>
+              <div class="dialog-footer">
+                <el-button @click="showAddTask = false">取消</el-button>
+                <el-button type="primary" @click="addTask">确认添加</el-button>
+              </div>
             </div>
           </div>
-        </div>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -163,6 +163,7 @@ import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import "element-plus/dist/index.css";
+import store from "@/store.js";
 
 export default {
   setup() {
@@ -228,13 +229,12 @@ export default {
     }
 
     // 正确获取路由传递过来的节点数据（通过params.node），并将Proxy对象转换为普通对象
-    if (route.params) {
-      nodename.value = route.params.nodeName;
-      nodestartdate.value = route.params.startDate;
-      nodeenddate.value = route.params.endDate;
-      nodeinfo.value = route.params.nodeInfo;
-      nodeId.value = route.params.nodeId;
-    }
+
+      nodename.value = store.state.node.nodeName;
+      nodestartdate.value = store.state.node.startDate;
+      nodeenddate.value = store.state.node.endDate ;
+      nodeinfo.value = store.state.node.nodeInfo ;
+      nodeId.value = store.state.node.nodeId ;
 
     const calculateRemainingTime = () => {
       if (!nodestartdate.value ||!nodeenddate.value) {
@@ -260,12 +260,12 @@ export default {
     const fetchMaterialData = async () => {
       try {
         const token = localStorage.getItem('jwtToken');
-        const nodeId = parseInt(route.params.nodeId, 10);
+        const nodeId = parseInt(store.state.node.nodeId, 10);
         if (isNaN(nodeId)) {
           ElMessage.error('无法获取有效的节点ID，请检查路由参数');
           return;
         }
-        const response = await axios.get(`http://localhost:9528/manager/node/${nodeId}/materials`, {
+        const response = await axios.get(`/api/manager/node/${nodeId}/materials`, {
           headers: {
             'token': token
           }
@@ -280,7 +280,7 @@ export default {
     const fetchMaterialNames = async () => {
       try {
         const token = localStorage.getItem('jwtToken');
-        const response = await axios.get('http://localhost:9528/administrator/getAllMaterial', {
+        const response = await axios.get('/api/administrator/getAllMaterial', {
           headers: {
             'token': token
           }
@@ -303,12 +303,12 @@ export default {
     const fetchEquipmentData = async () => {
       try {
         const token = localStorage.getItem('jwtToken');
-        const nodeId = parseInt(route.params.nodeId, 10);
+        const nodeId = parseInt(store.state.node.nodeId,10);
         if (isNaN(nodeId)) {
           ElMessage.error('无法获取有效的节点ID，请检查路由参数');
           return;
         }
-        const response = await axios.get(`http://localhost:9528/manager/node/${nodeId}/equipment/details`, {
+        const response = await axios.get(`/api/manager/node/${nodeId}/equipment/details`, {
           headers: {
             'token': token
           }
@@ -324,9 +324,10 @@ export default {
       try {
         const token = localStorage.getItem('jwtToken');
         const nodeId = {
-          nodeId: route.params.nodeId
+          nodeId: String(store.state.node.nodeId)
         };
-        const response = await axios.post('http://localhost:9528/manager/inspectionTasksByNodeId', nodeId, {
+        console.log(nodeId)
+        const response = await axios.post('/api/manager/inspectionTasksByNodeId', nodeId, {
           headers: {
             'token': token
           }
@@ -342,19 +343,19 @@ export default {
       try {
         const token = localStorage.getItem('jwtToken');
         const reqData = {
-          nodeId: String(route.params.nodeId),
+          nodeId: String(store.state.node.nodeId),
           materialName: newMaterial.value.materialName,
           requiredQuantity:newMaterial.value.requiredQuantity,
         };
-        const response = await axios.post(`http://localhost:9528/manager/configure`, reqData, {
+        const response = await axios.post(`/api/manager/configure`, reqData, {
           headers: {
             'token': token
           }
         });
-          await fetchMaterialData();
-          ElMessage.success('材料添加成功');
-          showAddMaterial.value = false;
-          newMaterial.value = { materialName: '', requiredQuantity: 0 };
+        await fetchMaterialData();
+        ElMessage.success('材料添加成功');
+        showAddMaterial.value = false;
+        newMaterial.value = { materialName: '', requiredQuantity: 0 };
       } catch (error) {
         ElMessage.error('添加材料出现网络错误');
       }
@@ -376,18 +377,18 @@ export default {
       try {
         const token = localStorage.getItem('jwtToken');
         const reqData = {
-          nodeId: String(route.params.nodeId),
+          nodeId: String(store.state.node.nodeId),
           materialName: row.materialName,
           newQuantity: editMaterialData.value.newQuantity
         };
-        const response = await axios.post('http://localhost:9528/manager/updateMaterialQuantityByName', reqData, {
+        const response = await axios.post('/api/manager/updateMaterialQuantityByName', reqData, {
           headers: {
             'token': token
           }
         });
-          await fetchMaterialData();
-          ElMessage.success('材料编辑成功');
-          hideEditMaterial(row);
+        await fetchMaterialData();
+        ElMessage.success('材料编辑成功');
+        hideEditMaterial(row);
       } catch (error) {
         ElMessage.error('编辑材料出现网络错误');
       }
@@ -402,7 +403,7 @@ export default {
           ElMessage.error('无法获取有效的节点ID，请检查路由参数');
           return;
         }
-        const response = await axios.post(`http://localhost:9528/manager/node/${nodeId}/equipment`, newEquipment.value, {
+        const response = await axios.post(`/api/manager/node/${nodeId}/equipment`, newEquipment.value, {
           headers: {
             'token': token
           }
@@ -447,7 +448,7 @@ export default {
           ElMessage.error('无法获取有效的节点ID，请检查路由参数');
           return;
         }
-        const response = await axios.post(`http://localhost:9528/manager/node/${nodeId}/inspectionTasks`, newTask.value, {
+        const response = await axios.post(`/api/manager/node/${nodeId}/inspectionTasks`, newTask.value, {
           headers: {
             'token': token
           }

@@ -348,40 +348,40 @@ export default {
         const Data4 = {
           status: "已完成"
         };
-        const waitProjectResponse = await axios.post('http://localhost:9528/project/projectNum', Data1, {
+        const waitProjectResponse = await axios.post('/api/project/projectNum', Data1, {
           headers: {
             'token': token
           }
         });
         waitprojecttotal.value = waitProjectResponse.data.data;
-        const BProjectResponse = await axios.post('http://localhost:9528/project/projectNum', Data2, {
+        const BProjectResponse = await axios.post('/api/project/projectNum', Data2, {
           headers: {
             'token': token
           }
         });
         Bprojecttotal.value = BProjectResponse.data.data;
         // 分别发送请求获取各项顶部统计信息数据
-        const ongoingProjectResponse = await axios.post('http://localhost:9528/project/projectNum', Data3, {
+        const ongoingProjectResponse = await axios.post('/api/project/projectNum', Data3, {
           headers: {
             'token': token
           }
         });
         ongoingProject.value = ongoingProjectResponse.data.data;
-        const completedProjectResponse = await axios.post('http://localhost:9528/project/projectNum', Data4, {
+        const completedProjectResponse = await axios.post('/api/project/projectNum', Data4, {
           headers: {
             'token': token
           }
         });
         completedProject.value = completedProjectResponse.data.data;
         projectTotal.value = waitProjectResponse.data.data + BProjectResponse.data.data + ongoingProjectResponse.data.data + completedProjectResponse.data.data;
-        const biddingTotalResponse = await axios.get('http://localhost:9528/administrator/biddingNum', {
+        const biddingTotalResponse = await axios.get('/api/administrator/biddingNum', {
           headers: {
             'token': token
           }
         });
         biddingTotal.value = biddingTotalResponse.data.data;
 
-        const employeeNumberResponse = await axios.get('http://localhost:9528/administrator/employee', {
+        const employeeNumberResponse = await axios.get('/api/administrator/employee', {
           headers: {
             'token': token
           }
@@ -391,7 +391,7 @@ export default {
         const type1={
             projectType: "房屋建筑"
         }
-        const projectTypeDataResponse1 = await axios.post('http://localhost:9528/project/numByType',type1,{
+        const projectTypeDataResponse1 = await axios.post('/api/project/numByType',type1,{
           headers :{
             'token' : token
           }
@@ -400,7 +400,7 @@ export default {
         const type2={
           projectType: "市政工程"
         }
-        const projectTypeDataResponse2 = await axios.post('http://localhost:9528/project/numByType',type2,{
+        const projectTypeDataResponse2 = await axios.post('/api/project/numByType',type2,{
           headers :{
             'token' : token
           }
@@ -408,20 +408,20 @@ export default {
         typenum2.value = projectTypeDataResponse2.data.data;
         typesum.value =projectTypeDataResponse1.data.data+projectTypeDataResponse2.data.data;
         // 获取合同金额图表数据
-        const projectamountDataResponse1 = await axios.post('http://localhost:9528/project/costByType',type1,{
+        const projectamountDataResponse1 = await axios.post('/api/project/costByType',type1,{
           headers :{
             'token' : token
           }
         });
         amount1.value =projectamountDataResponse1.data.data;
         console.log("amount1",amount1)
-        const projectamountDataResponse2 = await axios.post('http://localhost:9528/project/costByType',type2,{
+        const projectamountDataResponse2 = await axios.post('/api/project/costByType',type2,{
           headers :{
             'token' : token
           }
         });
         amount2.value = projectamountDataResponse2.data.data;
-        const allprojectResponse = await axios.get('http://localhost:9528/project/all', {
+        const allprojectResponse = await axios.get('/api/project/all', {
           headers: {
             'token': token
           }
@@ -433,7 +433,7 @@ export default {
                   projectId: String(i+1),
                   status:"未开始"
               }; // 根据循环的每个项目id构建请求体
-              const response1 = await axios.post('http://localhost:9528/administrator/nodes/count', requestBody1,{
+              const response1 = await axios.post('/api/administrator/nodes/count', requestBody1,{
                 headers: {
                   'token': token
                 }
@@ -443,7 +443,7 @@ export default {
                 projectId: String(i+1),
                 status:"施工中"
               }; // 根据循环的每个项目id构建请求体
-              const response2 = await axios.post('http://localhost:9528/administrator/nodes/count', requestBody2,{
+              const response2 = await axios.post('/api/administrator/nodes/count', requestBody2,{
                 headers: {
                   'token': token
                 }
@@ -453,7 +453,7 @@ export default {
                 projectId: String(i+1),
                 status:"已完成"
               }; // 根据循环的每个项目id构建请求体
-              const response3 = await axios.post('http://localhost:9528/administrator/nodes/count', requestBody3,{
+              const response3 = await axios.post('/api/administrator/nodes/count', requestBody3,{
                 headers: {
                   'token': token
                 }
@@ -512,14 +512,14 @@ export default {
                 year:String(currentYear),
                 month:String(currentMonthName-i),
               }
-              const biddingChartDataResponse = await axios.post('http://localhost:9528/administrator/newTender',time1,{
+              const biddingChartDataResponse = await axios.post('/api/administrator/newTender',time1,{
                 headers: {
                   'token': token
                 }
               });
               biddingNumbers.push(biddingChartDataResponse.data.data)
               // 获取近五个月员工总数折线统计图数据
-              const employeeChartDataResponse = await axios.post('http://localhost:9528/administrator/newEmployee',time1,{
+              const employeeChartDataResponse = await axios.post('/api/administrator/newEmployee',time1,{
                 headers: {
                   'token': token
                 }
@@ -531,14 +531,14 @@ export default {
                 year:String (currentYear-1),
                 month:String (currentMonthName+12-i),
               }
-              const biddingChartDataResponse = await axios.post('http://localhost:9528/administrator/newTender',time1,{
+              const biddingChartDataResponse = await axios.post('/api/administrator/newTender',time1,{
                 headers: {
                   'token': token
                 }
               });
               biddingNumbers.push(biddingChartDataResponse.data.data)
               // 获取近五个月员工总数折线统计图数据
-              const employeeChartDataResponse = await axios.post('http://localhost:9528/administrator/newEmployee',time1,{
+              const employeeChartDataResponse = await axios.post('/api/administrator/newEmployee',time1,{
                 headers: {
                   'token': token
                 }

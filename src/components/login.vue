@@ -113,15 +113,7 @@ export default {
           password: password.value
       };
       const token1=ref('');
-      // const response1=axios.post('http://localhost:9528/auth/bidderlogin',data1)
-      // response1.then((result)=> {
-      //    token1.value=result.data.data;
-      // })
-      // if(token1.value){
-      //   router.push('/bidder-view');
-      // }
-      // 向后端发送用户名和密码
-      axios.post('http://localhost:9528/auth/login', data1, {
+      axios.post('/api/auth/login', data1, {
       })
           .then(response => {
             console.log('响应数据：', response.data); // 打印响应数据以检查结构
@@ -148,8 +140,6 @@ export default {
               if (jobType === '项目经理') {
                 // 存储JWT到localStorage，方便后续的身份验证
                 localStorage.setItem('jwtToken', token);
-                console.log(localStorage.getItem('jwtToken'));
-                // 跳转到后台管理面板
                 router.push('/manadashboard');
               }
               else if(jobType ==='后台管理员'){
